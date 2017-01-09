@@ -33,8 +33,8 @@ export class SnappingGridComponent implements AfterViewInit {
     let columns = Math.ceil(canvas.width / spacing);
     let rows = Math.ceil(canvas.height / spacing);
 
-    for (let x = 0; x < columns; x++) {
-      for (let y = 0; y < rows; y++) {
+    for (let x = 1; x < columns; x++) {
+      for (let y = 1; y < rows; y++) {
         ctx.fillRect(x * spacing, y * spacing, 1, 1);
       }
     }

@@ -1,1 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
+.cursor_grab {
+    cursor: move;
+    cursor: -webkit-grab; /* Chrome 1-21, Safari 4+ */
+    cursor:    -moz-grab; /* Firefox 1.5-26 */
+    cursor:         grab; /* W3C standards syntax, should come least */
+}
+
+.cursor_grabbing {
+    cursor: move;
+    cursor: -webkit-grabbing;
+    cursor:    -moz-grabbing;
+    cursor:         grabbing;
+}

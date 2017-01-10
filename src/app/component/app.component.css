@@ -5,6 +5,7 @@
     top: 10px;
     bottom: 10px;
     position: absolute;
+    overflow: hidden;
 }
 
 #elementsContainerWrapper {
@@ -14,6 +15,7 @@
     left:0;
     right:200px;
     border: 1px solid gray;
+    z-index: 1;
 }
 
 app-snapping-grid {
@@ -38,4 +40,5 @@ app-elements-pallete {
     right:0;
     width: 190px;
     border: 1px solid gray;
+    z-index: 1;
 }

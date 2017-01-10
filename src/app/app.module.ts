@@ -6,6 +6,7 @@ import { CopyParentSizeDirective } from './copy-parent-size.directive';
 import { SnappingGridComponent } from './snapping-grid.component';
 import { ElementsPalleteComponent } from './elements-pallete/elements-pallete.component';
 import { ElementsContainerComponent } from './elements-container.component';
+import { DragPreviewInjectComponent } from './drag-preview-inject.component';
 
 @NgModule({
   declarations: [
@@ -13,7 +14,8 @@ import { ElementsContainerComponent } from './elements-container.component';
     CopyParentSizeDirective,
     SnappingGridComponent,
     ElementsPalleteComponent,
-    ElementsContainerComponent
+    ElementsContainerComponent,
+    DragPreviewInjectComponent
   ],
   imports: [
     BrowserModule

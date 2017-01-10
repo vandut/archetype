@@ -19,15 +19,25 @@ export class SnappingGridComponent implements AfterViewInit {
     this.drawGrid();
   }
 
-  private getGridCanvas(): HTMLCanvasElement {
+  private getCanvas(): HTMLCanvasElement {
     return this.canvasElementRef.nativeElement;
   }
 
-  drawGrid() {
-    let canvas = this.getGridCanvas();
-    let ctx = canvas.getContext('2d');
+  private getCanvasContext() {
+    return this.getCanvas().getContext('2d');
+  }
 
-    ctx.fillStyle = "rgba(200,200,200,1)";
+  clearCanvas() {
+    let canvas = this.getCanvas();
+    let context = this.getCanvasContext();
+    context.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  drawGrid() {
+    let canvas = this.getCanvas();
+    let context = this.getCanvasContext();
+
+    context.fillStyle = "rgba(200,200,200,1)";
 
     let spacing = 10;
     let columns = Math.ceil(canvas.width / spacing);
@@ -35,7 +45,7 @@ export class SnappingGridComponent implements AfterViewInit {
 
     for (let x = 1; x < columns; x++) {
       for (let y = 1; y < rows; y++) {
-        ctx.fillRect(x * spacing, y * spacing, 1, 1);
+        context.fillRect(x * spacing, y * spacing, 1, 1);
       }
     }
   }

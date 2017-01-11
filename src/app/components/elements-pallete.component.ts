@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { DragAndDropService, DragAndDropMessage } from "../drag-and-drop.service"
+import { DragAndDropService, DragAndDropMessage } from "../services/drag-and-drop.service"
 
 @Component({
   selector: 'app-elements-pallete',

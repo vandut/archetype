@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { DragAndDropService } from "../drag-and-drop.service"
+import { DragAndDropService } from "../services/drag-and-drop.service"
 
 @Component({
   selector: 'app-root',

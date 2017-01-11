@@ -1,7 +1,7 @@
 import { Component, ElementRef, HostListener, OnInit, OnDestroy } from '@angular/core';
-import { DragAndDropService, DragAndDropMessage } from "./drag-and-drop.service"
+import { DragAndDropService, DragAndDropMessage } from "../services/drag-and-drop.service"
 import { Subscription } from 'rxjs/Rx';
-import { HTMLElementWrapper } from "./HTMLElementWrapper"
+import { HTMLElementWrapper } from "../utils/HTMLElementWrapper"
 
 @Component({
   selector: 'app-elements-container',

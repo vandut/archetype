@@ -1,31 +1,37 @@
-import { Component, ElementRef, HostListener } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, OnDestroy } from '@angular/core';
 import { HTMLElementWrapper } from "./HTMLElementWrapper"
+import { DragAndDropService, DragAndDropMessage } from "./drag-and-drop.service"
+import { Subscription } from 'rxjs/Rx';
 
 @Component({
   selector: 'app-drag-preview-inject',
   template: ``
 })
-export class DragPreviewInjectComponent {
+export class DragPreviewInjectComponent implements OnInit, OnDestroy {
 
-  private template = '<div style="width: 100px; height: 100px; background: red;">A</div>';
+  private template = '';
   private draggedElement: HTMLElementWrapper = undefined;
   private mouseInsideFlag: boolean = false;
   private dragActiveFlag: boolean = false;
 
-  constructor(private elementRef: ElementRef) {}
+  private dragStartSubscription: Subscription = undefined;
+  private dragStopSubscription: Subscription = undefined;
 
-  @HostListener('document:mousedown', ['$event'])
-  onMouseDown(event: MouseEvent) {
-    if (this.isPartOfParent(event)) {
-      this.onMouseDownInside(event);
-    }
+  constructor(
+    private elementRef: ElementRef,
+    private dragAndDropService: DragAndDropService) {}
+
+  ngOnInit() {
+    this.dragStartSubscription = this.dragAndDropService.dragStart.subscribe(
+      message => this.startDrag(message.event, message.template)
+    );
+    this.dragStopSubscription = this.dragAndDropService.dragStop.subscribe(
+      message => this.stopDrag(message.event)
+    );
   }
 
-  @HostListener('document:mouseup', ['$event'])
-  onMouseUp(event: MouseEvent) {
-    if (this.isPartOfParent(event)) {
-      this.onMouseUpInside(event);
-    }
+  ngOnDestroy() {
+    this.dragStartSubscription.unsubscribe();
   }
 
   @HostListener('document:mousemove', ['$event'])
@@ -45,23 +51,29 @@ export class DragPreviewInjectComponent {
     }
   }
 
-  private onMouseDownInside(event: MouseEvent) {
-    this.spawnElement();
-    this.moveElementTo(event);
-    this.dragActiveFlag = true;
-    event.preventDefault();
+  startDrag(event: MouseEvent, template: string) {
+    if (!this.dragActiveFlag) {
+      this.template = template;
+      this.spawnElement();
+      let [x, y] = this.calculateMousePositionRelativeToParent(event);
+      this.moveElementTo(x, y);
+      this.dragActiveFlag = true;
+    }
   }
 
-  private onMouseUpInside(event: MouseEvent) {
-    this.dragActiveFlag = false;
-    this.destroyElement();
-    event.preventDefault();
+  stopDrag(event: MouseEvent) {
+    if (this.dragActiveFlag) {
+      this.dragActiveFlag = false;
+      this.destroyElement();
+      this.dragAndDropService.dragAttach.emit(new DragAndDropMessage(event, this.template));
+    }
   }
 
   private onMouseEntered(event: MouseEvent) {
     if (this.dragActiveFlag) {
       this.spawnElement();
-      this.moveElementTo(event);
+      let [x, y] = this.calculateMousePositionRelativeToParent(event);
+      this.moveElementTo(x, y);
       event.preventDefault();
     }
   }
@@ -75,14 +87,16 @@ export class DragPreviewInjectComponent {
 
   private onMouseMoveInside(event: MouseEvent) {
     if (this.dragActiveFlag) {
-      this.moveElementTo(event);
+      let [x, y] = this.calculateMousePositionRelativeToParent(event);
+      this.moveElementTo(x, y);
       event.preventDefault();
     }
   }
 
-  private moveElementTo(event: MouseEvent) {
-    let pos = this.calculateMousePositionRelativeToParent(event);
-    this.draggedElement.moveTo(pos[0] - this.draggedElement.getWidth()/2, pos[1] - this.draggedElement.getHeight()/2);
+  private moveElementTo(x: number, y: number) {
+    x -= this.dragAndDropService.dragPadding;
+    y -= this.dragAndDropService.dragPadding;
+    this.draggedElement.moveTo(x, y);
   }
 
   private calculateMousePositionRelativeToParent(event: MouseEvent): [number, number] {
@@ -111,8 +125,10 @@ export class DragPreviewInjectComponent {
   }
 
   private destroyElement() {
-    this.draggedElement.remove();
-    this.draggedElement = undefined;
+    if (this.draggedElement !== undefined) {
+      this.draggedElement.remove();
+      this.draggedElement = undefined;
+    }
   }
 
   private createElement(): HTMLElementWrapper {

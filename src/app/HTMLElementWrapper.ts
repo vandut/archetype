@@ -34,6 +34,11 @@ export class HTMLElementWrapper {
         this.wrapperElement.style.zIndex = '9999';
     }
 
+    setAbsolutePosition(x: number, y: number) {
+        this.wrapperElement.style.position = 'absolute';
+        this.moveTo(x, y);
+    }
+
     setOpacity(opacity: number) {
         this.wrapperElement.style.opacity = opacity + '';
     }

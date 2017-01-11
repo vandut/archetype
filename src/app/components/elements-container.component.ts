@@ -1,7 +1,8 @@
 import { Component, ElementRef, HostListener, OnInit, OnDestroy } from '@angular/core';
-import { DragAndDropService, DragAndDropMessage } from "../services/drag-and-drop.service"
 import { Subscription } from 'rxjs/Rx';
 import { HTMLElementWrapper } from "../utils/HTMLElementWrapper"
+import { DragAndDropService, DragAndDropMessage } from "../services/drag-and-drop.service"
+import { SelectionService } from "../services/selection.service"
 
 @Component({
   selector: 'app-elements-container',
@@ -16,7 +17,8 @@ export class ElementsContainerComponent implements OnInit, OnDestroy {
 
   constructor(
     private elementRef: ElementRef,
-    private dragAndDropService: DragAndDropService) {}
+    private dragAndDropService: DragAndDropService,
+    private selectionService: SelectionService) {}
 
   ngOnInit() {
     this.dragStopSubscription = this.dragAndDropService.dragStop.subscribe(
@@ -33,9 +35,9 @@ export class ElementsContainerComponent implements OnInit, OnDestroy {
     if (this.isPartOfElement(event)) {
       let target: HTMLElement = <HTMLElement> event.target;
       if (target.classList.contains(ElementsContainerComponent.MANAGED_CSS_CLASS)) {
-        console.log('managed selected', target);
+        this.selectionService.selected.emit(target);
       } else {
-        console.log('selection cleared');
+        this.selectionService.selected.emit(null);
       }
     }
   }

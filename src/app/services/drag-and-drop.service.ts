@@ -1,18 +1,8 @@
 import { Injectable } from '@angular/core';
-import * as Rx from 'rxjs/Rx';
+import { Topic } from "./topic"
 
 export class DragAndDropMessage {
   constructor(public event: MouseEvent, public template: string = undefined) {}
-}
-
-class Topic<T> {
-  private subject = new Rx.Subject<T>();
-  emit(value: T) {
-    this.subject.next(value);
-  }
-  subscribe(next?: (value: T) => void): Rx.Subscription {
-    return this.subject.subscribe(next);
-  }
 }
 
 @Injectable()

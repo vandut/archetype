@@ -3,11 +3,18 @@ export class HTMLElementWrapper {
     private constructor(private wrapperElement: HTMLElement) {}
 
     static fromTemplate(template: string): HTMLElementWrapper {
-        var div = document.createElement('div');
+        let div = document.createElement('div');
         div.innerHTML = template;
         let element = <HTMLElement> div.firstChild;
         return new HTMLElementWrapper(element);
     }
+
+    static fromDiv(): HTMLElementWrapper {
+        let div = document.createElement('div');
+        return new HTMLElementWrapper(div);
+    }
+
+    public get style() { return this.wrapperElement.style; }
 
     getWrappedElement(): HTMLElement {
         return this.wrapperElement;
@@ -30,17 +37,22 @@ export class HTMLElementWrapper {
     }
 
     positionOnTop() {
-        this.wrapperElement.style.position = 'absolute';
-        this.wrapperElement.style.zIndex = '9999';
+        this.style.position = 'absolute';
+        this.style.zIndex = '9999';
     }
 
     setAbsolutePosition(x: number, y: number) {
-        this.wrapperElement.style.position = 'absolute';
+        this.style.position = 'absolute';
         this.moveTo(x, y);
     }
 
+    setSize(w: number, h: number) {
+        this.style.width = w + 'px';
+        this.style.height = h + 'px';
+    }
+
     setOpacity(opacity: number) {
-        this.wrapperElement.style.opacity = opacity + '';
+        this.style.opacity = opacity + '';
     }
 
     addClass(name: string) {
@@ -48,12 +60,8 @@ export class HTMLElementWrapper {
     }
 
     moveTo(x: number, y: number) {
-        this.wrapperElement.style.left = x + 'px';
-        this.wrapperElement.style.top = y + 'px';
-    }
-
-    visibility(value: string) {
-        this.wrapperElement.style.visibility = value;
+        this.style.left = x + 'px';
+        this.style.top = y + 'px';
     }
 
 }

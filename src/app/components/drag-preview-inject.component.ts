@@ -36,11 +36,11 @@ class DraggableElement {
   }
 
   show() {
-    this.draggedElement.visibility(null);
+    this.draggedElement.style.visibility = null;
   }
 
   hide() {
-    this.draggedElement.visibility('hidden');
+    this.draggedElement.style.visibility = 'hidden';
   }
 
   moveTo(offsetX: number, offsetY: number, padding: number) {

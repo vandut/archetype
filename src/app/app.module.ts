@@ -7,6 +7,7 @@ import { SnappingGridComponent } from './components/snapping-grid.component';
 import { ElementsPalleteComponent } from './components/elements-pallete.component';
 import { ElementsContainerComponent } from './components/elements-container.component';
 import { DragPreviewInjectComponent } from './components/drag-preview-inject.component';
+import { SelectionLayerComponent } from "./components/selection-layer.component"
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import { DragPreviewInjectComponent } from './components/drag-preview-inject.com
     SnappingGridComponent,
     ElementsPalleteComponent,
     ElementsContainerComponent,
-    DragPreviewInjectComponent
+    DragPreviewInjectComponent,
+    SelectionLayerComponent
   ],
   imports: [
     BrowserModule

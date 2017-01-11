@@ -52,4 +52,6 @@ export class HTMLElementWrapper {
         this.wrapperElement.style.top = y + 'px';
     }
 
+    }
+
 }

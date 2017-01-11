@@ -5,17 +5,58 @@ import { Subscription } from 'rxjs/Rx';
 import { BaseDomManipulationComponent } from "./base-dom-manipulation.component"
 import { MouseMoveEventsMixin, MouseMoveEventsListener } from "../mixins/MouseMoveEventsMixin"
 
+class DraggableElement {
+
+  private constructor(
+    private draggedElement: HTMLElementWrapper,
+    private template: string) {}
+
+  static fromTemplate(template: string) {
+    let element = HTMLElementWrapper.fromTemplate(template);
+    element.positionOnTop();
+    element.setOpacity(0.25);
+    element.addClass('cursor_grabbing');
+    return new DraggableElement(element, template);
+  }
+
+  getWrappedDeprecated(): HTMLElementWrapper {
+    return this.draggedElement;
+  }
+
+  getTemplate(): string {
+    return this.template;
+  }
+
+  attach(parent: Node) {
+    this.draggedElement.appendAsChildOf(parent);
+  }
+
+  remove() {
+    this.draggedElement.remove();
+  }
+
+  show() {
+    this.draggedElement.visibility(null);
+  }
+
+  hide() {
+    this.draggedElement.visibility('hidden');
+  }
+
+  moveTo(offsetX: number, offsetY: number, padding: number) {
+    this.draggedElement.moveTo(offsetX - padding, offsetY - padding);
+  }
+
+}
+
 @Component({
   selector: 'app-drag-preview-inject',
   template: ``
 })
 export class DragPreviewInjectComponent extends BaseDomManipulationComponent implements OnInit, OnDestroy, MouseMoveEventsListener {
 
-  private template = '';
-  private draggedElement: HTMLElementWrapper = undefined;
-  private dragActiveFlag: boolean = false;
-
-  private dragStartSubscription: Subscription = undefined;
+  private subscription: Subscription;
+  private draggableElement: DraggableElement = null;
 
   constructor(
     private dragAndDropService: DragAndDropService,
@@ -25,13 +66,11 @@ export class DragPreviewInjectComponent extends BaseDomManipulationComponent imp
 
   ngOnInit() {
     MouseMoveEventsMixin.register(this.getNativeParentElement(), this);
-    this.dragStartSubscription = this.dragAndDropService.dragStart.subscribe(
-      message => this.startDrag(message.event, message.template)
-    );
+    this.subscription = this.dragAndDropService.dragStart.subscribe(m => this.startDrag(m));
   }
 
   ngOnDestroy() {
-    this.dragStartSubscription.unsubscribe();
+    this.subscription.unsubscribe();
   }
 
   @HostListener('document:mouseup', ['$event'])
@@ -40,75 +79,39 @@ export class DragPreviewInjectComponent extends BaseDomManipulationComponent imp
   }
 
   onMouseEntered(event: MouseEvent) {
-    if (this.dragActiveFlag) {
-      this.spawnElement();
-      let [x, y] = this.toParentElementCoordinates(event);
-      this.moveElementTo(x, y);
-      event.preventDefault();
+    if (this.draggableElement) {
+      this.draggableElement.show();
     }
   }
 
   onMouseLeft(event: MouseEvent) {
-    if (this.dragActiveFlag) {
-      this.destroyElement();
-      event.preventDefault();
+    if (this.draggableElement) {
+      this.draggableElement.hide();
     }
   }
 
   onMouseMove(event: MouseEvent) {
-    if (this.dragActiveFlag) {
+    if (this.draggableElement) {
       let [x, y] = this.toParentElementCoordinates(event);
-      this.moveElementTo(x, y);
-      event.preventDefault();
+      this.draggableElement.moveTo(x, y, this.dragAndDropService.padding);
     }
   }
 
-  startDrag(event: MouseEvent, template: string) {
-    if (!this.dragActiveFlag) {
-      this.template = template;
-      this.spawnElement();
-      let [x, y] = this.toParentElementCoordinates(event);
-      this.moveElementTo(x, y);
-      this.dragActiveFlag = true;
+  startDrag(message: DragAndDropMessage) {
+    if (!this.draggableElement) {
+      this.draggableElement = DraggableElement.fromTemplate(message.template);
+      this.draggableElement.attach(this.getNativeParentElement());
+      let [x, y] = this.toParentElementCoordinates(message.event);
+      this.draggableElement.moveTo(x, y, this.dragAndDropService.padding);
     }
   }
 
   stopDrag(event: MouseEvent) {
-    if (this.dragActiveFlag) {
-      this.dragActiveFlag = false;
-      this.destroyElement();
-      this.dragAndDropService.dragStop.emit(new DragAndDropMessage(event, this.template));
+    if (this.draggableElement) {
+      this.draggableElement.remove();
+      this.dragAndDropService.dragStop.emit(new DragAndDropMessage(event, this.draggableElement.getTemplate()));
+      this.draggableElement = null;
     }
-  }
-
-  private moveElementTo(x: number, y: number) {
-    x -= this.dragAndDropService.dragPadding;
-    y -= this.dragAndDropService.dragPadding;
-    this.draggedElement.moveTo(x, y);
-  }
-
-  private spawnElement() {
-    this.draggedElement = this.createElement();
-    this.draggedElement.appendAsChildOf(this.getNativeParentElement());
-  }
-
-  private destroyElement() {
-    if (this.draggedElement !== undefined) {
-      this.draggedElement.remove();
-      this.draggedElement = undefined;
-    }
-  }
-
-  private createElement(): HTMLElementWrapper {
-    let el = HTMLElementWrapper.fromTemplate(this.template)
-    el.positionOnTop();
-    el.setOpacity(0.25);
-    el.addClass('cursor_grabbing');
-    return el;
-  }
-
-  private isDraggedElementPresent(): boolean {
-    return this.draggedElement !== undefined;
   }
 
 }

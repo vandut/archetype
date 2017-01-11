@@ -14,7 +14,7 @@ export class ElementsContainerComponent extends BaseDomManipulationComponent imp
 
   private static MANAGED_CSS_CLASS = 'archetype_managed';
 
-  private dragStopSubscription: Subscription;
+  private subscription: Subscription;
 
   constructor(
     private dragAndDropService: DragAndDropService,
@@ -24,11 +24,11 @@ export class ElementsContainerComponent extends BaseDomManipulationComponent imp
   }
 
   ngOnInit() {
-    this.dragStopSubscription = this.dragAndDropService.dragStop.subscribe(m => this.stopDrag(m));
+    this.subscription = this.dragAndDropService.dragStop.subscribe(m => this.stopDrag(m));
   }
 
   ngOnDestroy() {
-    this.dragStopSubscription.unsubscribe();
+    this.subscription.unsubscribe();
   }
 
   @HostListener('document:mousedown', ['$event'])
@@ -47,7 +47,7 @@ export class ElementsContainerComponent extends BaseDomManipulationComponent imp
     if (this.isPageCoordinatesInsideComponent(message.event)) {
       let el = HTMLElementWrapper.fromTemplate(message.template);
       let [x, y] = this.toComponentCoordinates(message.event);
-      let padding = this.dragAndDropService.dragPadding;
+      let padding = this.dragAndDropService.padding;
       el.setAbsolutePosition(x - padding, y - padding);
       el.addClass(ElementsContainerComponent.MANAGED_CSS_CLASS);
       el.appendAsChildOf(this.getNativeElement());

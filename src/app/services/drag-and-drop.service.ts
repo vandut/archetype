@@ -14,6 +14,6 @@ export class DragAndDropService {
   public get dragStart() { return this.dragStartTopic; }
   public get dragStop() { return this.dragStopTopic; }
 
-  public get dragPadding() { return 10; }
+  public get padding() { return 10; }
 
 }

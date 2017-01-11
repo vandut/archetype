@@ -2,12 +2,13 @@ import { Component, ElementRef, HostListener, OnInit, OnDestroy } from '@angular
 import { HTMLElementWrapper } from "../utils/HTMLElementWrapper"
 import { DragAndDropService, DragAndDropMessage } from "../services/drag-and-drop.service"
 import { Subscription } from 'rxjs/Rx';
+import { BaseDomManipulationComponent } from "./base-dom-manipulation.component"
 
 @Component({
   selector: 'app-drag-preview-inject',
   template: ``
 })
-export class DragPreviewInjectComponent implements OnInit, OnDestroy {
+export class DragPreviewInjectComponent extends BaseDomManipulationComponent implements OnInit, OnDestroy {
 
   private template = '';
   private draggedElement: HTMLElementWrapper = undefined;
@@ -17,8 +18,10 @@ export class DragPreviewInjectComponent implements OnInit, OnDestroy {
   private dragStartSubscription: Subscription = undefined;
 
   constructor(
-    private elementRef: ElementRef,
-    private dragAndDropService: DragAndDropService) {}
+    private dragAndDropService: DragAndDropService,
+    elementRef: ElementRef) {
+      super(elementRef);
+  }
 
   ngOnInit() {
     this.dragStartSubscription = this.dragAndDropService.dragStart.subscribe(
@@ -32,7 +35,7 @@ export class DragPreviewInjectComponent implements OnInit, OnDestroy {
 
   @HostListener('document:mousemove', ['$event'])
   onMouseMove(event: MouseEvent) {
-    if (this.isPartOfParent(event)) {
+    if (this.isEventTargetInsideParent(event.target)) {
       if (!this.mouseInsideFlag) {
         this.mouseInsideFlag = true;
         this.onMouseEntered(event);
@@ -56,7 +59,7 @@ export class DragPreviewInjectComponent implements OnInit, OnDestroy {
     if (!this.dragActiveFlag) {
       this.template = template;
       this.spawnElement();
-      let [x, y] = this.calculateMousePositionRelativeToParent(event);
+      let [x, y] = this.toParentElementCoordinates(event);
       this.moveElementTo(x, y);
       this.dragActiveFlag = true;
     }
@@ -73,7 +76,7 @@ export class DragPreviewInjectComponent implements OnInit, OnDestroy {
   private onMouseEntered(event: MouseEvent) {
     if (this.dragActiveFlag) {
       this.spawnElement();
-      let [x, y] = this.calculateMousePositionRelativeToParent(event);
+      let [x, y] = this.toParentElementCoordinates(event);
       this.moveElementTo(x, y);
       event.preventDefault();
     }
@@ -88,7 +91,7 @@ export class DragPreviewInjectComponent implements OnInit, OnDestroy {
 
   private onMouseMoveInside(event: MouseEvent) {
     if (this.dragActiveFlag) {
-      let [x, y] = this.calculateMousePositionRelativeToParent(event);
+      let [x, y] = this.toParentElementCoordinates(event);
       this.moveElementTo(x, y);
       event.preventDefault();
     }
@@ -100,29 +103,9 @@ export class DragPreviewInjectComponent implements OnInit, OnDestroy {
     this.draggedElement.moveTo(x, y);
   }
 
-  private calculateMousePositionRelativeToParent(event: MouseEvent): [number, number] {
-    let x = event.offsetX;
-    let y = event.offsetY;
-    for (let node: HTMLElement = <HTMLElement> event.target;
-          node != this.getParent();
-          node = <HTMLElement> node.offsetParent) {
-      x += node.offsetLeft;
-      y += node.offsetTop;
-    }
-    return [x, y];
-  }
-
-  private getParent(): HTMLElement {
-    return this.elementRef.nativeElement.parentNode;
-  }
-
-  private isPartOfParent(event: MouseEvent): boolean {
-    return this.getParent().contains(<Node> event.target);
-  }
-
   private spawnElement() {
     this.draggedElement = this.createElement();
-    this.draggedElement.appendAsChildOf(this.getParent());
+    this.draggedElement.appendAsChildOf(this.getNativeParentElement());
   }
 
   private destroyElement() {

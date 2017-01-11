@@ -14,7 +14,7 @@ export class ElementsContainerComponent extends BaseDomManipulationComponent imp
 
   private static MANAGED_CSS_CLASS = 'archetype_managed';
 
-  private dragStopSubscription: Subscription = undefined;
+  private dragStopSubscription: Subscription;
 
   constructor(
     private dragAndDropService: DragAndDropService,
@@ -24,9 +24,7 @@ export class ElementsContainerComponent extends BaseDomManipulationComponent imp
   }
 
   ngOnInit() {
-    this.dragStopSubscription = this.dragAndDropService.dragStop.subscribe(
-      message => this.stopDrag(message.event, message.template)
-    );
+    this.dragStopSubscription = this.dragAndDropService.dragStop.subscribe(m => this.stopDrag(m));
   }
 
   ngOnDestroy() {
@@ -35,7 +33,7 @@ export class ElementsContainerComponent extends BaseDomManipulationComponent imp
 
   @HostListener('document:mousedown', ['$event'])
   onMouseDown(event: MouseEvent) {
-    if (this.isEventTargetInsideComponent(event)) {
+    if (this.isEventTargetInsideComponent(event.target)) {
       let target: HTMLElement = <HTMLElement> event.target;
       if (target.classList.contains(ElementsContainerComponent.MANAGED_CSS_CLASS)) {
         this.selectionService.selected.emit(target);
@@ -45,10 +43,10 @@ export class ElementsContainerComponent extends BaseDomManipulationComponent imp
     }
   }
 
-  stopDrag(event: MouseEvent, template: string) {
-    if (this.isMouseEventInsideComponent(event)) {
-      let el = HTMLElementWrapper.fromTemplate(template);
-      let [x, y] = this.toComponentCoordinates(event);
+  stopDrag(message: DragAndDropMessage) {
+    if (this.isPageCoordinatesInsideComponent(message.event)) {
+      let el = HTMLElementWrapper.fromTemplate(message.template);
+      let [x, y] = this.toComponentCoordinates(message.event);
       let padding = this.dragAndDropService.dragPadding;
       el.setAbsolutePosition(x - padding, y - padding);
       el.addClass(ElementsContainerComponent.MANAGED_CSS_CLASS);

@@ -1,4 +1,5 @@
 import { ElementRef } from '@angular/core';
+import { PageCoordinates } from "../utils/PageCoordinates"
 
 export class BaseDomManipulationComponent {
 
@@ -8,21 +9,37 @@ export class BaseDomManipulationComponent {
     return this.elementRef.nativeElement;
   }
 
-  isEventTargetInsideComponent(event: Event): boolean {
-    return this.getNativeElement().contains(<Node> event.target);
+  getNativeParentElement(): HTMLElement {
+    return <HTMLElement> this.getNativeElement().parentNode;
   }
 
-  isMouseEventInsideComponent(event: MouseEvent): boolean {
+  isEventTargetInsideComponent(target: EventTarget): boolean {
+    return this.getNativeElement().contains(<Node> target);
+  }
+
+  isEventTargetInsideParent(target: EventTarget): boolean {
+    return this.getNativeParentElement().contains(<Node> target);
+  }
+
+  isPageCoordinatesInsideComponent(coordinates: PageCoordinates): boolean {
     let rect = this.getNativeElement().getBoundingClientRect();
-    return event.pageX >= rect.left && event.pageX <= rect.right
-        && event.pageY >= rect.top && event.pageY <= rect.bottom;
+    return coordinates.pageX >= rect.left && coordinates.pageX <= rect.right
+        && coordinates.pageY >= rect.top && coordinates.pageY <= rect.bottom;
   }
 
-  toComponentCoordinates(event: MouseEvent): [number, number] {
+  toComponentCoordinates(coordinates: PageCoordinates): [number, number] {
     let rect = this.getNativeElement().getBoundingClientRect();
     return [
-      event.pageX - rect.left,
-      event.pageY - rect.top
+      coordinates.pageX - rect.left,
+      coordinates.pageY - rect.top
+    ];
+  }
+
+  toParentElementCoordinates(coordinates: PageCoordinates): [number, number] {
+    let rect = this.getNativeParentElement().getBoundingClientRect();
+    return [
+      coordinates.pageX - rect.left,
+      coordinates.pageY - rect.top
     ];
   }
 

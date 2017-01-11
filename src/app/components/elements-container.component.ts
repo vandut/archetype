@@ -10,22 +10,22 @@ import { HTMLElementWrapper } from "../utils/HTMLElementWrapper"
 })
 export class ElementsContainerComponent implements OnInit, OnDestroy {
 
-  private dragAttachSubscription: Subscription = undefined;
-
   private static MANAGED_CSS_CLASS = 'archetype_managed';
+
+  private dragStopSubscription: Subscription = undefined;
 
   constructor(
     private elementRef: ElementRef,
     private dragAndDropService: DragAndDropService) {}
 
   ngOnInit() {
-    this.dragAttachSubscription = this.dragAndDropService.dragAttach.subscribe(
-      message => this.dragAttach(message.event, message.template)
+    this.dragStopSubscription = this.dragAndDropService.dragStop.subscribe(
+      message => this.stopDrag(message.event, message.template)
     );
   }
 
   ngOnDestroy() {
-    this.dragAttachSubscription.unsubscribe();
+    this.dragStopSubscription.unsubscribe();
   }
 
   @HostListener('document:mousedown', ['$event'])
@@ -40,15 +40,7 @@ export class ElementsContainerComponent implements OnInit, OnDestroy {
     }
   }
 
-  @HostListener('document:mouseup', ['$event'])
-  onMouseUp(event: MouseEvent) {
-    this.dragAndDropService.dragStop.emit(new DragAndDropMessage(event));
-    if (this.isInsideElement(event)) {
-      event.preventDefault();
-    }
-  }
-
-  dragAttach(event: MouseEvent, template: string) {
+  stopDrag(event: MouseEvent, template: string) {
     if (this.isInsideElement(event)) {
       let [x, y] = this.translateToLocalCoordinates(event);
       let el = HTMLElementWrapper.fromTemplate(template);

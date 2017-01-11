@@ -15,7 +15,6 @@ export class DragPreviewInjectComponent implements OnInit, OnDestroy {
   private dragActiveFlag: boolean = false;
 
   private dragStartSubscription: Subscription = undefined;
-  private dragStopSubscription: Subscription = undefined;
 
   constructor(
     private elementRef: ElementRef,
@@ -24,9 +23,6 @@ export class DragPreviewInjectComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.dragStartSubscription = this.dragAndDropService.dragStart.subscribe(
       message => this.startDrag(message.event, message.template)
-    );
-    this.dragStopSubscription = this.dragAndDropService.dragStop.subscribe(
-      message => this.stopDrag(message.event)
     );
   }
 
@@ -51,6 +47,11 @@ export class DragPreviewInjectComponent implements OnInit, OnDestroy {
     }
   }
 
+  @HostListener('document:mouseup', ['$event'])
+  onMouseUp(event: MouseEvent) {
+    this.stopDrag(event);
+  }
+
   startDrag(event: MouseEvent, template: string) {
     if (!this.dragActiveFlag) {
       this.template = template;
@@ -65,7 +66,7 @@ export class DragPreviewInjectComponent implements OnInit, OnDestroy {
     if (this.dragActiveFlag) {
       this.dragActiveFlag = false;
       this.destroyElement();
-      this.dragAndDropService.dragAttach.emit(new DragAndDropMessage(event, this.template));
+      this.dragAndDropService.dragStop.emit(new DragAndDropMessage(event, this.template));
     }
   }
 

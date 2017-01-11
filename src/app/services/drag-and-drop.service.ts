@@ -20,11 +20,9 @@ export class DragAndDropService {
 
   public dragStartTopic = new Topic<DragAndDropMessage>();
   public dragStopTopic = new Topic<DragAndDropMessage>();
-  public dragAttachTopic = new Topic<DragAndDropMessage>();
 
   public get dragStart() { return this.dragStartTopic; }
   public get dragStop() { return this.dragStopTopic; }
-  public get dragAttach() { return this.dragAttachTopic; }
 
   public get dragPadding() { return 10; }
 

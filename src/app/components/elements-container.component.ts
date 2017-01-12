@@ -31,12 +31,15 @@ export class ElementsContainerComponent extends BaseDomManipulationComponent imp
 
   @HostListener('document:mousedown', ['$event'])
   onMouseDown(event: MouseEvent) {
-    if (this.isEventTargetInsideComponent(event.target)) {
+    if (this.isEventTargetInsideComponent(event.target) && !event.ctrlKey) {
       let target: HTMLElement = <HTMLElement> event.target;
       if (target.classList.contains(ElementsContainerComponent.MANAGED_CSS_CLASS)) {
         this.selectionService.selected.emit(target);
       } else {
         this.selectionService.selected.emit(null);
+      }
+      if (event.target !== this.getNativeElement()) {
+        event.preventDefault();
       }
     }
   }
@@ -52,7 +55,6 @@ export class ElementsContainerComponent extends BaseDomManipulationComponent imp
         .done();
 
       this.getNativeElement().appendChild(element);
-      this.selectionService.selected.emit(element);
     }
   }
 

@@ -6,7 +6,8 @@ import { Subscription } from 'rxjs/Rx';
 
 class Selection {
 
-  private constructor(private htmlElement: HTMLElement) {}
+  private constructor(private htmlElement: HTMLElement) {
+  }
 
   static fromElement(element: HTMLElement) {
     return Selection.at(element.offsetLeft, element.offsetTop,

@@ -1,6 +1,6 @@
 import { Component, ElementRef, HostListener, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Rx';
-import { HTMLElementWrapper } from '../utils/HTMLElementWrapper';
+import { HTMLElementChmod } from '../utils/HTMLElement';
 import { DragAndDropService, DragAndDropMessage } from '../services/drag-and-drop.service';
 import { SelectionService } from '../services/selection.service';
 import { BaseDomManipulationComponent } from './base-dom-manipulation.component';
@@ -43,12 +43,16 @@ export class ElementsContainerComponent extends BaseDomManipulationComponent imp
 
   stopDrag(message: DragAndDropMessage) {
     if (this.isPageCoordinatesInsideComponent(message.event)) {
-      let el = HTMLElementWrapper.fromTemplate(message.template);
       let [x, y] = this.toComponentCoordinates(message.event);
       let padding = this.dragAndDropService.padding;
-      el.setAbsolutePosition(x - padding, y - padding);
-      el.addClass(ElementsContainerComponent.MANAGED_CSS_CLASS);
-      el.appendAsChildOf(this.getNativeElement());
+
+      let element = HTMLElementChmod.fromTemplate(message.template)
+        .setAbsolutePosition(x - padding, y - padding)
+        .addClass(ElementsContainerComponent.MANAGED_CSS_CLASS)
+        .done();
+
+      this.getNativeElement().appendChild(element);
+      this.selectionService.selected.emit(element);
     }
   }
 

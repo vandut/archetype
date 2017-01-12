@@ -1,5 +1,5 @@
 import { Component, ElementRef, HostListener, OnInit, OnDestroy } from '@angular/core';
-import { HTMLElementWrapper } from '../utils/HTMLElementWrapper';
+import { HTMLElementChmod } from '../utils/HTMLElement';
 import { DragAndDropService, DragAndDropMessage } from '../services/drag-and-drop.service';
 import { Subscription } from 'rxjs/Rx';
 import { BaseDomManipulationComponent } from './base-dom-manipulation.component';
@@ -7,19 +7,14 @@ import { MouseMoveEventsMixin, MouseMoveEventsListener } from '../mixins/MouseMo
 
 class DraggableElement {
 
-  private constructor(private draggedElement: HTMLElementWrapper,
-                      private template: string) {}
+  private draggedElement: HTMLElement;
 
-  static fromTemplate(template: string) {
-    let element = HTMLElementWrapper.fromTemplate(template);
-    element.positionOnTop();
-    element.setOpacity(0.25);
-    element.addClass('cursor_grabbing');
-    return new DraggableElement(element, template);
-  }
-
-  getWrappedDeprecated(): HTMLElementWrapper {
-    return this.draggedElement;
+  constructor(private template: string) {
+    this.draggedElement = HTMLElementChmod.fromTemplate(template)
+      .positionOnTop()
+      .setOpacity(0.25)
+      .addClass('cursor_grabbing')
+      .done();
   }
 
   getTemplate(): string {
@@ -27,7 +22,7 @@ class DraggableElement {
   }
 
   attach(parent: Node) {
-    this.draggedElement.appendAsChildOf(parent);
+    parent.appendChild(this.draggedElement);
   }
 
   remove() {
@@ -43,7 +38,8 @@ class DraggableElement {
   }
 
   moveTo(offsetX: number, offsetY: number, padding: number) {
-    this.draggedElement.moveTo(offsetX - padding, offsetY - padding);
+    HTMLElementChmod.of(this.draggedElement)
+      .setPosition(offsetX - padding, offsetY - padding);
   }
 
 }
@@ -97,9 +93,9 @@ export class DragPreviewInjectComponent extends BaseDomManipulationComponent imp
 
   startDrag(message: DragAndDropMessage) {
     if (!this.draggableElement) {
-      this.draggableElement = DraggableElement.fromTemplate(message.template);
-      this.draggableElement.attach(this.getNativeParentElement());
       let [x, y] = this.toParentElementCoordinates(message.event);
+      this.draggableElement = new DraggableElement(message.template);
+      this.draggableElement.attach(this.getNativeParentElement());
       this.draggableElement.moveTo(x, y, this.dragAndDropService.padding);
     }
   }

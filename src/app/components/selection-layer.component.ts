@@ -1,29 +1,32 @@
 import { Component, OnInit, OnDestroy, ElementRef } from '@angular/core';
 import { BaseDomManipulationComponent } from './base-dom-manipulation.component';
 import { SelectionService } from '../services/selection.service';
-import { HTMLElementWrapper } from '../utils/HTMLElementWrapper';
+import { HTMLElementChmod } from '../utils/HTMLElement';
 import { Subscription } from 'rxjs/Rx';
 
 class Selection {
 
-  private constructor(private htmlElement: HTMLElementWrapper) {}
+  private constructor(private htmlElement: HTMLElement) {}
 
   static fromElement(element: HTMLElement) {
     return Selection.at(element.offsetLeft, element.offsetTop,
       element.clientWidth, element.clientHeight);
   }
 
-  static at(x: number, y: number, w: number, h: number) {
-    let element = HTMLElementWrapper.fromDiv();
-    element.setAbsolutePosition(x, y);
-    element.setSize(w, h);
-    element.style.outline = '2px dashed black';
-    element.style.boxShadow = '0 0 0 2px white';
-    return new Selection(element);
+  private static at(x: number, y: number, w: number, h: number) {
+    return new Selection(HTMLElementChmod.fromDiv()
+      .setAbsolutePosition(x, y)
+      .setSize(w, h)
+      .customStyle(style => {
+        style.outline = '2px dashed black';
+        style.boxShadow = '0 0 0 2px white';
+      })
+      .done()
+    );
   }
 
   attach(element: HTMLElement) {
-    this.htmlElement.appendAsChildOf(element);
+    element.appendChild(this.htmlElement);
   }
 
   remove() {

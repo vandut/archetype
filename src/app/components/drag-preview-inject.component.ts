@@ -1,15 +1,14 @@
 import { Component, ElementRef, HostListener, OnInit, OnDestroy } from '@angular/core';
-import { HTMLElementWrapper } from "../utils/HTMLElementWrapper"
-import { DragAndDropService, DragAndDropMessage } from "../services/drag-and-drop.service"
+import { HTMLElementWrapper } from '../utils/HTMLElementWrapper';
+import { DragAndDropService, DragAndDropMessage } from '../services/drag-and-drop.service';
 import { Subscription } from 'rxjs/Rx';
-import { BaseDomManipulationComponent } from "./base-dom-manipulation.component"
-import { MouseMoveEventsMixin, MouseMoveEventsListener } from "../mixins/MouseMoveEventsMixin"
+import { BaseDomManipulationComponent } from './base-dom-manipulation.component';
+import { MouseMoveEventsMixin, MouseMoveEventsListener } from '../mixins/MouseMoveEventsMixin';
 
 class DraggableElement {
 
-  private constructor(
-    private draggedElement: HTMLElementWrapper,
-    private template: string) {}
+  private constructor(private draggedElement: HTMLElementWrapper,
+                      private template: string) {}
 
   static fromTemplate(template: string) {
     let element = HTMLElementWrapper.fromTemplate(template);
@@ -58,10 +57,9 @@ export class DragPreviewInjectComponent extends BaseDomManipulationComponent imp
   private subscription: Subscription;
   private draggableElement: DraggableElement = null;
 
-  constructor(
-    private dragAndDropService: DragAndDropService,
-    elementRef: ElementRef) {
-      super(elementRef);
+  constructor(private dragAndDropService: DragAndDropService,
+              elementRef: ElementRef) {
+    super(elementRef);
   }
 
   ngOnInit() {

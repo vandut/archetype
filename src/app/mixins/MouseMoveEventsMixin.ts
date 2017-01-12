@@ -5,7 +5,7 @@ export interface MouseMoveEventsListener {
 }
 
 export class MouseMoveEventsMixin {
-  
+
   static register(element: HTMLElement, listener: MouseMoveEventsListener) {
     element.addEventListener('mousemove',  e => listener.onMouseMove(e), false);
     element.addEventListener('mouseenter', e => listener.onMouseEntered(e));

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { DragAndDropService } from "../services/drag-and-drop.service"
-import { SelectionService } from "../services/selection.service"
+import { DragAndDropService } from '../services/drag-and-drop.service';
+import { SelectionService } from '../services/selection.service';
 
 @Component({
   selector: 'app-root',
@@ -11,4 +11,5 @@ import { SelectionService } from "../services/selection.service"
     SelectionService
   ]
 })
-export class AppComponent {}
+export class AppComponent {
+}

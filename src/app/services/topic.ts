@@ -1,7 +1,7 @@
 import * as Rx from 'rxjs/Rx';
 
 export class Topic<T> {
-    
+
   private subject = new Rx.Subject<T>();
 
   emit(value: T) {

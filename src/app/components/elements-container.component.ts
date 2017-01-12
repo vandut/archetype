@@ -1,9 +1,9 @@
 import { Component, ElementRef, HostListener, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Rx';
-import { HTMLElementWrapper } from "../utils/HTMLElementWrapper"
-import { DragAndDropService, DragAndDropMessage } from "../services/drag-and-drop.service"
-import { SelectionService } from "../services/selection.service"
-import { BaseDomManipulationComponent } from "./base-dom-manipulation.component"
+import { HTMLElementWrapper } from '../utils/HTMLElementWrapper';
+import { DragAndDropService, DragAndDropMessage } from '../services/drag-and-drop.service';
+import { SelectionService } from '../services/selection.service';
+import { BaseDomManipulationComponent } from './base-dom-manipulation.component';
 
 @Component({
   selector: 'app-elements-container',
@@ -15,11 +15,10 @@ export class ElementsContainerComponent extends BaseDomManipulationComponent imp
 
   private subscription: Subscription;
 
-  constructor(
-    private dragAndDropService: DragAndDropService,
-    private selectionService: SelectionService,
-    elementRef: ElementRef) {
-      super(elementRef);
+  constructor(private dragAndDropService: DragAndDropService,
+              private selectionService: SelectionService,
+              elementRef: ElementRef) {
+    super(elementRef);
   }
 
   ngOnInit() {

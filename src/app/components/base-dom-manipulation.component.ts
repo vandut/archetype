@@ -1,10 +1,10 @@
 import { ElementRef } from '@angular/core';
-import { PageCoordinates } from "../utils/PageCoordinates"
+import { PageCoordinates } from '../utils/PageCoordinates';
 
 export class BaseDomManipulationComponent {
 
   constructor(private elementRef: ElementRef) {}
-  
+
   getNativeElement(): HTMLElement {
     return this.elementRef.nativeElement;
   }
@@ -24,7 +24,7 @@ export class BaseDomManipulationComponent {
   isPageCoordinatesInsideComponent(coordinates: PageCoordinates): boolean {
     let rect = this.getNativeElement().getBoundingClientRect();
     return coordinates.pageX >= rect.left && coordinates.pageX <= rect.right
-        && coordinates.pageY >= rect.top && coordinates.pageY <= rect.bottom;
+      && coordinates.pageY >= rect.top && coordinates.pageY <= rect.bottom;
   }
 
   toComponentCoordinates(coordinates: PageCoordinates): [number, number] {

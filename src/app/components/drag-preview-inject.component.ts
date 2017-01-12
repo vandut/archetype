@@ -39,7 +39,7 @@ class DraggableElement {
 
   moveTo(offsetX: number, offsetY: number, padding: number) {
     HTMLElementChmod.of(this.draggedElement)
-      .setPosition(offsetX - padding, offsetY - padding);
+      .setCoordinates(offsetX - padding, offsetY - padding);
   }
 
 }

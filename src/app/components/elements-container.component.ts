@@ -47,7 +47,7 @@ export class ElementsContainerComponent extends BaseDomManipulationComponent imp
       let padding = this.dragAndDropService.padding;
 
       let element = HTMLElementChmod.fromTemplate(message.template)
-        .setAbsolutePosition(x - padding, y - padding)
+        .setAbsoluteCoordinates(x - padding, y - padding)
         .addClass(ElementsContainerComponent.MANAGED_CSS_CLASS)
         .done();
 

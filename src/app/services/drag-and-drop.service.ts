@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Topic } from './topic';
+import { PageCoordinates } from '../utils/PageCoordinates';
 
 export class DragAndDropMessage {
-  constructor(public event: MouseEvent, public template: string = undefined) {}
+  constructor(public coordinates: PageCoordinates, public template: string = undefined) {}
 }
 
 @Injectable()

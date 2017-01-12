@@ -93,7 +93,7 @@ export class DragPreviewInjectComponent extends BaseDomManipulationComponent imp
 
   startDrag(message: DragAndDropMessage) {
     if (!this.draggableElement) {
-      let [x, y] = this.toParentElementCoordinates(message.event);
+      let [x, y] = this.toParentElementCoordinates(message.coordinates);
       this.draggableElement = new DraggableElement(message.template);
       this.draggableElement.attach(this.getNativeParentElement());
       this.draggableElement.moveTo(x, y, this.dragAndDropService.padding);
@@ -103,7 +103,8 @@ export class DragPreviewInjectComponent extends BaseDomManipulationComponent imp
   stopDrag(event: MouseEvent) {
     if (this.draggableElement) {
       this.draggableElement.remove();
-      this.dragAndDropService.dragStop.emit(new DragAndDropMessage(event, this.draggableElement.getTemplate()));
+      let message = new DragAndDropMessage(event, this.draggableElement.getTemplate());
+      this.dragAndDropService.dragStop.emit(message);
       this.draggableElement = null;
     }
   }

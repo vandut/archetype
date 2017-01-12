@@ -42,8 +42,8 @@ export class ElementsContainerComponent extends BaseDomManipulationComponent imp
   }
 
   stopDrag(message: DragAndDropMessage) {
-    if (this.isPageCoordinatesInsideComponent(message.event)) {
-      let [x, y] = this.toComponentCoordinates(message.event);
+    if (this.isPageCoordinatesInsideComponent(message.coordinates)) {
+      let [x, y] = this.toComponentCoordinates(message.coordinates);
       let padding = this.dragAndDropService.padding;
 
       let element = HTMLElementChmod.fromTemplate(message.template)

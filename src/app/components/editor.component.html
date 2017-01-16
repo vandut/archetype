@@ -1,3 +1,6 @@
 <app-snapping-grid></app-snapping-grid>
-<app-element-compositor></app-element-compositor>
+
+<app-element-compositor
+  (onSelected)="onElementSelected($event)"></app-element-compositor>
+
 <app-selection-layer></app-selection-layer>

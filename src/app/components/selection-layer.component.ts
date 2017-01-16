@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy, ElementRef } from '@angular/core';
 import { BaseDomManipulationComponent } from './base-dom-manipulation.component';
-import { SelectionService } from '../services/selection.service';
 import { HTMLElementChmod } from '../utils/HTMLElement';
 import { Subscription } from 'rxjs/Rx';
 import { PageCoordinates } from '../utils/PageCoordinates';
@@ -94,27 +93,23 @@ class Selection {
 })
 export class SelectionLayerComponent extends BaseDomManipulationComponent implements OnInit, OnDestroy {
 
-  private selectionSubscription: Subscription;
   private dragStartedSubscription: Subscription;
   private selection: Selection = null;
 
-  constructor(private selectionService: SelectionService,
-              private dragAndDropService: DragAndDropService,
+  constructor(private dragAndDropService: DragAndDropService,
               elementRef: ElementRef) {
     super(elementRef);
   }
 
   ngOnInit() {
-    this.selectionSubscription = this.selectionService.selected.subscribe(t => this.selectTarget(t));
     this.dragStartedSubscription = this.dragAndDropService.dragStart.subscribe(m => this.clearSelection());
   }
 
   ngOnDestroy() {
-    this.selectionSubscription.unsubscribe();
     this.dragStartedSubscription.unsubscribe();
   }
 
-  private selectTarget(target: HTMLElement) {
+  public selectTarget(target: HTMLElement) {
     this.clearSelection();
     if (target) {
       this.selection = new Selection(target, (d, c) => this.selectionDragStarted(d, c));
@@ -122,7 +117,7 @@ export class SelectionLayerComponent extends BaseDomManipulationComponent implem
     }
   }
 
-  private clearSelection() {
+  public clearSelection() {
     if (this.selection) {
       this.selection.remove();
       this.selection = null;

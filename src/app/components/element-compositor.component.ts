@@ -1,8 +1,7 @@
-import { Component, ElementRef, HostListener, OnInit, OnDestroy } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, OnDestroy, EventEmitter, Output } from '@angular/core';
 import { Subscription } from 'rxjs/Rx';
 import { HTMLElementChmod } from '../utils/HTMLElement';
 import { DragAndDropService, DragAndDropMessage } from '../services/drag-and-drop.service';
-import { SelectionService } from '../services/selection.service';
 import { BaseDomManipulationComponent } from './base-dom-manipulation.component';
 
 @Component({
@@ -15,8 +14,10 @@ export class ElementCompositorComponent extends BaseDomManipulationComponent imp
 
   private subscription: Subscription;
 
+  @Output()
+  private onSelected = new EventEmitter<HTMLElement>();
+
   constructor(private dragAndDropService: DragAndDropService,
-              private selectionService: SelectionService,
               elementRef: ElementRef) {
     super(elementRef);
   }
@@ -34,9 +35,9 @@ export class ElementCompositorComponent extends BaseDomManipulationComponent imp
     if (this.isEventTargetInsideComponent(event.target) && !event.ctrlKey) {
       let target: HTMLElement = <HTMLElement> event.target;
       if (target.classList.contains(ElementCompositorComponent.MANAGED_CSS_CLASS)) {
-        this.selectionService.selected.emit(target);
+        this.onSelected.emit(target);
       } else {
-        this.selectionService.selected.emit(null);
+        this.onSelected.emit(null);
       }
       if (event.target !== this.getNativeElement()) {
         event.preventDefault();

@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { SnappingGridComponent } from './snapping-grid.component';
 import { ElementCompositorComponent } from './element-compositor.component';
-import { SelectionLayerComponent } from './selection-layer.component';
+import { ElementSelectionComponent } from './element-selection.component';
 import { PageCoordinates } from '../utils/PageCoordinates';
 
 @Component({
@@ -17,8 +17,8 @@ export class EditorComponent {
   @ViewChild(ElementCompositorComponent)
   private elementCompositor: ElementCompositorComponent;
 
-  @ViewChild(SelectionLayerComponent)
-  private selectionLayer: SelectionLayerComponent;
+  @ViewChild(ElementSelectionComponent)
+  private selectionLayer: ElementSelectionComponent;
 
   isPageCoordinatesInside(coordinates: PageCoordinates): boolean {
     return this.elementCompositor.isPageCoordinatesInsideComponent(coordinates);

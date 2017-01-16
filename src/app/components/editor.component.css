@@ -17,7 +17,7 @@ app-element-compositor {
   overflow: hidden;
 }
 
-app-selection-layer {
+app-element-selection {
   pointer-events: none;
   position: absolute;
   width: 100%;

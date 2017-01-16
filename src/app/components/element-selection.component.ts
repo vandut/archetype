@@ -86,10 +86,10 @@ class Selection {
 }
 
 @Component({
-  selector: 'app-selection-layer',
+  selector: 'app-element-selection',
   template: ``
 })
-export class SelectionLayerComponent extends BaseDomManipulationComponent {
+export class ElementSelectionComponent extends BaseDomManipulationComponent {
 
   private selection: Selection = null;
 

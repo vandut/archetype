@@ -6,7 +6,7 @@ import { SnappingGridComponent } from './components/snapping-grid.component';
 import { ElementPaletteComponent } from './components/element-palette.component';
 import { ElementCompositorComponent } from './components/element-compositor.component';
 import { ElementPreviewComponent } from './components/element-preview.component';
-import { SelectionLayerComponent } from './components/selection-layer.component';
+import { ElementSelectionComponent } from './components/element-selection.component';
 import { EditorComponent } from './components/editor.component';
 
 @NgModule({
@@ -17,7 +17,7 @@ import { EditorComponent } from './components/editor.component';
     ElementPaletteComponent,
     ElementCompositorComponent,
     ElementPreviewComponent,
-    SelectionLayerComponent,
+    ElementSelectionComponent,
     EditorComponent
   ],
   imports: [

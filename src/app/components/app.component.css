@@ -18,7 +18,7 @@ app-editor {
     z-index: 1;
 }
 
-app-elements-pallete {
+app-element-palette {
     position: absolute;
     top:0;
     bottom:0;

@@ -2,11 +2,11 @@ import { Component, Output, EventEmitter } from '@angular/core';
 import { DragAndDropMessage } from '../utils/DragAndDropMessage';
 
 @Component({
-  selector: 'app-elements-pallete',
-  templateUrl: './elements-pallete.component.html',
-  styleUrls: ['./elements-pallete.component.css']
+  selector: 'app-element-palette',
+  templateUrl: './element-palette.component.html',
+  styleUrls: ['./element-palette.component.css']
 })
-export class ElementsPalleteComponent {
+export class ElementPaletteComponent {
 
   private defaultDivTemplate = '<div style="width: 100px; height: 100px; background: red;">A</div>';
 

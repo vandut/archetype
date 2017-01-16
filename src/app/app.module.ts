@@ -4,7 +4,7 @@ import { AppComponent } from './components/app.component';
 import { CopyParentSizeDirective } from './directives/copy-parent-size.directive';
 import { SnappingGridComponent } from './components/snapping-grid.component';
 import { ElementsPalleteComponent } from './components/elements-pallete.component';
-import { ElementsContainerComponent } from './components/elements-container.component';
+import { ElementCompositorComponent } from './components/element-compositor.component';
 import { DragPreviewInjectComponent } from './components/drag-preview-inject.component';
 import { SelectionLayerComponent } from './components/selection-layer.component';
 import { EditorComponent } from './components/editor.component';
@@ -15,7 +15,7 @@ import { EditorComponent } from './components/editor.component';
     CopyParentSizeDirective,
     SnappingGridComponent,
     ElementsPalleteComponent,
-    ElementsContainerComponent,
+    ElementCompositorComponent,
     DragPreviewInjectComponent,
     SelectionLayerComponent,
     EditorComponent

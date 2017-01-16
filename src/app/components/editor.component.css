@@ -9,7 +9,7 @@ app-snapping-grid {
   z-index: 0;
 }
 
-app-elements-container {
+app-element-compositor {
   position: absolute;
   width: 100%;
   height: 100%;

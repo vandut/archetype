@@ -7,6 +7,7 @@ import { ElementsPalleteComponent } from './components/elements-pallete.componen
 import { ElementsContainerComponent } from './components/elements-container.component';
 import { DragPreviewInjectComponent } from './components/drag-preview-inject.component';
 import { SelectionLayerComponent } from './components/selection-layer.component';
+import { EditorComponent } from './components/editor.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { SelectionLayerComponent } from './components/selection-layer.component'
     ElementsPalleteComponent,
     ElementsContainerComponent,
     DragPreviewInjectComponent,
-    SelectionLayerComponent
+    SelectionLayerComponent,
+    EditorComponent
   ],
   imports: [
     BrowserModule

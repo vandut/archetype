@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { DragAndDropMessage } from '../utils/DragAndDropMessage';
 import { EditorComponent } from './editor.component';
-import { DragPreviewInjectComponent } from './drag-preview-inject.component';
+import { ElementPreviewComponent } from './element-preview.component';
 
 @Component({
   selector: 'app-root',
@@ -12,8 +12,8 @@ export class AppComponent {
 
   @ViewChild(EditorComponent)
   private editor: EditorComponent;
-  @ViewChild(DragPreviewInjectComponent)
-  private dragPreviewInject: DragPreviewInjectComponent;
+  @ViewChild(ElementPreviewComponent)
+  private dragPreviewInject: ElementPreviewComponent;
 
   private padding = 10;
 

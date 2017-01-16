@@ -44,10 +44,10 @@ class DraggableElement {
 }
 
 @Component({
-  selector: 'app-drag-preview-inject',
+  selector: 'app-element-preview',
   template: ``
 })
-export class DragPreviewInjectComponent extends BaseDomManipulationComponent implements OnInit, MouseMoveEventsListener {
+export class ElementPreviewComponent extends BaseDomManipulationComponent implements OnInit, MouseMoveEventsListener {
 
   private draggableElement: DraggableElement = null;
 

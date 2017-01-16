@@ -1,33 +1,21 @@
-import { Component, ElementRef, HostListener, OnInit, OnDestroy, EventEmitter, Output } from '@angular/core';
-import { Subscription } from 'rxjs/Rx';
-import { HTMLElementChmod } from '../utils/HTMLElement';
-import { DragAndDropService, DragAndDropMessage } from '../services/drag-and-drop.service';
+import { Component, ElementRef, HostListener, EventEmitter, Output } from '@angular/core';
 import { BaseDomManipulationComponent } from './base-dom-manipulation.component';
+import { HTMLElementChmod } from '../utils/HTMLElement';
+import { PageCoordinates } from '../utils/PageCoordinates';
 
 @Component({
   selector: 'app-element-compositor',
   template: ``
 })
-export class ElementCompositorComponent extends BaseDomManipulationComponent implements OnInit, OnDestroy {
+export class ElementCompositorComponent extends BaseDomManipulationComponent {
 
   private static MANAGED_CSS_CLASS = 'archetype_managed';
-
-  private subscription: Subscription;
 
   @Output()
   private onSelected = new EventEmitter<HTMLElement>();
 
-  constructor(private dragAndDropService: DragAndDropService,
-              elementRef: ElementRef) {
+  constructor(elementRef: ElementRef) {
     super(elementRef);
-  }
-
-  ngOnInit() {
-    this.subscription = this.dragAndDropService.dragStop.subscribe(m => this.stopDrag(m));
-  }
-
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
   }
 
   @HostListener('document:mousedown', ['$event'])
@@ -45,18 +33,15 @@ export class ElementCompositorComponent extends BaseDomManipulationComponent imp
     }
   }
 
-  stopDrag(message: DragAndDropMessage) {
-    if (this.isPageCoordinatesInsideComponent(message.coordinates)) {
-      let [x, y] = this.toComponentCoordinates(message.coordinates);
-      let padding = this.dragAndDropService.padding;
+  addElement(template: string, coordinates: PageCoordinates) {
+    let [x, y] = this.toComponentCoordinates(coordinates);
 
-      let element = HTMLElementChmod.fromTemplate(message.template)
-        .setAbsoluteCoordinates(x - padding, y - padding)
-        .addClass(ElementCompositorComponent.MANAGED_CSS_CLASS)
-        .done();
+    let element = HTMLElementChmod.fromTemplate(template)
+      .setAbsoluteCoordinates(x, y)
+      .addClass(ElementCompositorComponent.MANAGED_CSS_CLASS)
+      .done();
 
-      this.getNativeElement().appendChild(element);
-    }
+    this.getNativeElement().appendChild(element);
   }
 
 }

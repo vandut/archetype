@@ -1,7 +1,6 @@
-import { Component, ElementRef, HostListener, OnInit, OnDestroy } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, EventEmitter, Output, Input } from '@angular/core';
 import { HTMLElementChmod } from '../utils/HTMLElement';
-import { DragAndDropService, DragAndDropMessage } from '../services/drag-and-drop.service';
-import { Subscription } from 'rxjs/Rx';
+import { DragAndDropMessage } from '../utils/DragAndDropMessage';
 import { BaseDomManipulationComponent } from './base-dom-manipulation.component';
 import { MouseMoveEventsMixin, MouseMoveEventsListener } from '../mixins/MouseMoveEventsMixin';
 
@@ -48,23 +47,22 @@ class DraggableElement {
   selector: 'app-drag-preview-inject',
   template: ``
 })
-export class DragPreviewInjectComponent extends BaseDomManipulationComponent implements OnInit, OnDestroy, MouseMoveEventsListener {
+export class DragPreviewInjectComponent extends BaseDomManipulationComponent implements OnInit, MouseMoveEventsListener {
 
-  private subscription: Subscription;
   private draggableElement: DraggableElement = null;
 
-  constructor(private dragAndDropService: DragAndDropService,
-              elementRef: ElementRef) {
+  @Input()
+  private padding: number;
+
+  @Output()
+  private onDragStop = new EventEmitter<DragAndDropMessage>();
+
+  constructor(elementRef: ElementRef) {
     super(elementRef);
   }
 
   ngOnInit() {
     MouseMoveEventsMixin.register(this.getNativeParentElement(), this);
-    this.subscription = this.dragAndDropService.dragStart.subscribe(m => this.startDrag(m));
-  }
-
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
   }
 
   @HostListener('document:mouseup', ['$event'])
@@ -87,7 +85,7 @@ export class DragPreviewInjectComponent extends BaseDomManipulationComponent imp
   onMouseMove(event: MouseEvent) {
     if (this.draggableElement) {
       let [x, y] = this.toParentElementCoordinates(event);
-      this.draggableElement.moveTo(x, y, this.dragAndDropService.padding);
+      this.draggableElement.moveTo(x, y, this.padding);
     }
   }
 
@@ -96,7 +94,7 @@ export class DragPreviewInjectComponent extends BaseDomManipulationComponent imp
       let [x, y] = this.toParentElementCoordinates(message.coordinates);
       this.draggableElement = new DraggableElement(message.template);
       this.draggableElement.attach(this.getNativeParentElement());
-      this.draggableElement.moveTo(x, y, this.dragAndDropService.padding);
+      this.draggableElement.moveTo(x, y, this.padding);
     }
   }
 
@@ -104,7 +102,7 @@ export class DragPreviewInjectComponent extends BaseDomManipulationComponent imp
     if (this.draggableElement) {
       this.draggableElement.remove();
       let message = new DragAndDropMessage(event, this.draggableElement.getTemplate());
-      this.dragAndDropService.dragStop.emit(message);
+      this.onDragStop.emit(message);
       this.draggableElement = null;
     }
   }

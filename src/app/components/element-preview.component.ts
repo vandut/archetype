@@ -1,8 +1,7 @@
-import { Component, ElementRef, HostListener, OnInit, EventEmitter, Output, Input } from '@angular/core';
-import { HTMLElementChmod } from '../utils/HTMLElement';
-import { DragAndDropMessage } from '../utils/DragAndDropMessage';
+import { Component, ElementRef } from '@angular/core';
 import { BaseDomManipulationComponent } from './base-dom-manipulation.component';
-import { MouseMoveEventsMixin, MouseMoveEventsListener } from '../mixins/MouseMoveEventsMixin';
+import { HTMLElementChmod } from '../utils/HTMLElement';
+import { PageCoordinates } from '../utils/PageCoordinates';
 
 class DraggableElement {
 
@@ -36,9 +35,8 @@ class DraggableElement {
     this.draggedElement.style.visibility = 'hidden';
   }
 
-  moveTo(offsetX: number, offsetY: number, padding: number) {
-    HTMLElementChmod.of(this.draggedElement)
-      .setCoordinates(offsetX - padding, offsetY - padding);
+  moveTo(offsetX: number, offsetY: number) {
+    HTMLElementChmod.of(this.draggedElement).setCoordinates(offsetX, offsetY);
   }
 
 }
@@ -47,62 +45,57 @@ class DraggableElement {
   selector: 'app-element-preview',
   template: ``
 })
-export class ElementPreviewComponent extends BaseDomManipulationComponent implements OnInit, MouseMoveEventsListener {
+export class ElementPreviewComponent extends BaseDomManipulationComponent {
 
   private draggableElement: DraggableElement = null;
-
-  @Input()
-  private padding: number;
-
-  @Output()
-  private onDragStop = new EventEmitter<DragAndDropMessage>();
 
   constructor(elementRef: ElementRef) {
     super(elementRef);
   }
 
-  ngOnInit() {
-    MouseMoveEventsMixin.register(this.getNativeParentElement(), this);
+  isPreviewActive(): boolean {
+    return !!this.draggableElement;
   }
 
-  @HostListener('document:mouseup', ['$event'])
-  onMouseUp(event: MouseEvent) {
-    this.stopDrag(event);
+  getPreviewTemplate(): string {
+    if (this.isPreviewActive()) {
+      return this.draggableElement.getTemplate();
+    } else {
+      return null;
+    }
   }
 
-  onMouseEntered(event: MouseEvent) {
-    if (this.draggableElement) {
+  createPreview(template: string, coordinates: PageCoordinates) {
+    if (!this.isPreviewActive()) {
+      let [x, y] = this.toParentElementCoordinates(coordinates);
+      this.draggableElement = new DraggableElement(template);
+      this.draggableElement.attach(this.getNativeParentElement());
+      this.draggableElement.moveTo(x, y);
+    }
+  }
+
+  showPreview() {
+    if (this.isPreviewActive()) {
       this.draggableElement.show();
     }
   }
 
-  onMouseLeft(event: MouseEvent) {
-    if (this.draggableElement) {
+  movePreviewTo(coordinates: PageCoordinates) {
+    if (this.isPreviewActive()) {
+      let [x, y] = this.toParentElementCoordinates(coordinates);
+      this.draggableElement.moveTo(x, y);
+    }
+  }
+
+  hidePreview() {
+    if (this.isPreviewActive()) {
       this.draggableElement.hide();
     }
   }
 
-  onMouseMove(event: MouseEvent) {
-    if (this.draggableElement) {
-      let [x, y] = this.toParentElementCoordinates(event);
-      this.draggableElement.moveTo(x, y, this.padding);
-    }
-  }
-
-  startDrag(message: DragAndDropMessage) {
-    if (!this.draggableElement) {
-      let [x, y] = this.toParentElementCoordinates(message.coordinates);
-      this.draggableElement = new DraggableElement(message.template);
-      this.draggableElement.attach(this.getNativeParentElement());
-      this.draggableElement.moveTo(x, y, this.padding);
-    }
-  }
-
-  stopDrag(event: MouseEvent) {
-    if (this.draggableElement) {
+  removePreview() {
+    if (this.isPreviewActive()) {
       this.draggableElement.remove();
-      let message = new DragAndDropMessage(event, this.draggableElement.getTemplate());
-      this.onDragStop.emit(message);
       this.draggableElement = null;
     }
   }

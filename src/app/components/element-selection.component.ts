@@ -1,7 +1,7 @@
 import { Component, ElementRef, Output, EventEmitter } from '@angular/core';
 import { BaseDomManipulationComponent } from './base-dom-manipulation.component';
 import { PageCoordinates } from '../utils/PageCoordinates';
-import { ElementSelection, SelectionActionType, SelectionMessage } from './selection';
+import { ElementSelection, SelectionActionType, SelectionMessage, TargetSelection } from './selection';
 
 @Component({
   selector: 'app-element-selection',
@@ -33,7 +33,7 @@ export class ElementSelectionComponent extends BaseDomManipulationComponent {
     }
   }
 
-  private selectionDragStarted(target: HTMLElement, type: SelectionActionType, coordinates: PageCoordinates): boolean {
+  private selectionDragStarted(target: TargetSelection, type: SelectionActionType, coordinates: PageCoordinates): boolean {
     this.onSelectAction.emit(new SelectionMessage(target, type, coordinates));
     return false;
   }

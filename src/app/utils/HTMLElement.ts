@@ -36,16 +36,32 @@ export class HTMLElementChmod {
     this.element.style.left = x + 'px';
   }
 
+  get left(): number {
+    return HTMLElementChmod.stringPx(this.element.style.left);
+  }
+
   set top(y: number) {
     this.element.style.top = y + 'px';
+  }
+
+  get top(): number {
+    return HTMLElementChmod.stringPx(this.element.style.top);
   }
 
   set right(x: number) {
     this.element.style.right = x + 'px';
   }
 
+  get right(): number {
+    return HTMLElementChmod.stringPx(this.element.style.right);
+  }
+
   set bottom(y: number) {
     this.element.style.bottom = y + 'px';
+  }
+
+  get bottom(): number {
+    return HTMLElementChmod.stringPx(this.element.style.bottom);
   }
 
   setCoordinates(x: number, y: number): HTMLElementChmod {
@@ -64,8 +80,16 @@ export class HTMLElementChmod {
     this.element.style.width = w + 'px';
   }
 
+  get width(): number {
+    return HTMLElementChmod.stringPx(this.element.style.width);
+  }
+
   set height(h: number) {
     this.element.style.height = h + 'px';
+  }
+
+  get height(): number {
+    return HTMLElementChmod.stringPx(this.element.style.height);
   }
 
   setSize(w: number, h: number): HTMLElementChmod {
@@ -108,6 +132,10 @@ export class HTMLElementChmod {
   custom(lambda: (element: HTMLElementChmod) => void): HTMLElementChmod {
     lambda(this);
     return this;
+  }
+
+  private static stringPx(value: string): number {
+    return Number(value.slice(0, -2));
   }
 
 }

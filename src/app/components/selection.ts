@@ -13,15 +13,20 @@ export enum SelectionActionType {
   Resize_SE
 }
 
+export interface TargetSelection {
+  getTarget(): HTMLElement;
+  updateTarget();
+}
+
 export class SelectionMessage {
-  constructor(public target: HTMLElement,
+  constructor(public target: TargetSelection,
               public action: SelectionActionType,
               public coordinates: PageCoordinates) {}
 }
 
-export declare type ElementSelectionActionEventHandler = (target: HTMLElement, a: SelectionActionType, c: PageCoordinates) => boolean;
+export declare type ElementSelectionActionEventHandler = (target: TargetSelection, a: SelectionActionType, c: PageCoordinates) => boolean;
 
-export class ElementSelection {
+export class ElementSelection implements TargetSelection {
 
   private htmlElement: HTMLElement;
 
@@ -90,7 +95,18 @@ export class ElementSelection {
   }
 
   private handleSelection(type: SelectionActionType, coordinates: PageCoordinates): boolean {
-    return this.eventHandler(this.target, type, coordinates);
+    return this.eventHandler(this, type, coordinates);
+  }
+
+  getTarget(): HTMLElement {
+    return this.target;
+  }
+
+  updateTarget() {
+    let t = HTMLElementChmod.of(this.target);
+    HTMLElementChmod.of(this.htmlElement)
+      .setCoordinates(t.left, t.top)
+      .setSize(t.width, t.height);
   }
 
   attach(element: HTMLElement) {

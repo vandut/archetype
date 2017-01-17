@@ -1,7 +1,7 @@
 import { PageCoordinates } from '../utils/PageCoordinates';
 import { HTMLElementChmod } from '../utils/HTMLElement';
 
-export enum ElementSelectionEventType {
+export enum SelectionActionType {
   Move,
   Resize_N,
   Resize_S,
@@ -13,14 +13,20 @@ export enum ElementSelectionEventType {
   Resize_SE
 }
 
-export declare type ElementSelectionEventHandler = (target: HTMLElement, t: ElementSelectionEventType, c: PageCoordinates) => boolean;
+export class SelectionMessage {
+  constructor(public target: HTMLElement,
+              public action: SelectionActionType,
+              public coordinates: PageCoordinates) {}
+}
+
+export declare type ElementSelectionActionEventHandler = (target: HTMLElement, a: SelectionActionType, c: PageCoordinates) => boolean;
 
 export class ElementSelection {
 
   private htmlElement: HTMLElement;
 
   constructor(private target: HTMLElement,
-              private eventHandler: ElementSelectionEventHandler) {
+              private eventHandler: ElementSelectionActionEventHandler) {
     this.htmlElement = this.at(target.offsetLeft, target.offsetTop, target.clientWidth, target.clientHeight);
   }
 
@@ -64,27 +70,27 @@ export class ElementSelection {
     let corner = 2;
     let selectionBackground = 'repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1) 10px, rgba(255, 255, 255, 0.1) 10px, rgba(255, 255, 255, 0.1) 20px)';
     let rootElement = ElementSelection.borderAll(x, y, w, h, 2);
-    rootElement.appendChild(ElementSelection.boxSegment(this.handler(ElementSelectionEventType.Move), 'move', 0, 0, 0, 0, null, null).customStyle(style => style.background = selectionBackground).done());
-    rootElement.appendChild(ElementSelection.boxSegment(this.handler(ElementSelectionEventType.Resize_W), 'w-resize', -oPpadding, null, 0, 0, oPpadding+iPpadding, null).done());
-    rootElement.appendChild(ElementSelection.boxSegment(this.handler(ElementSelectionEventType.Resize_E), 'e-resize', null, -oPpadding, 0, 0, oPpadding+iPpadding, null).done());
-    rootElement.appendChild(ElementSelection.boxSegment(this.handler(ElementSelectionEventType.Resize_N), 'n-resize', 0, 0, -oPpadding, null, null, oPpadding+iPpadding).done());
-    rootElement.appendChild(ElementSelection.boxSegment(this.handler(ElementSelectionEventType.Resize_S), 's-resize', 0, 0, null, -oPpadding, null, oPpadding+iPpadding).done());
-    rootElement.appendChild(ElementSelection.boxSegment(this.handler(ElementSelectionEventType.Resize_NW), 'nw-resize', -oPpadding, null, -oPpadding, null, oPpadding+corner*2, oPpadding+corner*2).done());
-    rootElement.appendChild(ElementSelection.boxSegment(this.handler(ElementSelectionEventType.Resize_NE), 'ne-resize', null, -oPpadding, -oPpadding, null, oPpadding+corner*2, oPpadding+corner*2).done());
-    rootElement.appendChild(ElementSelection.boxSegment(this.handler(ElementSelectionEventType.Resize_SW), 'sw-resize', -oPpadding, null, null, -oPpadding, oPpadding+corner*2, oPpadding+corner*2).done());
-    rootElement.appendChild(ElementSelection.boxSegment(this.handler(ElementSelectionEventType.Resize_SE), 'se-resize', null, -oPpadding, null, -oPpadding, oPpadding+corner*2, oPpadding+corner*2).done());
+    rootElement.appendChild(ElementSelection.boxSegment(this.handler(SelectionActionType.Move), 'move', 0, 0, 0, 0, null, null).customStyle(style => style.background = selectionBackground).done());
+    rootElement.appendChild(ElementSelection.boxSegment(this.handler(SelectionActionType.Resize_W), 'w-resize', -oPpadding, null, 0, 0, oPpadding+iPpadding, null).done());
+    rootElement.appendChild(ElementSelection.boxSegment(this.handler(SelectionActionType.Resize_E), 'e-resize', null, -oPpadding, 0, 0, oPpadding+iPpadding, null).done());
+    rootElement.appendChild(ElementSelection.boxSegment(this.handler(SelectionActionType.Resize_N), 'n-resize', 0, 0, -oPpadding, null, null, oPpadding+iPpadding).done());
+    rootElement.appendChild(ElementSelection.boxSegment(this.handler(SelectionActionType.Resize_S), 's-resize', 0, 0, null, -oPpadding, null, oPpadding+iPpadding).done());
+    rootElement.appendChild(ElementSelection.boxSegment(this.handler(SelectionActionType.Resize_NW), 'nw-resize', -oPpadding, null, -oPpadding, null, oPpadding+corner*2, oPpadding+corner*2).done());
+    rootElement.appendChild(ElementSelection.boxSegment(this.handler(SelectionActionType.Resize_NE), 'ne-resize', null, -oPpadding, -oPpadding, null, oPpadding+corner*2, oPpadding+corner*2).done());
+    rootElement.appendChild(ElementSelection.boxSegment(this.handler(SelectionActionType.Resize_SW), 'sw-resize', -oPpadding, null, null, -oPpadding, oPpadding+corner*2, oPpadding+corner*2).done());
+    rootElement.appendChild(ElementSelection.boxSegment(this.handler(SelectionActionType.Resize_SE), 'se-resize', null, -oPpadding, null, -oPpadding, oPpadding+corner*2, oPpadding+corner*2).done());
     return rootElement;
   }
 
-  private handler(type: ElementSelectionEventType) {
+  private handler(type: SelectionActionType) {
     return event => {
       event.preventDefault();
       return this.handleSelection(type, event);
     }
   }
 
-  private handleSelection(type: ElementSelectionEventType, coordinates: PageCoordinates): boolean {
-    return this.eventHandler(this.htmlElement, type, coordinates);
+  private handleSelection(type: SelectionActionType, coordinates: PageCoordinates): boolean {
+    return this.eventHandler(this.target, type, coordinates);
   }
 
   attach(element: HTMLElement) {

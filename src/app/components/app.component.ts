@@ -25,8 +25,8 @@ export class AppComponent extends InputEventsStrategyComponent {
 
   constructor() {
     super();
-    this.registerStrategy(this.nopStrategy);
-    this.registerStrategy(this.elementPreviewStrategy);
+    this.registerSwitchableStrategy(this.nopStrategy);
+    this.registerSwitchableStrategy(this.elementPreviewStrategy);
     this.switchStrategyTo(this.nopStrategy);
   }
 

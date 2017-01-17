@@ -46,10 +46,10 @@ export class SwitchableInputEventsStrategy extends InputEventsStrategy {
 @Component({})
 export class InputEventsStrategyComponent {
 
-  private currentStrategy: InputEventsStrategy;
+  private currentStrategy: InputEventsStrategy = new InputEventsStrategy();
   private switchStrategyCallback: SwitchStrategyCallback = strategy => this.switchStrategyTo(strategy);
 
-  protected registerStrategy(strategy: SwitchableInputEventsStrategy) {
+  protected registerSwitchableStrategy(strategy: SwitchableInputEventsStrategy) {
     strategy.switchStrategyCallback = this.switchStrategyCallback;
   }
 

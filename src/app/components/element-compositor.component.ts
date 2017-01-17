@@ -33,7 +33,7 @@ export class ElementCompositorComponent extends BaseDomManipulationComponent {
     }
   }
 
-  addElement(template: string, coordinates: PageCoordinates) {
+  addElement(template: string, coordinates: PageCoordinates): HTMLElement {
     let [x, y] = this.toComponentCoordinates(coordinates);
 
     let element = HTMLElementChmod.fromTemplate(template)
@@ -42,6 +42,7 @@ export class ElementCompositorComponent extends BaseDomManipulationComponent {
       .done();
 
     this.getNativeElement().appendChild(element);
+    return element;
   }
 
 }

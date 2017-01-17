@@ -25,7 +25,8 @@ export class EditorComponent {
   }
 
   addElement(template: string, coordinates: PageCoordinates) {
-    this.elementCompositor.addElement(template, coordinates);
+    let element = this.elementCompositor.addElement(template, coordinates);
+    this.selectionLayer.selectTarget(element);
   }
 
   clearSelection() {

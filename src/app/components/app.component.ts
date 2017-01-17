@@ -3,16 +3,14 @@ import { DragAndDropMessage } from '../utils/DragAndDropMessage';
 import { EditorComponent } from './editor.component';
 import { ElementPreviewComponent } from './element-preview.component';
 import { PageCoordinates } from '../utils/PageCoordinates';
-import { InputEventsStrategy, SwitchableInputEventsStrategy, InputEventsStrategyComponent } from './strategy';
-
-declare type ValueProvider<T> = () => T;
+import { GlobalInputEventsStrategy, GlobalInputEventsStrategyComponent, ValueProvider } from './strategy';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent extends InputEventsStrategyComponent {
+export class AppComponent extends GlobalInputEventsStrategyComponent<GlobalInputEventsStrategy> {
 
   @ViewChild(EditorComponent)
   private editor: EditorComponent;
@@ -20,7 +18,7 @@ export class AppComponent extends InputEventsStrategyComponent {
   @ViewChild(ElementPreviewComponent)
   private elementPreview: ElementPreviewComponent;
 
-  private nopStrategy = new SwitchableInputEventsStrategy();
+  private nopStrategy = new GlobalInputEventsStrategy();
   private elementPreviewStrategy = new ElementPreviewStrategy(this.nopStrategy, () => this.editor, () => this.elementPreview);
 
   constructor() {
@@ -37,11 +35,11 @@ export class AppComponent extends InputEventsStrategyComponent {
 
 }
 
-class ElementPreviewStrategy extends SwitchableInputEventsStrategy {
+class ElementPreviewStrategy extends GlobalInputEventsStrategy {
 
   private static PADDING = 10;
 
-  constructor(private nopStrategy: InputEventsStrategy,
+  constructor(private nopStrategy: GlobalInputEventsStrategy,
               private editorProvider: ValueProvider<EditorComponent>,
               private elementPreviewProvider: ValueProvider<ElementPreviewComponent>) {
     super();

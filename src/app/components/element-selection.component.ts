@@ -31,8 +31,8 @@ class Selection {
     return Selection.box(x, null, y, null, w, h)
       .pointerEvents(false)
       .customStyle(style => {
-        style.outline = `${padding}px dashed black`;
-        style.boxShadow = `0 0 0 ${padding}px white`;
+        style.outline = `${padding}px dashed rgba(0, 0, 0, 1.0)`;
+        style.boxShadow = `0 0 0 ${padding}px rgba(255, 255, 255, 1.0)`;
       })
       .done();
   }

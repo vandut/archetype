@@ -49,7 +49,7 @@ export class AppComponent {
     }
   }
 
-  private onDragStart(message: DragAndDropMessage) {
+  private onPaletteDragStart(message: DragAndDropMessage) {
     this.editor.clearSelection();
     let coordinates = this.addPaddingToPageCoordinates(message.coordinates);
     this.dragPreviewInject.createPreview(message.template, coordinates);

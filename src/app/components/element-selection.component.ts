@@ -8,7 +8,7 @@ class Selection {
   private htmlElement: HTMLElement;
 
   constructor(private target: HTMLElement,
-              private selectionDragStartListener: (d: string, c: PageCoordinates) => void) {
+              private selectionDragStartListener: (d: string, c: PageCoordinates) => boolean) {
     this.htmlElement = this.at(target.offsetLeft, target.offsetTop, target.clientWidth, target.clientHeight);
   }
 
@@ -37,15 +37,13 @@ class Selection {
       .done();
   }
 
-  private static shadowBorder(handler: (e: MouseEvent) => void, cursor: string, l: number, r: number, t: number, b: number, w: number, h: number) {
-    let element = Selection.box(l, r, t, b, w, h)
+  private static boxSegment(handler: (e: MouseEvent) => boolean, cursor: string, l: number, r: number, t: number, b: number, w: number, h: number): HTMLElementChmod {
+    return Selection.box(l, r, t, b, w, h)
       .pointerEvents(true)
       .customStyle(style => {
         style.cursor = cursor;
       })
-      .done();
-    element.addEventListener('mousedown', handler);
-    return element;
+      .eventListener('mousedown', handler);
   }
 
   private at(x: number, y: number, w: number, h: number) {
@@ -53,27 +51,33 @@ class Selection {
     let iPpadding = 3;
     let corner = 2;
     let rootElement = Selection.borderAll(x, y, w, h, 2);
-    rootElement.appendChild(Selection.shadowBorder(this.handler('all'), 'move', iPpadding, iPpadding, iPpadding, iPpadding, null, null));
-    rootElement.appendChild(Selection.shadowBorder(this.handler('w'), 'w-resize', -oPpadding, null, 0, 0, oPpadding+iPpadding, null));
-    rootElement.appendChild(Selection.shadowBorder(this.handler('e'), 'e-resize', null, -oPpadding, 0, 0, oPpadding+iPpadding, null));
-    rootElement.appendChild(Selection.shadowBorder(this.handler('n'), 'n-resize', 0, 0, -oPpadding, null, null, oPpadding+iPpadding));
-    rootElement.appendChild(Selection.shadowBorder(this.handler('s'), 's-resize', 0, 0, null, -oPpadding, null, oPpadding+iPpadding));
-    rootElement.appendChild(Selection.shadowBorder(this.handler('nw'), 'nw-resize', -oPpadding, null, -oPpadding, null, oPpadding+corner*2, oPpadding+corner*2));
-    rootElement.appendChild(Selection.shadowBorder(this.handler('ne'), 'ne-resize', null, -oPpadding, -oPpadding, null, oPpadding+corner*2, oPpadding+corner*2));
-    rootElement.appendChild(Selection.shadowBorder(this.handler('sw'), 'sw-resize', -oPpadding, null, null, -oPpadding, oPpadding+corner*2, oPpadding+corner*2));
-    rootElement.appendChild(Selection.shadowBorder(this.handler('se'), 'se-resize', null, -oPpadding, null, -oPpadding, oPpadding+corner*2, oPpadding+corner*2));
+    rootElement.appendChild(
+      Selection.boxSegment(this.handler('all'), 'move', 0, 0, 0, 0, null, null)
+        .customStyle(style => {
+          style.background = 'repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1) 10px, rgba(255, 255, 255, 0.1) 10px, rgba(255, 255, 255, 0.1) 20px)';
+        })
+        .done()
+    );
+    rootElement.appendChild(Selection.boxSegment(this.handler('w'), 'w-resize', -oPpadding, null, 0, 0, oPpadding+iPpadding, null).done());
+    rootElement.appendChild(Selection.boxSegment(this.handler('e'), 'e-resize', null, -oPpadding, 0, 0, oPpadding+iPpadding, null).done());
+    rootElement.appendChild(Selection.boxSegment(this.handler('n'), 'n-resize', 0, 0, -oPpadding, null, null, oPpadding+iPpadding).done());
+    rootElement.appendChild(Selection.boxSegment(this.handler('s'), 's-resize', 0, 0, null, -oPpadding, null, oPpadding+iPpadding).done());
+    rootElement.appendChild(Selection.boxSegment(this.handler('nw'), 'nw-resize', -oPpadding, null, -oPpadding, null, oPpadding+corner*2, oPpadding+corner*2).done());
+    rootElement.appendChild(Selection.boxSegment(this.handler('ne'), 'ne-resize', null, -oPpadding, -oPpadding, null, oPpadding+corner*2, oPpadding+corner*2).done());
+    rootElement.appendChild(Selection.boxSegment(this.handler('sw'), 'sw-resize', -oPpadding, null, null, -oPpadding, oPpadding+corner*2, oPpadding+corner*2).done());
+    rootElement.appendChild(Selection.boxSegment(this.handler('se'), 'se-resize', null, -oPpadding, null, -oPpadding, oPpadding+corner*2, oPpadding+corner*2).done());
     return rootElement;
   }
 
   private handler(direction: string) {
     return event => {
       event.preventDefault();
-      this.handleSelection(direction, event);
+      return this.handleSelection(direction, event);
     }
   }
 
-  private handleSelection(direction: string, coordinates: PageCoordinates) {
-    this.selectionDragStartListener(direction, coordinates);
+  private handleSelection(direction: string, coordinates: PageCoordinates): boolean {
+    return this.selectionDragStartListener(direction, coordinates);
   }
 
   attach(element: HTMLElement) {
@@ -112,8 +116,9 @@ export class ElementSelectionComponent extends BaseDomManipulationComponent {
     }
   }
 
-  private selectionDragStarted(direction: string, coordinates: PageCoordinates) {
+  private selectionDragStarted(direction: string, coordinates: PageCoordinates): boolean {
     console.log(direction, coordinates);
+    return true;
   }
 
 }

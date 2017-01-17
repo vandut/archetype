@@ -95,6 +95,11 @@ export class HTMLElementChmod {
     return this;
   }
 
+  eventListener(type: string, handler: (e: Event) => boolean): HTMLElementChmod {
+    this.element.addEventListener(type, handler);
+    return this;
+  }
+
   customStyle(lambda: (style: CSSStyleDeclaration) => void): HTMLElementChmod {
     lambda(this.element.style);
     return this;

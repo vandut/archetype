@@ -1,5 +1,6 @@
-import { Component, Output, EventEmitter } from '@angular/core';
-import { SelectionMessage } from './selection.component';
+import { Component, HostListener } from '@angular/core';
+import { DragService, DragDetail } from '../services/drag.service';
+import { ElementPaletteComponent } from './element-palette.component';
 
 @Component({
   selector: 'app-element-selection',
@@ -8,9 +9,6 @@ import { SelectionMessage } from './selection.component';
 export class ElementSelectionComponent {
 
   private selectedElements: HTMLElement[] = [];
-
-  @Output()
-  private dragStarted = new EventEmitter<SelectionMessage>();
 
   public selectTarget(target: HTMLElement) {
     this.clearSelection();
@@ -23,8 +21,11 @@ export class ElementSelectionComponent {
     this.selectedElements.pop();
   }
 
-  private onDragStarted(message: SelectionMessage) {
-    this.dragStarted.emit(message);
+  @HostListener(DragService.BEGIN_EVENT, ['$event.detail'])
+  private onDragBegin(detail: DragDetail<string, MouseEvent>) {
+    if (detail.source instanceof ElementPaletteComponent) {
+      this.clearSelection();
+    }
   }
 
 }

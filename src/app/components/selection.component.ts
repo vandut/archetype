@@ -1,5 +1,6 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { HTMLElementChmod } from '../utils/HTMLElement';
+import { DragService, DragDetail } from '../services/drag.service';
 
 export enum SelectionActionType {
   Move,
@@ -25,9 +26,6 @@ export class SelectionMessage {
 })
 export class SelectionComponent {
 
-  @Output()
-  private dragStarted = new EventEmitter<SelectionMessage>();
-
   private element: HTMLElementChmod;
 
   @Input()
@@ -51,8 +49,11 @@ export class SelectionComponent {
     return this.element.height;
   }
 
-  private onMouseDown(type: string): boolean {
-    this.dragStarted.emit(new SelectionMessage(this.element.done(), SelectionActionType[type]));
+  constructor(private dragService: DragService) {}
+
+  private onMouseDown(type: string, event: MouseEvent): boolean {
+    let message = new SelectionMessage(this.element.done(), SelectionActionType[type]);
+    this.dragService.beginDrag(new DragDetail(this, message, event));
     return false;
   }
 

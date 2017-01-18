@@ -1,11 +1,11 @@
 <div class="box" [style.top.px]="top" [style.left.px]="left" [style.width.px]="width" [style.height.px]="height">
-  <div class="background" (mousedown)="onMouseDown('Move')"></div>
-  <div class="border W" (mousedown)="onMouseDown('Resize_W')"></div>
-  <div class="border E" (mousedown)="onMouseDown('Resize_E')"></div>
-  <div class="border N" (mousedown)="onMouseDown('Resize_N')"></div>
-  <div class="border S" (mousedown)="onMouseDown('Resize_S')"></div>
-  <div class="corner NW" (mousedown)="onMouseDown('Resize_NW')"></div>
-  <div class="corner NE" (mousedown)="onMouseDown('Resize_NE')"></div>
-  <div class="corner SW" (mousedown)="onMouseDown('Resize_SW')"></div>
-  <div class="corner SE" (mousedown)="onMouseDown('Resize_SE')"></div>
+  <div class="background" (mousedown)="onMouseDown('Move', $event)"></div>
+  <div class="border W" (mousedown)="onMouseDown('Resize_W', $event)"></div>
+  <div class="border E" (mousedown)="onMouseDown('Resize_E', $event)"></div>
+  <div class="border N" (mousedown)="onMouseDown('Resize_N', $event)"></div>
+  <div class="border S" (mousedown)="onMouseDown('Resize_S', $event)"></div>
+  <div class="corner NW" (mousedown)="onMouseDown('Resize_NW', $event)"></div>
+  <div class="corner NE" (mousedown)="onMouseDown('Resize_NE', $event)"></div>
+  <div class="corner SW" (mousedown)="onMouseDown('Resize_SW', $event)"></div>
+  <div class="corner SE" (mousedown)="onMouseDown('Resize_SE', $event)"></div>
 </div>

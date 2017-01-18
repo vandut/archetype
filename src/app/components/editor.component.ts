@@ -1,18 +1,20 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { SnappingGridComponent } from './snapping-grid.component';
 import { ElementCompositorComponent } from './element-compositor.component';
 import { ElementSelectionComponent } from './element-selection.component';
 import { PageCoordinates } from '../utils/PageCoordinates';
-import { GlobalInputEventsStrategy, GlobalInputEventsStrategyComponent, ValueProvider } from './strategy';
 import { HTMLElementChmod } from '../utils/HTMLElement';
-import { SelectionActionType, SelectionMessage } from './selection.component';
+import { SelectionActionType, SelectionMessage, SelectionComponent } from './selection.component';
+import { DragService, DragDetail } from '../services/drag.service';
+import { ElementPreviewComponent } from './element-preview.component';
+import { ElementPaletteComponent } from './element-palette.component';
 
 @Component({
   selector: 'app-editor',
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.component.css']
 })
-export class EditorComponent extends GlobalInputEventsStrategyComponent<GlobalInputEventsStrategy> {
+export class EditorComponent {
 
   @ViewChild(SnappingGridComponent)
   private snappingGrid: SnappingGridComponent;
@@ -23,44 +25,52 @@ export class EditorComponent extends GlobalInputEventsStrategyComponent<GlobalIn
   @ViewChild(ElementSelectionComponent)
   private selectionLayer: ElementSelectionComponent;
 
-  private nopStrategy = new GlobalInputEventsStrategy();
-  private resizeStrategy = new ResizeStrategy(this.nopStrategy);
+  constructor(private elementRef: ElementRef) {}
 
-  private originRectProvider: ValueProvider<ClientRect> = () => this.elementRef.nativeElement.getBoundingClientRect();
-
-  constructor(private elementRef: ElementRef) {
-    super();
-    this.registerSwitchableStrategy(this.nopStrategy);
-    this.registerSwitchableStrategy(this.resizeStrategy);
-    this.switchStrategyTo(this.nopStrategy);
-  }
-
-  isPageCoordinatesInside(coordinates: PageCoordinates): boolean {
-    return this.elementCompositor.isPageCoordinatesInsideComponent(coordinates);
-  }
-
-  addElement(template: string, coordinates: PageCoordinates) {
-    let element = this.elementCompositor.addElement(template, coordinates);
-    this.selectionLayer.selectTarget(element);
-  }
-
-  clearSelection() {
-    this.selectionLayer.clearSelection();
-  }
-
-  onElementSelected(element: HTMLElement) {
-    if (element) {
-      this.selectionLayer.selectTarget(element);
-    } else {
-      this.selectionLayer.clearSelection();
+  @HostListener(DragService.BEGIN_EVENT, ['$event.detail'])
+  private onDragBegin(detail: DragDetail<SelectionMessage, MouseEvent>) {
+    if (detail.source instanceof SelectionComponent) {
+      if (detail.data.action == SelectionActionType.Move) {
+        // TODO: to implement Move operation
+      }
     }
   }
 
-  onDragStarted(message: SelectionMessage) {
-    switch (message.action) {
-      case SelectionActionType.Move:
-        // TODO: to implement
-        break;
+  @HostListener(DragService.MOVE_EVENT, ['$event.detail'])
+  private onDragMove(detail: DragDetail<SelectionMessage, MouseEvent>) {
+    if (detail.source instanceof SelectionComponent && this.isPageCoordinatesInside(detail.cause)) {
+      if (this.isResizeAction(detail.data.action)) {
+        ResizeOperation.apply(detail.data.target, detail.cause, detail.data.action, this.getParentElement());
+      } else if (detail.data.action == SelectionActionType.Move) {
+        // TODO: to implement Move operation
+      }
+    }
+  }
+
+  @HostListener(DragService.END_EVENT, ['$event.detail'])
+  private onDragEnd(detail: DragDetail<any, MouseEvent>) {
+    let inside = this.isPageCoordinatesInside(detail.cause);
+    if (detail.source instanceof ElementPaletteComponent && inside) {
+      this.addElement(detail.data, detail.cause);
+    } else if (detail.source instanceof SelectionComponent) {
+      if (this.isResizeAction(detail.data.action)) {
+        ResizeOperation.apply(detail.data.target, detail.cause, detail.data.action, this.getParentElement());
+      } else if (detail.data.action == SelectionActionType.Move) {
+        // TODO: to implement Move operation
+      }
+    }
+  }
+
+  private getParentElement(): HTMLElement {
+    return this.elementRef.nativeElement;
+  }
+
+  private isPageCoordinatesInside(coordinates: PageCoordinates): boolean {
+    return this.elementCompositor.isPageCoordinatesInsideComponent(coordinates);
+  }
+
+  private isResizeAction(action: SelectionActionType): boolean {
+    switch (action) {
       case SelectionActionType.Resize_N:
       case SelectionActionType.Resize_S:
       case SelectionActionType.Resize_W:
@@ -69,94 +79,69 @@ export class EditorComponent extends GlobalInputEventsStrategyComponent<GlobalIn
       case SelectionActionType.Resize_NE:
       case SelectionActionType.Resize_SW:
       case SelectionActionType.Resize_SE:
-        this.switchStrategyTo(this.resizeStrategy);
-        this.resizeStrategy.beginResize(message.target, message.action, this.originRectProvider);
-        break;
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  private addElement(template: string, coordinates: PageCoordinates) {
+    coordinates = ElementPreviewComponent.addPaddingToPageCoordinates(coordinates);
+    let element = this.elementCompositor.addElement(template, coordinates);
+    this.selectionLayer.selectTarget(element);
+  }
+
+  private onElementSelected(element: HTMLElement) {
+    if (element) {
+      this.selectionLayer.selectTarget(element);
+    } else {
+      this.selectionLayer.clearSelection();
     }
   }
 
 }
 
-class ResizeStrategy extends GlobalInputEventsStrategy {
+class ResizeOperation {
 
-  private activity: ResizeActivity = null;
-
-  constructor(private nopStrategy: GlobalInputEventsStrategy) {
-    super();
+  static apply(htmlElement: HTMLElement, coordinates: PageCoordinates, action: SelectionActionType, parentNode: HTMLElement) {
+    new ResizeOperation(HTMLElementChmod.of(htmlElement)).implementation(coordinates, action, parentNode.getBoundingClientRect());
   }
 
-  beginResize(ts: HTMLElement, action: SelectionActionType, originRectProvider: ValueProvider<ClientRect>) {
-    this.activity = new ResizeActivity(ts, action, originRectProvider);
+  private constructor(private chmod: HTMLElementChmod) {}
+
+  private get rect(): ClientRect {
+    return this.chmod.clientRect;
   }
 
-  onLocalMouseMove(event: MouseEvent): boolean {
-    this.activity.apply(event);
-    return false;
-  }
-
-  onLocalMouseUp(event: MouseEvent): boolean {
-    this.activity.apply(event);
-    this.activity = null;
-    return false;
-  }
-
-  onGlobalMouseUp(event: MouseEvent): boolean {
-    if (this.activity) {
-      // Action is finished but outside accepted zone.
-      // We can revert if we wish. But decide to ignore.
-      this.activity = null;
-    }
-    this.switchStrategyTo(this.nopStrategy);
-    return false;
-  }
-
-}
-
-class ResizeActivity {
-
-  private chmod: HTMLElementChmod;
-
-  constructor(private htmlElement: HTMLElement, private action: SelectionActionType, private originRectProvider: ValueProvider<ClientRect>) {
-    this.chmod = HTMLElementChmod.of(this.htmlElement);
-  }
-
-  get rect(): ClientRect {
-    return this.htmlElement.getBoundingClientRect();
-  }
-
-  get originRect(): ClientRect {
-    return this.originRectProvider();
-  }
-
-  set left(l: number) {
+  private set left(l: number) {
     if (this.chmod.width + this.chmod.left - l >= 0) {
       this.chmod.width = this.chmod.width + this.chmod.left - l;
       this.chmod.left = l;
     }
   }
 
-  set top(t: number) {
+  private set top(t: number) {
     if (this.chmod.height + this.chmod.top - t >= 0) {
       this.chmod.height = this.chmod.height + this.chmod.top - t;
       this.chmod.top = t;
     }
   }
 
-  set width(w: number) {
+  private set width(w: number) {
     this.chmod.width = w;
   }
 
-  set height(h: number) {
+  private set height(h: number) {
     this.chmod.height = h;
   }
 
-  apply(coordinates: PageCoordinates) {
-    let l = coordinates.pageX - this.originRect.left;
-    let t = coordinates.pageY - this.originRect.top;
+  private implementation(coordinates: PageCoordinates, action: SelectionActionType, originRect: ClientRect) {
+    let l = coordinates.pageX - originRect.left;
+    let t = coordinates.pageY - originRect.top;
     let w = coordinates.pageX - this.rect.left;
     let h = coordinates.pageY - this.rect.top;
 
-    switch (this.action) {
+    switch (action) {
       case SelectionActionType.Resize_N:
         this.top = t;
         break;

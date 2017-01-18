@@ -138,4 +138,8 @@ export class HTMLElementChmod {
     return Number(value.slice(0, -2));
   }
 
+  get clientRect(): ClientRect {
+    return this.element.getBoundingClientRect();
+  }
+
 }

@@ -9,6 +9,7 @@ import { ElementPreviewComponent } from './components/element-preview.component'
 import { ElementSelectionComponent } from './components/element-selection.component';
 import { EditorComponent } from './components/editor.component';
 import { SelectionComponent } from './components/selection.component';
+import { DragService } from './services/drag.service';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,9 @@ import { SelectionComponent } from './components/selection.component';
   imports: [
     BrowserModule
   ],
-  providers: [],
+  providers: [
+    DragService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

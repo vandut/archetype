@@ -1,7 +1,9 @@
-import { Component, ElementRef } from '@angular/core';
+import { Component, ElementRef, HostListener } from '@angular/core';
 import { BaseDomManipulationComponent } from './base-dom-manipulation.component';
 import { HTMLElementChmod } from '../utils/HTMLElement';
 import { PageCoordinates } from '../utils/PageCoordinates';
+import { DragService, DragDetail } from '../services/drag.service';
+import { ElementPaletteComponent } from './element-palette.component';
 
 class DraggableElement {
 
@@ -27,6 +29,10 @@ class DraggableElement {
     this.draggedElement.remove();
   }
 
+  isVisible(): boolean {
+    return !this.draggedElement.style.visibility;
+  }
+
   show() {
     this.draggedElement.style.visibility = null;
   }
@@ -47,57 +53,78 @@ class DraggableElement {
 })
 export class ElementPreviewComponent extends BaseDomManipulationComponent {
 
+  private static PADDING = 10;
+
   private draggableElement: DraggableElement = null;
 
   constructor(elementRef: ElementRef) {
     super(elementRef);
   }
 
-  isPreviewActive(): boolean {
-    return !!this.draggableElement;
-  }
-
-  getPreviewTemplate(): string {
-    if (this.isPreviewActive()) {
-      return this.draggableElement.getTemplate();
-    } else {
-      return null;
+  @HostListener(DragService.BEGIN_EVENT, ['$event.detail'])
+  private onDragBegin(detail: DragDetail<string, MouseEvent>) {
+    if (detail.source instanceof ElementPaletteComponent) {
+      this.createPreview(detail.data, detail.cause);
     }
   }
 
-  createPreview(template: string, coordinates: PageCoordinates) {
-    if (!this.isPreviewActive()) {
-      let [x, y] = this.toParentElementCoordinates(coordinates);
-      this.draggableElement = new DraggableElement(template);
-      this.draggableElement.attach(this.getNativeParentElement());
-      this.draggableElement.moveTo(x, y);
+  @HostListener(DragService.MOVE_EVENT, ['$event.detail'])
+  private onDragMove(detail: DragDetail<string, MouseEvent>) {
+    if (detail.source instanceof ElementPaletteComponent) {
+      let inside = this.isPageCoordinatesInsideParentComponent(detail.cause);
+      let visible = this.draggableElement.isVisible();
+      if (inside) {
+        if (!visible) {
+          this.showPreview();
+        }
+        this.movePreviewTo(detail.cause);
+      } else {
+        if (visible) {
+          this.hidePreview();
+        }
+      }
     }
   }
 
-  showPreview() {
-    if (this.isPreviewActive()) {
-      this.draggableElement.show();
+  @HostListener(DragService.END_EVENT, ['$event.detail'])
+  private onDragEnd(detail: DragDetail<string, MouseEvent>) {
+    if (detail.source instanceof ElementPaletteComponent) {
+      this.removePreview();
     }
+  }
+
+  private createPreview(template: string, coordinates: PageCoordinates) {
+    coordinates = ElementPreviewComponent.addPaddingToPageCoordinates(coordinates);
+    let [x, y] = this.toParentElementCoordinates(coordinates);
+    this.draggableElement = new DraggableElement(template);
+    this.draggableElement.attach(this.getNativeParentElement());
+    this.draggableElement.moveTo(x, y);
+  }
+
+  private showPreview() {
+    this.draggableElement.show();
   }
 
   movePreviewTo(coordinates: PageCoordinates) {
-    if (this.isPreviewActive()) {
-      let [x, y] = this.toParentElementCoordinates(coordinates);
-      this.draggableElement.moveTo(x, y);
-    }
+    coordinates = ElementPreviewComponent.addPaddingToPageCoordinates(coordinates);
+    let [x, y] = this.toParentElementCoordinates(coordinates);
+    this.draggableElement.moveTo(x, y);
   }
 
-  hidePreview() {
-    if (this.isPreviewActive()) {
-      this.draggableElement.hide();
-    }
+  private hidePreview() {
+    this.draggableElement.hide();
   }
 
-  removePreview() {
-    if (this.isPreviewActive()) {
-      this.draggableElement.remove();
-      this.draggableElement = null;
-    }
+  private removePreview() {
+    this.draggableElement.remove();
+    this.draggableElement = null;
+  }
+
+  public static addPaddingToPageCoordinates(coordinates: PageCoordinates): PageCoordinates {
+    return {
+      pageX: coordinates.pageX - ElementPreviewComponent.PADDING,
+      pageY: coordinates.pageY - ElementPreviewComponent.PADDING
+    };
   }
 
 }

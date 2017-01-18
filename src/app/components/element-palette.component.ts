@@ -1,5 +1,5 @@
-import { Component, Output, EventEmitter } from '@angular/core';
-import { DragAndDropMessage } from '../utils/DragAndDropMessage';
+import { Component } from '@angular/core';
+import { DragService, DragDetail } from '../services/drag.service';
 
 @Component({
   selector: 'app-element-palette',
@@ -10,12 +10,10 @@ export class ElementPaletteComponent {
 
   private defaultDivTemplate = '<div style="width: 100px; height: 100px; background: red;">A</div>';
 
-  @Output()
-  private onDragStart = new EventEmitter<DragAndDropMessage>();
+  constructor(private dragService: DragService) {}
 
   startDrag(event: MouseEvent, template: string) {
-    let message = new DragAndDropMessage(event, template);
-    this.onDragStart.emit(message);
+    this.dragService.beginDrag(new DragDetail(this, template, event));
     event.preventDefault();
   }
 

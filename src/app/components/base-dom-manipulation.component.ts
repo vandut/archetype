@@ -23,6 +23,15 @@ export class BaseDomManipulationComponent {
 
   isPageCoordinatesInsideComponent(coordinates: PageCoordinates): boolean {
     let rect = this.getNativeElement().getBoundingClientRect();
+    return this.isPageCoordinatesInsideClientRect(rect, coordinates);
+  }
+
+  isPageCoordinatesInsideParentComponent(coordinates: PageCoordinates): boolean {
+    let rect = this.getNativeParentElement().getBoundingClientRect();
+    return this.isPageCoordinatesInsideClientRect(rect, coordinates);
+  }
+
+  private isPageCoordinatesInsideClientRect(rect: ClientRect, coordinates: PageCoordinates): boolean {
     return coordinates.pageX >= rect.left && coordinates.pageX <= rect.right
       && coordinates.pageY >= rect.top && coordinates.pageY <= rect.bottom;
   }

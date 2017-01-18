@@ -1,0 +1,4 @@
+<app-selection
+  *ngFor="let target of selectedElements"
+  [target]="target"
+  (dragStarted)="onDragStarted($event)"></app-selection>

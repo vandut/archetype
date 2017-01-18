@@ -8,6 +8,7 @@ import { ElementCompositorComponent } from './components/element-compositor.comp
 import { ElementPreviewComponent } from './components/element-preview.component';
 import { ElementSelectionComponent } from './components/element-selection.component';
 import { EditorComponent } from './components/editor.component';
+import { SelectionComponent } from './components/selection.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { EditorComponent } from './components/editor.component';
     ElementCompositorComponent,
     ElementPreviewComponent,
     ElementSelectionComponent,
-    EditorComponent
+    EditorComponent,
+    SelectionComponent
   ],
   imports: [
     BrowserModule

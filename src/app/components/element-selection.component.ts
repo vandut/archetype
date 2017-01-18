@@ -1,41 +1,30 @@
-import { Component, ElementRef, Output, EventEmitter } from '@angular/core';
-import { BaseDomManipulationComponent } from './base-dom-manipulation.component';
-import { PageCoordinates } from '../utils/PageCoordinates';
-import { ElementSelection, SelectionActionType, SelectionMessage, TargetSelection } from './selection';
+import { Component, Output, EventEmitter } from '@angular/core';
+import { SelectionMessage } from './selection.component';
 
 @Component({
   selector: 'app-element-selection',
-  template: ``
+  templateUrl: './element-selection.component.html'
 })
-export class ElementSelectionComponent extends BaseDomManipulationComponent {
+export class ElementSelectionComponent {
+
+  private selectedElements: HTMLElement[] = [];
 
   @Output()
-  private onSelectAction = new EventEmitter<SelectionMessage>();
-
-  private selection: ElementSelection = null;
-
-  constructor(elementRef: ElementRef) {
-    super(elementRef);
-  }
+  private dragStarted = new EventEmitter<SelectionMessage>();
 
   public selectTarget(target: HTMLElement) {
     this.clearSelection();
     if (target) {
-      this.selection = new ElementSelection(target, (t, d, c) => this.selectionDragStarted(t, d, c));
-      this.selection.attach(this.getNativeElement());
+      this.selectedElements.push(target);
     }
   }
 
   public clearSelection() {
-    if (this.selection) {
-      this.selection.remove();
-      this.selection = null;
-    }
+    this.selectedElements.pop();
   }
 
-  private selectionDragStarted(target: TargetSelection, type: SelectionActionType, coordinates: PageCoordinates): boolean {
-    this.onSelectAction.emit(new SelectionMessage(target, type, coordinates));
-    return false;
+  private onDragStarted(message: SelectionMessage) {
+    this.dragStarted.emit(message);
   }
 
 }

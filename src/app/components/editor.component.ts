@@ -3,9 +3,9 @@ import { SnappingGridComponent } from './snapping-grid.component';
 import { ElementCompositorComponent } from './element-compositor.component';
 import { ElementSelectionComponent } from './element-selection.component';
 import { PageCoordinates } from '../utils/PageCoordinates';
-import { SelectionMessage, SelectionActionType, TargetSelection } from './selection';
 import { GlobalInputEventsStrategy, GlobalInputEventsStrategyComponent, ValueProvider } from './strategy';
 import { HTMLElementChmod } from '../utils/HTMLElement';
+import { SelectionActionType, SelectionMessage } from './selection.component';
 
 @Component({
   selector: 'app-editor',
@@ -56,7 +56,7 @@ export class EditorComponent extends GlobalInputEventsStrategyComponent<GlobalIn
     }
   }
 
-  onSelectAction(message: SelectionMessage) {
+  onDragStarted(message: SelectionMessage) {
     switch (message.action) {
       case SelectionActionType.Move:
         // TODO: to implement
@@ -85,7 +85,7 @@ class ResizeStrategy extends GlobalInputEventsStrategy {
     super();
   }
 
-  beginResize(ts: TargetSelection, action: SelectionActionType, originRectProvider: ValueProvider<ClientRect>) {
+  beginResize(ts: HTMLElement, action: SelectionActionType, originRectProvider: ValueProvider<ClientRect>) {
     this.activity = new ResizeActivity(ts, action, originRectProvider);
   }
 
@@ -102,8 +102,8 @@ class ResizeStrategy extends GlobalInputEventsStrategy {
 
   onGlobalMouseUp(event: MouseEvent): boolean {
     if (this.activity) {
-      // Consider should we revert when activity did not stop inside
-      // this.activity.revert();
+      // Action is finished but outside accepted zone.
+      // We can revert if we wish. But decide to ignore.
       this.activity = null;
     }
     this.switchStrategyTo(this.nopStrategy);
@@ -114,20 +114,10 @@ class ResizeStrategy extends GlobalInputEventsStrategy {
 
 class ResizeActivity {
 
-  private htmlElement: HTMLElement;
   private chmod: HTMLElementChmod;
 
-  private originalProperties;
-
-  constructor(private selection: TargetSelection, private action: SelectionActionType, private originRectProvider: ValueProvider<ClientRect>) {
-    this.htmlElement = selection.getTarget();
+  constructor(private htmlElement: HTMLElement, private action: SelectionActionType, private originRectProvider: ValueProvider<ClientRect>) {
     this.chmod = HTMLElementChmod.of(this.htmlElement);
-    this.originalProperties = {
-      x: this.chmod.left,
-      y: this.chmod.top,
-      w: this.chmod.width,
-      h: this.chmod.height
-    }
   }
 
   get rect(): ClientRect {
@@ -198,16 +188,6 @@ class ResizeActivity {
       default:
         return;
     }
-
-    this.selection.updateTarget();
-  }
-
-  revert() {
-    this.chmod.left = this.originalProperties.x;
-    this.chmod.top = this.originalProperties.y;
-    this.chmod.width = this.originalProperties.w;
-    this.chmod.height = this.originalProperties.h;
-    this.selection.updateTarget();
   }
 
 }

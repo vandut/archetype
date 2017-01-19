@@ -46,25 +46,19 @@ export class EditorComponent {
 
   @DragMoveListener()
   private onDragMove(detail: DragDetail<any | SelectionDragMessage, MouseEvent>) {
-    if (this.isPageCoordinatesInside(detail.cause) && detail.source instanceof SelectionComponent) {
+    if (detail.source instanceof SelectionComponent) {
       this.operation.apply(detail.data, detail.cause);
     }
   }
 
   @DragEndListener()
   private onDragEnd(detail: DragDetail<any | SelectionDragMessage, MouseEvent>) {
-    if (this.isPageCoordinatesInside(detail.cause)) {
-      if (detail.source instanceof ElementPaletteComponent) {
-        this.addElement(detail.data, detail.cause);
-      } else if (detail.source instanceof SelectionComponent) {
-        this.operation.apply(detail.data, detail.cause);
-        this.operation = null;
-      }
+    if (detail.source instanceof ElementPaletteComponent) {
+      this.addElement(detail.data, detail.cause);
+    } else if (detail.source instanceof SelectionComponent) {
+      this.operation.apply(detail.data, detail.cause);
+      this.operation = null;
     }
-  }
-
-  private isPageCoordinatesInside(coordinates: PageCoordinates): boolean {
-    return this.elementCompositor.isPageCoordinatesInsideComponent(coordinates);
   }
 
   private addElement(template: string, coordinates: PageCoordinates) {
@@ -122,74 +116,70 @@ class MoveOperation extends Operation<MoveDragMessage> {
 
 class ResizeOperation extends Operation<ResizeDragMessage> {
 
-  private get rect(): ClientRect {
-    return this.target.clientRect;
-  }
-
-  private get hostRect(): ClientRect {
-    return this.host.clientRect;
-  }
-
-  private set left(l: number) {
-    if (this.target.width + this.target.left - l >= 0) {
-      this.target.width = this.target.width + this.target.left - l;
-      this.target.left = l;
-    }
-  }
-
-  private set top(t: number) {
-    if (this.target.height + this.target.top - t >= 0) {
-      this.target.height = this.target.height + this.target.top - t;
-      this.target.top = t;
-    }
-  }
-
-  private set width(w: number) {
-    this.target.width = w;
-  }
-
-  private set height(h: number) {
-    this.target.height = h;
-  }
-
   apply(message: ResizeDragMessage, event: MouseEvent) {
-    let l = event.pageX - this.hostRect.left;
-    let t = event.pageY - this.hostRect.top;
-    let w = event.pageX - this.rect.left;
-    let h = event.pageY - this.rect.top;
+    let hostRect = this.host.clientRect;
+
+    let deltaX = event.pageX - this.lastCoordinates.pageX;
+    let deltaY = event.pageY - this.lastCoordinates.pageY;
+
+    switch (message.action) {
+      case SelectionActionType.Resize_W:
+      case SelectionActionType.Resize_NW:
+      case SelectionActionType.Resize_SW:
+        deltaX = Math.max(0, this.target.left + deltaX) - this.target.left + Math.min(0, this.target.width - deltaX);
+        break;
+      case SelectionActionType.Resize_E:
+      case SelectionActionType.Resize_NE:
+      case SelectionActionType.Resize_SE:
+        deltaX = Math.round(Math.min(hostRect.width, this.target.left + this.target.width + deltaX) - (this.target.left + this.target.width)) - Math.min(0, this.target.width + deltaX);
+        break;
+    }
 
     switch (message.action) {
       case SelectionActionType.Resize_N:
-        this.top = t;
+      case SelectionActionType.Resize_NW:
+      case SelectionActionType.Resize_NE:
+        deltaY = Math.max(0, this.target.top + deltaY) - this.target.top + Math.min(0, this.target.height - deltaY);
         break;
       case SelectionActionType.Resize_S:
-        this.height = h;
+      case SelectionActionType.Resize_SW:
+      case SelectionActionType.Resize_SE:
+        deltaY = Math.round(Math.min(hostRect.height, this.target.top + this.target.height + deltaY) - (this.target.top + this.target.height)) - Math.min(0, this.target.height + deltaY);
         break;
+    }
+
+    switch (message.action) {
+      case SelectionActionType.Resize_N:
+      case SelectionActionType.Resize_NW:
+      case SelectionActionType.Resize_NE:
+        this.target.top += deltaY;
+        this.target.height -= deltaY;
+        break;
+      case SelectionActionType.Resize_S:
+      case SelectionActionType.Resize_SW:
+      case SelectionActionType.Resize_SE:
+        this.target.height += deltaY;
+        break;
+    }
+
+    switch (message.action) {
       case SelectionActionType.Resize_W:
-        this.left = l;
+      case SelectionActionType.Resize_NW:
+      case SelectionActionType.Resize_SW:
+        this.target.left += deltaX;
+        this.target.width -= deltaX;
         break;
       case SelectionActionType.Resize_E:
-        this.width = w;
-        break;
-      case SelectionActionType.Resize_NW:
-        this.top = t;
-        this.left = l;
-        break;
       case SelectionActionType.Resize_NE:
-        this.top = t;
-        this.width = w;
-        break;
-      case SelectionActionType.Resize_SW:
-        this.height = h;
-        this.left = l;
-        break;
       case SelectionActionType.Resize_SE:
-        this.height = h;
-        this.width = w;
+        this.target.width += deltaX;
         break;
-      default:
-        return;
     }
+
+    this.lastCoordinates = {
+      pageX: this.lastCoordinates.pageX + deltaX,
+      pageY: this.lastCoordinates.pageY + deltaY
+    };
   }
 
 }

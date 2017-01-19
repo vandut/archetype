@@ -1,8 +1,8 @@
-import { Component, ElementRef } from '@angular/core';
+import { Component, ElementRef, HostListener } from '@angular/core';
 import { BaseDomManipulationComponent } from './base-dom-manipulation.component';
 import { HTMLElementChmod } from '../utils/HTMLElement';
 import { PageCoordinates } from '../utils/PageCoordinates';
-import { DragDetail, DragBeginListener, DragMoveListener, DragEndListener } from '../services/drag.service';
+import { DragDetail, DragEventNames } from '../services/drag.service';
 import { ElementPaletteComponent } from './element-palette.component';
 
 class DraggableElement {
@@ -57,14 +57,14 @@ export class ElementPreviewComponent extends BaseDomManipulationComponent {
     super(elementRef);
   }
 
-  @DragBeginListener()
+  @HostListener(DragEventNames.RECEIVE_BEGIN, ['$event.detail'])
   private onDragBegin(detail: DragDetail<string, MouseEvent>) {
     if (detail.source instanceof ElementPaletteComponent) {
       this.createPreview(detail.data, detail.cause);
     }
   }
 
-  @DragMoveListener()
+  @HostListener(DragEventNames.RECEIVE_MOVE, ['$event.detail'])
   private onDragMove(detail: DragDetail<string, MouseEvent>) {
     if (detail.source instanceof ElementPaletteComponent) {
       let inside = this.isPageCoordinatesInsideParentComponent(detail.cause);
@@ -82,7 +82,7 @@ export class ElementPreviewComponent extends BaseDomManipulationComponent {
     }
   }
 
-  @DragEndListener()
+  @HostListener(DragEventNames.RECEIVE_END, ['$event.detail'])
   private onDragEnd(detail: DragDetail<string, MouseEvent>) {
     if (detail.source instanceof ElementPaletteComponent) {
       this.removePreview();

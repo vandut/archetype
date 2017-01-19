@@ -1,14 +1,13 @@
-import { Injectable, HostListener } from '@angular/core';
-import { makePropDecorator } from '@angular/core/src/util/decorators';
+import { Injectable } from '@angular/core';
 
-class DragEventNames {
-  static DISPATCH_BEGIN = 'dragbegin';
-  static DISPATCH_MOVE = 'dragmove';
-  static DISPATCH_END = 'dragend';
+export class DragEventNames {
+  static readonly DISPATCH_BEGIN = 'dragbegin';
+  static readonly DISPATCH_MOVE = 'dragmove';
+  static readonly DISPATCH_END = 'dragend';
 
-  static RECEIVE_BEGIN = 'document:' + DragEventNames.DISPATCH_BEGIN;
-  static RECEIVE_MOVE = 'document:' + DragEventNames.DISPATCH_MOVE;
-  static RECEIVE_END = 'document:' + DragEventNames.DISPATCH_END;
+  static readonly RECEIVE_BEGIN = 'document:' + DragEventNames.DISPATCH_BEGIN;
+  static readonly RECEIVE_MOVE = 'document:' + DragEventNames.DISPATCH_MOVE;
+  static readonly RECEIVE_END = 'document:' + DragEventNames.DISPATCH_END;
 }
 
 export class DragDetail<T, E extends Event> {
@@ -17,13 +16,8 @@ export class DragDetail<T, E extends Event> {
               public cause?: E) {}
 }
 
-export let DragBeginListener = makePropDecorator('DragBeginListener', [{'eventName': DragEventNames.RECEIVE_BEGIN}, {'args': ['$event.detail']}], HostListener);
-export let DragMoveListener = makePropDecorator('DragMoveListener', [{'eventName': DragEventNames.RECEIVE_MOVE}, {'args': ['$event.detail']}], HostListener);
-export let DragEndListener = makePropDecorator('DragEndListener', [{'eventName': DragEventNames.RECEIVE_END}, {'args': ['$event.detail']}], HostListener);
-
 @Injectable()
 export class DragService {
-
 
   private initiatingDragDetail: DragDetail<any, Event> = null;
 

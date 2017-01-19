@@ -1,10 +1,10 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, HostListener } from '@angular/core';
 import { SnappingGridComponent } from './snapping-grid.component';
 import { ElementCompositorComponent } from './element-compositor.component';
 import { ElementSelectionComponent } from './element-selection.component';
 import { PageCoordinates } from '../utils/PageCoordinates';
 import { HTMLElementChmod } from '../utils/HTMLElement';
-import { DragDetail, DragBeginListener, DragMoveListener, DragEndListener } from '../services/drag.service';
+import { DragDetail, DragEventNames } from '../services/drag.service';
 import { ElementPreviewComponent } from './element-preview.component';
 import { ElementPaletteComponent } from './element-palette.component';
 import {
@@ -33,7 +33,7 @@ export class EditorComponent {
 
   private operation: Operation<SelectionDragMessage> = null;
 
-  @DragBeginListener()
+  @HostListener(DragEventNames.RECEIVE_BEGIN, ['$event.detail'])
   private onDragBegin(detail: DragDetail<any | SelectionDragMessage, MouseEvent>) {
     if (detail.source instanceof SelectionComponent) {
       if (detail.data instanceof ResizeDragMessage) {
@@ -44,14 +44,14 @@ export class EditorComponent {
     }
   }
 
-  @DragMoveListener()
+  @HostListener(DragEventNames.RECEIVE_MOVE, ['$event.detail'])
   private onDragMove(detail: DragDetail<any | SelectionDragMessage, MouseEvent>) {
     if (detail.source instanceof SelectionComponent) {
       this.operation.apply(detail.data, detail.cause);
     }
   }
 
-  @DragEndListener()
+  @HostListener(DragEventNames.RECEIVE_END, ['$event.detail'])
   private onDragEnd(detail: DragDetail<any | SelectionDragMessage, MouseEvent>) {
     if (detail.source instanceof ElementPaletteComponent) {
       this.addElement(detail.data, detail.cause);

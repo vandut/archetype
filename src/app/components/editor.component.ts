@@ -1,13 +1,16 @@
-import { Component, ViewChild, ElementRef, HostListener } from '@angular/core';
+import { Component, ViewChild, ElementRef } from '@angular/core';
 import { SnappingGridComponent } from './snapping-grid.component';
 import { ElementCompositorComponent } from './element-compositor.component';
 import { ElementSelectionComponent } from './element-selection.component';
 import { PageCoordinates } from '../utils/PageCoordinates';
 import { HTMLElementChmod } from '../utils/HTMLElement';
-import { SelectionActionType, SelectionMessage, SelectionComponent } from './selection.component';
 import { DragDetail, DragBeginListener, DragMoveListener, DragEndListener } from '../services/drag.service';
 import { ElementPreviewComponent } from './element-preview.component';
 import { ElementPaletteComponent } from './element-palette.component';
+import {
+  SelectionActionType, ResizeDragMessage, MoveDragMessage, SelectionComponent,
+  SelectionDragMessage
+} from './selection.component';
 
 @Component({
   selector: 'app-editor',
@@ -28,18 +31,16 @@ export class EditorComponent {
   constructor(private elementRef: ElementRef) {}
 
   @DragBeginListener()
-  private onDragBegin(detail: DragDetail<SelectionMessage, MouseEvent>) {
-    if (detail.source instanceof SelectionComponent) {
-      if (detail.data.action == SelectionActionType.Move) {
-        // TODO: to implement Move operation
-      }
+  private onDragBegin(detail: DragDetail<any | SelectionDragMessage, MouseEvent>) {
+    if (detail.source instanceof SelectionComponent && detail.data instanceof MoveDragMessage) {
+      // TODO: to implement Move operation
     }
   }
 
   @DragMoveListener()
-  private onDragMove(detail: DragDetail<SelectionMessage, MouseEvent>) {
+  private onDragMove(detail: DragDetail<any | SelectionDragMessage, MouseEvent>) {
     if (detail.source instanceof SelectionComponent && this.isPageCoordinatesInside(detail.cause)) {
-      if (this.isResizeAction(detail.data.action)) {
+      if (detail.data instanceof ResizeDragMessage) {
         ResizeOperation.apply(detail.data.target, detail.cause, detail.data.action, this.getParentElement());
       } else {
         // TODO: to implement Move operation
@@ -48,13 +49,15 @@ export class EditorComponent {
   }
 
   @DragEndListener()
-  private onDragEnd(detail: DragDetail<any, MouseEvent>) {
+  private onDragEnd(detail: DragDetail<any | SelectionDragMessage, MouseEvent>) {
     let inside = this.isPageCoordinatesInside(detail.cause);
     if (detail.source instanceof ElementPaletteComponent && inside) {
       this.addElement(detail.data, detail.cause);
     } else if (detail.source instanceof SelectionComponent) {
-      if (this.isResizeAction(detail.data.action)) {
-        ResizeOperation.apply(detail.data.target, detail.cause, detail.data.action, this.getParentElement());
+      if (detail.data instanceof ResizeDragMessage) {
+        if (this.isPageCoordinatesInside(detail.cause)) {
+          ResizeOperation.apply(detail.data.target, detail.cause, detail.data.action, this.getParentElement());
+        }
       } else {
         // TODO: to implement Move operation
       }
@@ -67,22 +70,6 @@ export class EditorComponent {
 
   private isPageCoordinatesInside(coordinates: PageCoordinates): boolean {
     return this.elementCompositor.isPageCoordinatesInsideComponent(coordinates);
-  }
-
-  private isResizeAction(action: SelectionActionType): boolean {
-    switch (action) {
-      case SelectionActionType.Resize_N:
-      case SelectionActionType.Resize_S:
-      case SelectionActionType.Resize_W:
-      case SelectionActionType.Resize_E:
-      case SelectionActionType.Resize_NW:
-      case SelectionActionType.Resize_NE:
-      case SelectionActionType.Resize_SW:
-      case SelectionActionType.Resize_SE:
-        return true;
-      default:
-        return false;
-    }
   }
 
   private addElement(template: string, coordinates: PageCoordinates) {

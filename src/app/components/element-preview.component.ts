@@ -17,10 +17,6 @@ class DraggableElement {
       .done();
   }
 
-  getTemplate(): string {
-    return this.template;
-  }
-
   attach(parent: Node) {
     parent.appendChild(this.draggedElement);
   }
@@ -105,7 +101,7 @@ export class ElementPreviewComponent extends BaseDomManipulationComponent {
     this.draggableElement.show();
   }
 
-  movePreviewTo(coordinates: PageCoordinates) {
+  private movePreviewTo(coordinates: PageCoordinates) {
     coordinates = ElementPreviewComponent.addPaddingToPageCoordinates(coordinates);
     let [x, y] = this.toParentElementCoordinates(coordinates);
     this.draggableElement.moveTo(x, y);

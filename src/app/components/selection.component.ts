@@ -14,10 +14,13 @@ export enum SelectionActionType {
   Resize_SE
 }
 
-export class SelectionMessage {
+export abstract class SelectionDragMessage {
   constructor(public target: HTMLElement,
               public action: SelectionActionType) {}
 }
+
+export class ResizeDragMessage extends SelectionDragMessage {}
+export class MoveDragMessage extends SelectionDragMessage {}
 
 @Component({
   selector: 'app-selection',
@@ -51,8 +54,14 @@ export class SelectionComponent {
 
   constructor(private dragService: DragService) {}
 
-  private onMouseDown(type: string, event: MouseEvent): boolean {
-    let message = new SelectionMessage(this.element.done(), SelectionActionType[type]);
+  private onMouseDownActionMove(event: MouseEvent): boolean {
+    let message = new MoveDragMessage(this.element.done(), SelectionActionType.Move);
+    this.dragService.beginDrag(this, message, event);
+    return false;
+  }
+
+  private onMouseDownActionResize(type: string, event: MouseEvent): boolean {
+    let message = new ResizeDragMessage(this.element.done(), SelectionActionType[type]);
     this.dragService.beginDrag(this, message, event);
     return false;
   }

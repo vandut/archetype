@@ -55,15 +55,19 @@ export class SelectionComponent {
   constructor(private dragService: DragService) {}
 
   private onMouseDownActionMove(event: MouseEvent): boolean {
-    let message = new MoveDragMessage(this.element.done(), SelectionActionType.Move);
-    this.dragService.beginDrag(this, message, event);
-    return false;
+    if (event.button == 0) {
+      let message = new MoveDragMessage(this.element.done(), SelectionActionType.Move);
+      this.dragService.beginDrag(this, message, event);
+      return false;
+    }
   }
 
   private onMouseDownActionResize(type: string, event: MouseEvent): boolean {
-    let message = new ResizeDragMessage(this.element.done(), SelectionActionType[type]);
-    this.dragService.beginDrag(this, message, event);
-    return false;
+    if (event.button == 0) {
+      let message = new ResizeDragMessage(this.element.done(), SelectionActionType[type]);
+      this.dragService.beginDrag(this, message, event);
+      return false;
+    }
   }
 
 }

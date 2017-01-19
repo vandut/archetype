@@ -13,8 +13,10 @@ export class ElementPaletteComponent {
   constructor(private dragService: DragService) {}
 
   startDrag(event: MouseEvent, template: string) {
-    this.dragService.beginDrag(this, template, event);
-    event.preventDefault();
+    if (event.button == 0) {
+      this.dragService.beginDrag(this, template, event);
+      event.preventDefault();
+    }
   }
 
 }

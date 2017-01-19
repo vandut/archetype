@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { SnappingGridComponent } from './snapping-grid.component';
 import { ElementCompositorComponent } from './element-compositor.component';
 import { ElementSelectionComponent } from './element-selection.component';
@@ -8,7 +8,10 @@ import { DragDetail, DragBeginListener, DragMoveListener, DragEndListener } from
 import { ElementPreviewComponent } from './element-preview.component';
 import { ElementPaletteComponent } from './element-palette.component';
 import {
-  SelectionActionType, ResizeDragMessage, MoveDragMessage, SelectionComponent,
+  SelectionActionType,
+  ResizeDragMessage,
+  MoveDragMessage,
+  SelectionComponent,
   SelectionDragMessage
 } from './selection.component';
 
@@ -28,44 +31,36 @@ export class EditorComponent {
   @ViewChild(ElementSelectionComponent)
   private selectionLayer: ElementSelectionComponent;
 
-  constructor(private elementRef: ElementRef) {}
+  private operation: Operation<SelectionDragMessage> = null;
 
   @DragBeginListener()
   private onDragBegin(detail: DragDetail<any | SelectionDragMessage, MouseEvent>) {
-    if (detail.source instanceof SelectionComponent && detail.data instanceof MoveDragMessage) {
-      // TODO: to implement Move operation
+    if (detail.source instanceof SelectionComponent) {
+      if (detail.data instanceof ResizeDragMessage) {
+        this.operation = new ResizeOperation(detail.data.target, this.elementCompositor.getNativeElement(), detail.cause);
+      } else if (detail.data instanceof MoveDragMessage) {
+        this.operation = new MoveOperation(detail.data.target, this.elementCompositor.getNativeElement(), detail.cause);
+      }
     }
   }
 
   @DragMoveListener()
   private onDragMove(detail: DragDetail<any | SelectionDragMessage, MouseEvent>) {
-    if (detail.source instanceof SelectionComponent && this.isPageCoordinatesInside(detail.cause)) {
-      if (detail.data instanceof ResizeDragMessage) {
-        ResizeOperation.apply(detail.data.target, detail.cause, detail.data.action, this.getParentElement());
-      } else {
-        // TODO: to implement Move operation
-      }
+    if (this.isPageCoordinatesInside(detail.cause) && detail.source instanceof SelectionComponent) {
+      this.operation.apply(detail.data, detail.cause);
     }
   }
 
   @DragEndListener()
   private onDragEnd(detail: DragDetail<any | SelectionDragMessage, MouseEvent>) {
-    let inside = this.isPageCoordinatesInside(detail.cause);
-    if (detail.source instanceof ElementPaletteComponent && inside) {
-      this.addElement(detail.data, detail.cause);
-    } else if (detail.source instanceof SelectionComponent) {
-      if (detail.data instanceof ResizeDragMessage) {
-        if (this.isPageCoordinatesInside(detail.cause)) {
-          ResizeOperation.apply(detail.data.target, detail.cause, detail.data.action, this.getParentElement());
-        }
-      } else {
-        // TODO: to implement Move operation
+    if (this.isPageCoordinatesInside(detail.cause)) {
+      if (detail.source instanceof ElementPaletteComponent) {
+        this.addElement(detail.data, detail.cause);
+      } else if (detail.source instanceof SelectionComponent) {
+        this.operation.apply(detail.data, detail.cause);
+        this.operation = null;
       }
     }
-  }
-
-  private getParentElement(): HTMLElement {
-    return this.elementRef.nativeElement;
   }
 
   private isPageCoordinatesInside(coordinates: PageCoordinates): boolean {
@@ -88,47 +83,82 @@ export class EditorComponent {
 
 }
 
-class ResizeOperation {
+abstract class Operation<Message extends SelectionDragMessage> {
 
-  static apply(htmlElement: HTMLElement, coordinates: PageCoordinates, action: SelectionActionType, parentNode: HTMLElement) {
-    new ResizeOperation(HTMLElementChmod.of(htmlElement)).implementation(coordinates, action, parentNode.getBoundingClientRect());
+  protected target: HTMLElementChmod;
+  protected host: HTMLElementChmod;
+
+  constructor(targetEl: HTMLElement, hostEl: HTMLElement,
+              protected lastCoordinates: PageCoordinates) {
+    this.target = HTMLElementChmod.of(targetEl);
+    this.host = HTMLElementChmod.of(hostEl);
   }
 
-  private constructor(private chmod: HTMLElementChmod) {}
+  abstract apply(message: Message, event: MouseEvent);
+
+}
+
+class MoveOperation extends Operation<MoveDragMessage> {
+
+  apply(message: MoveDragMessage, event: MouseEvent) {
+    this.target.left += event.pageX - this.lastCoordinates.pageX;
+    this.target.top += event.pageY - this.lastCoordinates.pageY;
+    this.lastCoordinates = event;
+    this.adjustForSize();
+  }
+
+  private adjustForSize() {
+    let adjustedLeft = Math.min(Math.max(0, this.target.left), this.host.width - this.target.width);
+    let adjustedTop = Math.min(Math.max(0, this.target.top), this.host.height - this.target.height);
+    this.lastCoordinates = {
+      pageX: this.lastCoordinates.pageX + adjustedLeft - this.target.left,
+      pageY: this.lastCoordinates.pageY + adjustedTop - this.target.top
+    };
+    this.target.left = adjustedLeft;
+    this.target.top = adjustedTop;
+  }
+
+}
+
+class ResizeOperation extends Operation<ResizeDragMessage> {
 
   private get rect(): ClientRect {
-    return this.chmod.clientRect;
+    return this.target.clientRect;
+  }
+
+  private get hostRect(): ClientRect {
+    return this.host.clientRect;
   }
 
   private set left(l: number) {
-    if (this.chmod.width + this.chmod.left - l >= 0) {
-      this.chmod.width = this.chmod.width + this.chmod.left - l;
-      this.chmod.left = l;
+    if (this.target.width + this.target.left - l >= 0) {
+      this.target.width = this.target.width + this.target.left - l;
+      this.target.left = l;
     }
   }
 
   private set top(t: number) {
-    if (this.chmod.height + this.chmod.top - t >= 0) {
-      this.chmod.height = this.chmod.height + this.chmod.top - t;
-      this.chmod.top = t;
+    if (this.target.height + this.target.top - t >= 0) {
+      this.target.height = this.target.height + this.target.top - t;
+      this.target.top = t;
     }
   }
 
   private set width(w: number) {
-    this.chmod.width = w;
+    this.target.width = w;
   }
 
   private set height(h: number) {
-    this.chmod.height = h;
+    this.target.height = h;
   }
 
-  private implementation(coordinates: PageCoordinates, action: SelectionActionType, originRect: ClientRect) {
-    let l = coordinates.pageX - originRect.left;
-    let t = coordinates.pageY - originRect.top;
-    let w = coordinates.pageX - this.rect.left;
-    let h = coordinates.pageY - this.rect.top;
+  apply(message: ResizeDragMessage, event: MouseEvent) {
+    let l = event.pageX - this.hostRect.left;
+    let t = event.pageY - this.hostRect.top;
+    let w = event.pageX - this.rect.left;
+    let h = event.pageY - this.rect.top;
 
-    switch (action) {
+    switch (message.action) {
       case SelectionActionType.Resize_N:
         this.top = t;
         break;

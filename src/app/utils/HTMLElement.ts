@@ -24,10 +24,6 @@ export class HTMLElementChmod {
     return HTMLElementChmod.of(HTMLElementFactory.fromTemplate(template));
   }
 
-  static fromDiv(): HTMLElementChmod {
-    return HTMLElementChmod.of(HTMLElementFactory.div());
-  }
-
   done(): HTMLElement {
     return this.element;
   }
@@ -81,7 +77,7 @@ export class HTMLElementChmod {
   }
 
   get width(): number {
-    return HTMLElementChmod.stringPx(this.element.style.width);
+    return this.element.clientWidth;
   }
 
   set height(h: number) {
@@ -89,7 +85,7 @@ export class HTMLElementChmod {
   }
 
   get height(): number {
-    return HTMLElementChmod.stringPx(this.element.style.height);
+    return this.element.clientHeight;
   }
 
   setSize(w: number, h: number): HTMLElementChmod {

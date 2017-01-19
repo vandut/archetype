@@ -1,5 +1,5 @@
-import { Component, HostListener } from '@angular/core';
-import { DragService, DragDetail } from '../services/drag.service';
+import { Component } from '@angular/core';
+import { DragDetail, DragBeginListener } from '../services/drag.service';
 import { ElementPaletteComponent } from './element-palette.component';
 
 @Component({
@@ -21,7 +21,7 @@ export class ElementSelectionComponent {
     this.selectedElements.pop();
   }
 
-  @HostListener(DragService.BEGIN_EVENT, ['$event.detail'])
+  @DragBeginListener()
   private onDragBegin(detail: DragDetail<string, MouseEvent>) {
     if (detail.source instanceof ElementPaletteComponent) {
       this.clearSelection();

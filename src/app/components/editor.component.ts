@@ -1,11 +1,11 @@
-import { Component, ViewChild, ElementRef, HostListener } from '@angular/core';
+import { Component, ViewChild, ElementRef } from '@angular/core';
 import { SnappingGridComponent } from './snapping-grid.component';
 import { ElementCompositorComponent } from './element-compositor.component';
 import { ElementSelectionComponent } from './element-selection.component';
 import { PageCoordinates } from '../utils/PageCoordinates';
 import { HTMLElementChmod } from '../utils/HTMLElement';
 import { SelectionActionType, SelectionMessage, SelectionComponent } from './selection.component';
-import { DragService, DragDetail } from '../services/drag.service';
+import { DragDetail, DragBeginListener, DragMoveListener, DragEndListener } from '../services/drag.service';
 import { ElementPreviewComponent } from './element-preview.component';
 import { ElementPaletteComponent } from './element-palette.component';
 
@@ -27,7 +27,7 @@ export class EditorComponent {
 
   constructor(private elementRef: ElementRef) {}
 
-  @HostListener(DragService.BEGIN_EVENT, ['$event.detail'])
+  @DragBeginListener()
   private onDragBegin(detail: DragDetail<SelectionMessage, MouseEvent>) {
     if (detail.source instanceof SelectionComponent) {
       if (detail.data.action == SelectionActionType.Move) {
@@ -36,18 +36,18 @@ export class EditorComponent {
     }
   }
 
-  @HostListener(DragService.MOVE_EVENT, ['$event.detail'])
+  @DragMoveListener()
   private onDragMove(detail: DragDetail<SelectionMessage, MouseEvent>) {
     if (detail.source instanceof SelectionComponent && this.isPageCoordinatesInside(detail.cause)) {
       if (this.isResizeAction(detail.data.action)) {
         ResizeOperation.apply(detail.data.target, detail.cause, detail.data.action, this.getParentElement());
-      } else if (detail.data.action == SelectionActionType.Move) {
+      } else {
         // TODO: to implement Move operation
       }
     }
   }
 
-  @HostListener(DragService.END_EVENT, ['$event.detail'])
+  @DragEndListener()
   private onDragEnd(detail: DragDetail<any, MouseEvent>) {
     let inside = this.isPageCoordinatesInside(detail.cause);
     if (detail.source instanceof ElementPaletteComponent && inside) {
@@ -55,7 +55,7 @@ export class EditorComponent {
     } else if (detail.source instanceof SelectionComponent) {
       if (this.isResizeAction(detail.data.action)) {
         ResizeOperation.apply(detail.data.target, detail.cause, detail.data.action, this.getParentElement());
-      } else if (detail.data.action == SelectionActionType.Move) {
+      } else {
         // TODO: to implement Move operation
       }
     }

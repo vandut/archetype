@@ -1,4 +1,15 @@
-import { Injectable } from '@angular/core';
+import { Injectable, HostListener } from '@angular/core';
+import { makePropDecorator } from '@angular/core/src/util/decorators';
+
+class DragEventNames {
+  static DISPATCH_BEGIN = 'dragbegin';
+  static DISPATCH_MOVE = 'dragmove';
+  static DISPATCH_END = 'dragend';
+
+  static RECEIVE_BEGIN = 'document:' + DragEventNames.DISPATCH_BEGIN;
+  static RECEIVE_MOVE = 'document:' + DragEventNames.DISPATCH_MOVE;
+  static RECEIVE_END = 'document:' + DragEventNames.DISPATCH_END;
+}
 
 export class DragDetail<T, E extends Event> {
   constructor(public source: any,
@@ -6,16 +17,13 @@ export class DragDetail<T, E extends Event> {
               public cause?: E) {}
 }
 
+export let DragBeginListener = makePropDecorator('DragBeginListener', [{'eventName': DragEventNames.RECEIVE_BEGIN}, {'args': ['$event.detail']}], HostListener);
+export let DragMoveListener = makePropDecorator('DragMoveListener', [{'eventName': DragEventNames.RECEIVE_MOVE}, {'args': ['$event.detail']}], HostListener);
+export let DragEndListener = makePropDecorator('DragEndListener', [{'eventName': DragEventNames.RECEIVE_END}, {'args': ['$event.detail']}], HostListener);
+
 @Injectable()
 export class DragService {
 
-  private static BEGIN_EVENT_NAME = 'dragbegin';
-  private static MOVE_EVENT_NAME = 'dragmove';
-  private static END_EVENT_NAME = 'dragend';
-
-  public static BEGIN_EVENT = 'document:' + DragService.BEGIN_EVENT_NAME;
-  public static MOVE_EVENT = 'document:' + DragService.MOVE_EVENT_NAME;
-  public static END_EVENT = 'document:' + DragService.END_EVENT_NAME;
 
   private initiatingDragDetail: DragDetail<any, Event> = null;
 
@@ -30,7 +38,7 @@ export class DragService {
   private registerListeners() {
     document.addEventListener('mousemove', event => {
       if (this.isDragActive()) {
-        DragService.broadcastEvent(DragService.MOVE_EVENT_NAME, this.copyInitiatingDragDetail(event))
+        DragService.broadcastEvent(DragEventNames.DISPATCH_MOVE, this.copyInitiatingDragDetail(event))
       }
     });
     document.addEventListener('mouseup', event => {
@@ -43,7 +51,7 @@ export class DragService {
   beginDrag(detail: DragDetail<any, Event>) {
     if (!this.isDragActive()) {
       this.initiatingDragDetail = detail;
-      DragService.broadcastEvent(DragService.BEGIN_EVENT_NAME, detail);
+      DragService.broadcastEvent(DragEventNames.DISPATCH_BEGIN, detail);
     } else {
       console.warn("Cannot start new drag, existing one is active.");
     }
@@ -51,7 +59,7 @@ export class DragService {
 
   endDrag(cause?: Event) {
     let dragDetail = this.copyInitiatingDragDetail(cause);
-    DragService.broadcastEvent(DragService.END_EVENT_NAME, dragDetail);
+    DragService.broadcastEvent(DragEventNames.DISPATCH_END, dragDetail);
     this.initiatingDragDetail = null;
   }
 

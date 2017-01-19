@@ -1,7 +1,8 @@
-import { Component, ElementRef, HostListener, EventEmitter, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Output } from '@angular/core';
 import { BaseDomManipulationComponent } from './base-dom-manipulation.component';
 import { HTMLElementChmod } from '../utils/HTMLElement';
 import { PageCoordinates } from '../utils/PageCoordinates';
+import { GlobalMouseDownListener } from '../utils/decorators';
 
 @Component({
   selector: 'app-element-compositor',
@@ -18,7 +19,7 @@ export class ElementCompositorComponent extends BaseDomManipulationComponent {
     super(elementRef);
   }
 
-  @HostListener('document:mousedown', ['$event'])
+  @GlobalMouseDownListener()
   onMouseDown(event: MouseEvent) {
     if (this.isEventTargetInsideComponent(event.target) && !event.ctrlKey) {
       let target: HTMLElement = <HTMLElement> event.target;

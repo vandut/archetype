@@ -48,10 +48,10 @@ export class DragService {
     });
   }
 
-  beginDrag(detail: DragDetail<any, Event>) {
+  beginDrag(source: any, data: any, cause?: Event) {
     if (!this.isDragActive()) {
-      this.initiatingDragDetail = detail;
-      DragService.broadcastEvent(DragEventNames.DISPATCH_BEGIN, detail);
+      this.initiatingDragDetail = new DragDetail(source, data, cause);
+      DragService.broadcastEvent(DragEventNames.DISPATCH_BEGIN, this.initiatingDragDetail);
     } else {
       console.warn("Cannot start new drag, existing one is active.");
     }

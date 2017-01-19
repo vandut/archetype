@@ -1,4 +1,5 @@
-import { Component, AfterViewInit, ViewChild, ElementRef, HostListener, Input } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef, Input } from '@angular/core';
+import { WindowResizeListener } from '../utils/decorators';
 
 @Component({
   selector: 'app-snapping-grid',
@@ -27,7 +28,7 @@ export class SnappingGridComponent implements AfterViewInit {
     this.drawGrid();
   }
 
-  @HostListener('window:resize')
+  @WindowResizeListener()
   onResize() {
     this.drawGrid();
   }

@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { SnappingGridComponent } from './snapping-grid.component';
 import { ElementCompositorComponent } from './element-compositor.component';
 import { ElementSelectionComponent } from './element-selection.component';

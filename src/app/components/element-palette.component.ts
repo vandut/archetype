@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { DragService, DragDetail } from '../services/drag.service';
+import { DragService } from '../services/drag.service';
 
 @Component({
   selector: 'app-element-palette',
@@ -13,7 +13,7 @@ export class ElementPaletteComponent {
   constructor(private dragService: DragService) {}
 
   startDrag(event: MouseEvent, template: string) {
-    this.dragService.beginDrag(new DragDetail(this, template, event));
+    this.dragService.beginDrag(this, template, event);
     event.preventDefault();
   }
 

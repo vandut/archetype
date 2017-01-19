@@ -1,4 +1,5 @@
-import { Directive, AfterViewInit, ElementRef, HostListener } from '@angular/core';
+import { Directive, AfterViewInit, ElementRef } from '@angular/core';
+import { WindowResizeListener } from '../utils/decorators';
 
 @Directive({
   selector: '[appCopyParentSize]'
@@ -11,7 +12,7 @@ export class CopyParentSizeDirective implements AfterViewInit {
     this.copyParentSize()
   }
 
-  @HostListener('window:resize')
+  @WindowResizeListener()
   onResize() {
     this.copyParentSize()
   }

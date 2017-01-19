@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { HTMLElementChmod } from '../utils/HTMLElement';
-import { DragService, DragDetail } from '../services/drag.service';
+import { DragService } from '../services/drag.service';
 
 export enum SelectionActionType {
   Move,
@@ -53,7 +53,7 @@ export class SelectionComponent {
 
   private onMouseDown(type: string, event: MouseEvent): boolean {
     let message = new SelectionMessage(this.element.done(), SelectionActionType[type]);
-    this.dragService.beginDrag(new DragDetail(this, message, event));
+    this.dragService.beginDrag(this, message, event);
     return false;
   }
 

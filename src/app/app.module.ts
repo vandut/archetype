@@ -1,4 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
 import { NgModule } from '@angular/core';
 import { AppComponent } from './components/app.component';
 import { CopyParentSizeDirective } from './directives/copy-parent-size.directive';
@@ -10,6 +11,7 @@ import { ElementSelectionComponent } from './components/element-selection.compon
 import { EditorComponent } from './components/editor.component';
 import { SelectionComponent } from './components/selection.component';
 import { DragService } from './services/drag.service';
+import { ElementInspectorComponent } from './components/element-inspector.component';
 
 @NgModule({
   declarations: [
@@ -21,10 +23,12 @@ import { DragService } from './services/drag.service';
     ElementPreviewComponent,
     ElementSelectionComponent,
     EditorComponent,
-    SelectionComponent
+    SelectionComponent,
+    ElementInspectorComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    FormsModule
   ],
   providers: [
     DragService

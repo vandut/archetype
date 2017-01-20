@@ -1,0 +1,28 @@
+:host {
+  display: block;
+  padding: 5px 5px 0px 5px;
+}
+
+label {
+  width: 100%;
+  margin-bottom: 5px;
+  display: inline-block;
+}
+
+input, textarea {
+  background: lightgray;
+  border: 0;
+  margin-bottom: 5px;
+  display: block;
+  padding: 5px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+textarea {
+  min-height: 150px;
+}
+
+input:disabled, textarea:disabled {
+  background: darkgray;
+}

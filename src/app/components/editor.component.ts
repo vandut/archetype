@@ -1,4 +1,4 @@
-import { Component, ViewChild, HostListener } from '@angular/core';
+import { Component, ViewChild, HostListener, Output, EventEmitter } from '@angular/core';
 import { SnappingGridComponent } from './snapping-grid.component';
 import { ElementCompositorComponent } from './element-compositor.component';
 import { ElementSelectionComponent } from './element-selection.component';
@@ -21,6 +21,9 @@ import {
   styleUrls: ['./editor.component.css']
 })
 export class EditorComponent {
+
+  @Output()
+  private elementSelected = new EventEmitter<HTMLElement>();
 
   @ViewChild(SnappingGridComponent)
   private snappingGrid: SnappingGridComponent;
@@ -62,9 +65,11 @@ export class EditorComponent {
   }
 
   private addElement(template: string, coordinates: PageCoordinates) {
-    coordinates = ElementPreviewComponent.addPaddingToPageCoordinates(coordinates);
-    let element = this.elementCompositor.addElement(template, coordinates);
-    this.selectionLayer.selectTarget(element);
+    if (this.elementCompositor.isPageCoordinatesInsideComponent(coordinates)) {
+      coordinates = ElementPreviewComponent.addPaddingToPageCoordinates(coordinates);
+      let element = this.elementCompositor.addElement(template, coordinates);
+      this.onElementSelected(element);
+    }
   }
 
   private onElementSelected(element: HTMLElement) {
@@ -73,6 +78,7 @@ export class EditorComponent {
     } else {
       this.selectionLayer.clearSelection();
     }
+    this.elementSelected.emit(element);
   }
 
 }

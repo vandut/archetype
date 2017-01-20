@@ -1,29 +1,37 @@
 :host {
-    background: white;
-    left: 10px;
-    right: 10px;
-    top: 10px;
-    bottom: 10px;
-    position: absolute;
-    overflow: hidden;
+  background: white;
+  left: 10px;
+  right: 10px;
+  top: 10px;
+  bottom: 10px;
+  position: absolute;
+  overflow: hidden;
 }
 
 app-editor {
-    position: absolute;
-    top:0;
-    bottom:0;
-    left:0;
-    right:200px;
-    border: 1px solid gray;
-    z-index: 1;
+  position: absolute;
+  top:0;
+  bottom:0;
+  left:0;
+  right:200px;
+  border: 1px solid gray;
+  z-index: 1;
+}
+
+div.right-column {
+  position: absolute;
+  top:0;
+  bottom:0;
+  right:0;
+  width: 190px;
+  z-index: 1;
 }
 
 app-element-palette {
-    position: absolute;
-    top:0;
-    bottom:0;
-    right:0;
-    width: 190px;
-    border: 1px solid gray;
-    z-index: 1;
+  border: 1px solid gray;
+  margin-bottom: 10px;
+}
+
+app-element-inspector {
+  border: 1px solid gray;
 }

@@ -1,4 +1,5 @@
-<div class="box" [style.top.px]="top" [style.left.px]="left" [style.width.px]="width" [style.height.px]="height">
+<div class="box" [style.left.px]="transformer.positionX" [style.top.px]="transformer.positionY"
+     [style.width.px]="transformer.totalWidth" [style.height.px]="transformer.totalHeight">
   <div class="background" (mousedown)="onMouseDownActionMove($event)"></div>
   <div class="border W" (mousedown)="onMouseDownActionResize('Resize_W', $event)"></div>
   <div class="border E" (mousedown)="onMouseDownActionResize('Resize_E', $event)"></div>

@@ -3,7 +3,7 @@ import { SnappingGridComponent } from './snapping-grid.component';
 import { ElementCompositorComponent } from './element-compositor.component';
 import { ElementSelectionComponent } from './element-selection.component';
 import { PageCoordinates } from '../utils/PageCoordinates';
-import { HTMLElementChmod } from '../utils/HTMLElement';
+import { HTMLElementChmod, HTMLElementTransformer } from '../utils/HTMLElement';
 import { DragDetail, DragEventNames } from '../services/drag.service';
 import { ElementPreviewComponent } from './element-preview.component';
 import { ElementPaletteComponent } from './element-palette.component';
@@ -85,12 +85,12 @@ export class EditorComponent {
 
 abstract class Operation<Message extends SelectionDragMessage> {
 
-  protected target: HTMLElementChmod;
+  protected target: HTMLElementTransformer;
   protected host: HTMLElementChmod;
 
   constructor(targetEl: HTMLElement, hostEl: HTMLElement,
               protected lastCoordinates: PageCoordinates) {
-    this.target = HTMLElementChmod.of(targetEl);
+    this.target = HTMLElementTransformer.of(targetEl);
     this.host = HTMLElementChmod.of(hostEl);
   }
 
@@ -101,21 +101,21 @@ abstract class Operation<Message extends SelectionDragMessage> {
 class MoveOperation extends Operation<MoveDragMessage> {
 
   apply(message: MoveDragMessage, event: MouseEvent) {
-    this.target.left += event.pageX - this.lastCoordinates.pageX;
-    this.target.top += event.pageY - this.lastCoordinates.pageY;
+    this.target.positionX += event.pageX - this.lastCoordinates.pageX;
+    this.target.positionY += event.pageY - this.lastCoordinates.pageY;
     this.lastCoordinates = event;
     this.adjustForSize();
   }
 
   private adjustForSize() {
-    let adjustedLeft = Math.min(Math.max(0, this.target.left), this.host.width - this.target.width);
-    let adjustedTop = Math.min(Math.max(0, this.target.top), this.host.height - this.target.height);
+    let adjustedLeft = Math.min(Math.max(0, this.target.positionX), this.host.innerWidth - this.target.totalWidth);
+    let adjustedTop = Math.min(Math.max(0, this.target.positionY), this.host.innerHeight - this.target.totalHeight);
     this.lastCoordinates = {
-      pageX: this.lastCoordinates.pageX + adjustedLeft - this.target.left,
-      pageY: this.lastCoordinates.pageY + adjustedTop - this.target.top
+      pageX: this.lastCoordinates.pageX + adjustedLeft - this.target.positionX,
+      pageY: this.lastCoordinates.pageY + adjustedTop - this.target.positionY
     };
-    this.target.left = adjustedLeft;
-    this.target.top = adjustedTop;
+    this.target.positionX = adjustedLeft;
+    this.target.positionY = adjustedTop;
   }
 
 }
@@ -128,16 +128,21 @@ class ResizeOperation extends Operation<ResizeDragMessage> {
     let deltaX = event.pageX - this.lastCoordinates.pageX;
     let deltaY = event.pageY - this.lastCoordinates.pageY;
 
+    let targetX = this.target.positionX;
+    let targetY = this.target.positionY;
+    let targetWidth = this.target.totalWidth;
+    let targetHeight = this.target.totalHeight;
+
     switch (message.action) {
       case SelectionActionType.Resize_W:
       case SelectionActionType.Resize_NW:
       case SelectionActionType.Resize_SW:
-        deltaX = Math.max(0, this.target.left + deltaX) - this.target.left + Math.min(0, this.target.width - deltaX);
+        deltaX = Math.max(0, targetX + deltaX) - targetX + Math.min(0, targetWidth - deltaX);
         break;
       case SelectionActionType.Resize_E:
       case SelectionActionType.Resize_NE:
       case SelectionActionType.Resize_SE:
-        deltaX = Math.round(Math.min(hostRect.width, this.target.left + this.target.width + deltaX) - (this.target.left + this.target.width)) - Math.min(0, this.target.width + deltaX);
+        deltaX = Math.round(Math.min(hostRect.width, targetX + targetWidth + deltaX) - (targetX + targetWidth)) - Math.min(0, targetWidth + deltaX);
         break;
     }
 
@@ -145,12 +150,12 @@ class ResizeOperation extends Operation<ResizeDragMessage> {
       case SelectionActionType.Resize_N:
       case SelectionActionType.Resize_NW:
       case SelectionActionType.Resize_NE:
-        deltaY = Math.max(0, this.target.top + deltaY) - this.target.top + Math.min(0, this.target.height - deltaY);
+        deltaY = Math.max(0, targetY + deltaY) - targetY + Math.min(0, targetHeight - deltaY);
         break;
       case SelectionActionType.Resize_S:
       case SelectionActionType.Resize_SW:
       case SelectionActionType.Resize_SE:
-        deltaY = Math.round(Math.min(hostRect.height, this.target.top + this.target.height + deltaY) - (this.target.top + this.target.height)) - Math.min(0, this.target.height + deltaY);
+        deltaY = Math.round(Math.min(hostRect.height, targetY + targetHeight + deltaY) - (targetY + targetHeight)) - Math.min(0, targetHeight + deltaY);
         break;
     }
 
@@ -158,13 +163,13 @@ class ResizeOperation extends Operation<ResizeDragMessage> {
       case SelectionActionType.Resize_N:
       case SelectionActionType.Resize_NW:
       case SelectionActionType.Resize_NE:
-        this.target.top += deltaY;
-        this.target.height -= deltaY;
+        this.target.positionY += deltaY;
+        this.target.totalHeight -= deltaY;
         break;
       case SelectionActionType.Resize_S:
       case SelectionActionType.Resize_SW:
       case SelectionActionType.Resize_SE:
-        this.target.height += deltaY;
+        this.target.totalHeight += deltaY;
         break;
     }
 
@@ -172,13 +177,13 @@ class ResizeOperation extends Operation<ResizeDragMessage> {
       case SelectionActionType.Resize_W:
       case SelectionActionType.Resize_NW:
       case SelectionActionType.Resize_SW:
-        this.target.left += deltaX;
-        this.target.width -= deltaX;
+        this.target.positionX += deltaX;
+        this.target.totalWidth -= deltaX;
         break;
       case SelectionActionType.Resize_E:
       case SelectionActionType.Resize_NE:
       case SelectionActionType.Resize_SE:
-        this.target.width += deltaX;
+        this.target.totalWidth += deltaX;
         break;
     }
 

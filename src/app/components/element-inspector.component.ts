@@ -12,7 +12,7 @@ export class ElementInspectorComponent {
   private selectedElement: HTMLElement = null;
 
   private enabledProperties = [
-    'position', 'width', 'height', 'left', 'right', 'top', 'bottom'
+    'position', 'width', 'height', 'left', 'top'
   ];
 
   @Input()

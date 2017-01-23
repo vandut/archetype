@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { HTMLElementChmod } from '../utils/HTMLElement';
+import { HTMLElementTransformer } from '../utils/HTMLElement';
 import { DragService } from '../services/drag.service';
 
 export enum SelectionActionType {
@@ -29,34 +29,20 @@ export class MoveDragMessage extends SelectionDragMessage {}
 })
 export class SelectionComponent {
 
-  private element: HTMLElementChmod;
+  private _target: HTMLElement;
+  private transformer: HTMLElementTransformer;
 
   @Input()
-  private set target(e: HTMLElement) {
-    this.element = HTMLElementChmod.of(e);
-  }
-
-  private get top() {
-    return this.element.top;
-  }
-
-  private get left() {
-    return this.element.left;
-  }
-
-  private get width() {
-    return this.element.width;
-  }
-
-  private get height() {
-    return this.element.height;
+  private set target(element: HTMLElement) {
+    this._target = element;
+    this.transformer = HTMLElementTransformer.of(element);
   }
 
   constructor(private dragService: DragService) {}
 
   private onMouseDownActionMove(event: MouseEvent): boolean {
     if (event.button == 0) {
-      let message = new MoveDragMessage(this.element.done(), SelectionActionType.Move);
+      let message = new MoveDragMessage(this._target, SelectionActionType.Move);
       this.dragService.beginDrag(this, message, event);
       return false;
     }
@@ -64,7 +50,7 @@ export class SelectionComponent {
 
   private onMouseDownActionResize(type: string, event: MouseEvent): boolean {
     if (event.button == 0) {
-      let message = new ResizeDragMessage(this.element.done(), SelectionActionType[type]);
+      let message = new ResizeDragMessage(this._target, SelectionActionType[type]);
       this.dragService.beginDrag(this, message, event);
       return false;
     }

@@ -1,6 +1,6 @@
 import { Component, ElementRef, HostListener } from '@angular/core';
 import { BaseDomManipulationComponent } from './base-dom-manipulation.component';
-import { HTMLElementChmod } from '../utils/HTMLElement';
+import { HTMLElementChmod, HTMLElementFactory, HTMLElementTransformer } from '../utils/HTMLElement';
 import { PageCoordinates } from '../utils/PageCoordinates';
 import { DragDetail, DragEventNames } from '../services/drag.service';
 import { ElementPaletteComponent } from './element-palette.component';
@@ -10,7 +10,7 @@ class DraggableElement {
   private draggedElement: HTMLElement;
 
   constructor(private template: string) {
-    this.draggedElement = HTMLElementChmod.fromTemplate(template)
+    this.draggedElement = HTMLElementChmod.of(HTMLElementFactory.fromTemplate(template))
       .positionOnTop()
       .setOpacity(0.25)
       .addClass('cursor_grabbing')
@@ -38,7 +38,9 @@ class DraggableElement {
   }
 
   moveTo(offsetX: number, offsetY: number) {
-    HTMLElementChmod.of(this.draggedElement).setCoordinates(offsetX, offsetY);
+    let transformer = HTMLElementTransformer.of(this.draggedElement);
+    transformer.positionX = offsetX;
+    transformer.positionY = offsetY;
   }
 
 }

@@ -12,6 +12,61 @@ export class HTMLElementFactory {
 
 }
 
+/**
+ * Helper class for transforming HTMLElement. Takes into account all properties and abstracts
+ * manipulating of both position and size regardless of anchoring type and other properties.
+ */
+export class HTMLElementTransformer {
+
+  private constructor(private element: HTMLElement) {}
+
+  static of(element: HTMLElement): HTMLElementTransformer {
+    return new HTMLElementTransformer(element);
+  }
+
+  get positionType(): string {
+    return this.element.style.position;
+  }
+
+  set positionType(p: string) {
+    this.element.style.position = p;
+    // TODO: add transformation
+  }
+
+  get positionX(): number {
+    return this.element.offsetLeft;
+  }
+
+  set positionX(x: number) {
+    this.element.style.left = x + 'px';
+  }
+
+  get positionY(): number {
+    return this.element.offsetTop;
+  }
+
+  set positionY(y: number) {
+    this.element.style.top = y + 'px';
+  }
+
+  get totalWidth(): number {
+    return this.element.offsetWidth;
+  }
+
+  set totalWidth(w: number) {
+    this.element.style.width = w + 'px';
+  }
+
+  get totalHeight(): number {
+    return this.element.offsetHeight;
+  }
+
+  set totalHeight(h: number) {
+    this.element.style.height = h + 'px';
+  }
+
+}
+
 export class HTMLElementChmod {
 
   private constructor(private element: HTMLElement) {}
@@ -20,78 +75,21 @@ export class HTMLElementChmod {
     return new HTMLElementChmod(element);
   }
 
-  static fromTemplate(template: string): HTMLElementChmod {
-    return HTMLElementChmod.of(HTMLElementFactory.fromTemplate(template));
-  }
-
   done(): HTMLElement {
     return this.element;
   }
 
-  set left(x: number) {
-    this.element.style.left = x + 'px';
-  }
-
-  get left(): number {
-    return HTMLElementChmod.stringPx(this.element.style.left);
-  }
-
-  set top(y: number) {
-    this.element.style.top = y + 'px';
-  }
-
-  get top(): number {
-    return HTMLElementChmod.stringPx(this.element.style.top);
-  }
-
-  set right(x: number) {
-    this.element.style.right = x + 'px';
-  }
-
-  get right(): number {
-    return HTMLElementChmod.stringPx(this.element.style.right);
-  }
-
-  set bottom(y: number) {
-    this.element.style.bottom = y + 'px';
-  }
-
-  get bottom(): number {
-    return HTMLElementChmod.stringPx(this.element.style.bottom);
-  }
-
-  setCoordinates(x: number, y: number): HTMLElementChmod {
-    this.left = x;
-    this.top = y;
+  applyTransformation(exec: (HTMLElementTransformer) => void): HTMLElementChmod {
+    exec(HTMLElementTransformer.of(this.element));
     return this;
   }
 
-  setAbsoluteCoordinates(x: number, y: number): HTMLElementChmod {
-    this.element.style.position = 'absolute';
-    this.setCoordinates(x, y);
-    return this;
-  }
-
-  set width(w: number) {
-    this.element.style.width = w + 'px';
-  }
-
-  get width(): number {
+  get innerWidth(): number {
     return this.element.clientWidth;
   }
 
-  set height(h: number) {
-    this.element.style.height = h + 'px';
-  }
-
-  get height(): number {
+  get innerHeight(): number {
     return this.element.clientHeight;
-  }
-
-  setSize(w: number, h: number): HTMLElementChmod {
-    this.width = w;
-    this.height = h;
-    return this;
   }
 
   addClass(name: string): HTMLElementChmod {
@@ -108,30 +106,6 @@ export class HTMLElementChmod {
   setOpacity(opacity: number): HTMLElementChmod {
     this.element.style.opacity = `${opacity}`;
     return this;
-  }
-
-  pointerEvents(status: boolean): HTMLElementChmod {
-    this.element.style.pointerEvents = status ? 'auto' : 'none';
-    return this;
-  }
-
-  eventListener(type: string, handler: (e: Event) => boolean): HTMLElementChmod {
-    this.element.addEventListener(type, handler);
-    return this;
-  }
-
-  customStyle(lambda: (style: CSSStyleDeclaration) => void): HTMLElementChmod {
-    lambda(this.element.style);
-    return this;
-  }
-
-  custom(lambda: (element: HTMLElementChmod) => void): HTMLElementChmod {
-    lambda(this);
-    return this;
-  }
-
-  private static stringPx(value: string): number {
-    return Number(value.slice(0, -2));
   }
 
   get clientRect(): ClientRect {

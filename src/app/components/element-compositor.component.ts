@@ -1,6 +1,6 @@
 import { Component, ElementRef, EventEmitter, Output, HostListener } from '@angular/core';
 import { BaseDomManipulationComponent } from './base-dom-manipulation.component';
-import { HTMLElementChmod } from '../utils/HTMLElement';
+import { HTMLElementChmod, HTMLElementFactory } from '../utils/HTMLElement';
 import { PageCoordinates } from '../utils/PageCoordinates';
 
 @Component({
@@ -36,8 +36,12 @@ export class ElementCompositorComponent extends BaseDomManipulationComponent {
   addElement(template: string, coordinates: PageCoordinates): HTMLElement {
     let [x, y] = this.toComponentCoordinates(coordinates);
 
-    let element = HTMLElementChmod.fromTemplate(template)
-      .setAbsoluteCoordinates(x, y)
+    let element = HTMLElementChmod.of(HTMLElementFactory.fromTemplate(template))
+      .applyTransformation(t => {
+        t.positionType = 'absolute';
+        t.positionX = x;
+        t.positionY = y;
+      })
       .addClass(ElementCompositorComponent.MANAGED_CSS_CLASS)
       .done();
 

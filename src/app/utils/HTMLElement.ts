@@ -29,8 +29,8 @@ export class HTMLElementTransformer {
   }
 
   set positionType(p: string) {
+    this.recalculatePositionAfterTypeChange(this.element.style.position, p);
     this.element.style.position = p;
-    // TODO: add transformation
   }
 
   get positionX(): number {
@@ -38,7 +38,11 @@ export class HTMLElementTransformer {
   }
 
   set positionX(x: number) {
-    this.element.style.left = x + 'px';
+    if (x) {
+      this.element.style.left = x + 'px';
+    } else {
+      this.element.style.left = null;
+    }
   }
 
   get positionY(): number {
@@ -46,7 +50,11 @@ export class HTMLElementTransformer {
   }
 
   set positionY(y: number) {
-    this.element.style.top = y + 'px';
+    if (y) {
+      this.element.style.top = y + 'px';
+    } else {
+      this.element.style.top = null;
+    }
   }
 
   get totalWidth(): number {
@@ -67,6 +75,16 @@ export class HTMLElementTransformer {
 
   get proxy(): HTMLElementTransformer {
     return this;
+  }
+
+  private recalculatePositionAfterTypeChange(from: string, to: string) {
+    if (to === 'static') {
+      this.positionX = null;
+      this.positionY = null;
+    } else if (to === 'absolute') {
+      this.positionX = 0;
+      this.positionY = 0;
+    }
   }
 
 }

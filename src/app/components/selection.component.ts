@@ -57,4 +57,12 @@ export class SelectionComponent {
     }
   }
 
+  public isMovable(): boolean {
+    return this.transformer.positionType !== 'static';
+  }
+
+  public isResizable(): boolean {
+    return getComputedStyle(this._target).display === 'block';
+  }
+
 }

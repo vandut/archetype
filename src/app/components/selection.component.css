@@ -15,7 +15,6 @@ div.background {
   top: 0;
   right: 0;
   bottom: 0;
-  cursor: move;
   background: repeating-linear-gradient(
     45deg,
     rgba(0, 0, 0, 0.1),
@@ -24,13 +23,24 @@ div.background {
     rgba(255, 255, 255, 0.1) 20px
   );
 }
+div[data-usable='true'].background {
+  cursor: move;
+}
+div[data-usable='false'].background {
+  pointer-events: none;
+}
 
 div.W {
   left: -3px;
   top: 0;
   bottom: 0;
   width: 6px;
+}
+div[data-usable='true'].W {
   cursor: w-resize;
+}
+div[data-usable='false'].W {
+  pointer-events: none;
 }
 
 div.E {
@@ -38,7 +48,12 @@ div.E {
   top: 0;
   bottom: 0;
   width: 6px;
+}
+div[data-usable='true'].E {
   cursor: e-resize;
+}
+div[data-usable='false'].E {
+  pointer-events: none;
 }
 
 div.N {
@@ -46,7 +61,12 @@ div.N {
   right: 0;
   top: -3px;
   height: 6px;
+}
+div[data-usable='true'].N {
   cursor: n-resize;
+}
+div[data-usable='false'].N {
+  pointer-events: none;
 }
 
 div.S {
@@ -54,14 +74,25 @@ div.S {
   right: 0;
   bottom: -3px;
   height: 6px;
+}
+div[data-usable='true'].S {
   cursor: s-resize;
 }
+div[data-usable='false'].S {
+  pointer-events: none;
+}
+
 div.NW {
   left: -3px;
   top: -3px;
   width: 7px;
   height: 7px;
+}
+div[data-usable='true'].NW {
   cursor: nw-resize;
+}
+div[data-usable='false'].NW {
+  pointer-events: none;
 }
 
 div.NE {
@@ -69,7 +100,12 @@ div.NE {
   top: -3px;
   width: 7px;
   height: 7px;
+}
+div[data-usable='true'].NE {
   cursor: ne-resize;
+}
+div[data-usable='false'].NE {
+  pointer-events: none;
 }
 
 div.SW {
@@ -77,7 +113,12 @@ div.SW {
   bottom: -3px;
   width: 7px;
   height: 7px;
+}
+div[data-usable='true'].SW {
   cursor: sw-resize;
+}
+div[data-usable='false'].SW {
+  pointer-events: none;
 }
 
 div.SE {
@@ -85,5 +126,10 @@ div.SE {
   bottom: -3px;
   width: 7px;
   height: 7px;
+}
+div[data-usable='true'].SE {
   cursor: se-resize;
+}
+div[data-usable='false'].SE {
+  pointer-events: none;
 }

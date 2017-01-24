@@ -1,12 +1,21 @@
 <div class="box" [style.left.px]="transformer.positionX" [style.top.px]="transformer.positionY"
      [style.width.px]="transformer.totalWidth" [style.height.px]="transformer.totalHeight">
-  <div class="background" (mousedown)="onMouseDownActionMove($event)"></div>
-  <div class="border W" (mousedown)="onMouseDownActionResize('Resize_W', $event)"></div>
-  <div class="border E" (mousedown)="onMouseDownActionResize('Resize_E', $event)"></div>
-  <div class="border N" (mousedown)="onMouseDownActionResize('Resize_N', $event)"></div>
-  <div class="border S" (mousedown)="onMouseDownActionResize('Resize_S', $event)"></div>
-  <div class="corner NW" (mousedown)="onMouseDownActionResize('Resize_NW', $event)"></div>
-  <div class="corner NE" (mousedown)="onMouseDownActionResize('Resize_NE', $event)"></div>
-  <div class="corner SW" (mousedown)="onMouseDownActionResize('Resize_SW', $event)"></div>
-  <div class="corner SE" (mousedown)="onMouseDownActionResize('Resize_SE', $event)"></div>
+  <div [attr.data-usable]="isMovable()"
+       class="background" (mousedown)="onMouseDownActionMove($event)"></div>
+  <div [attr.data-usable]="isMovable() && isResizable()"
+       class="border W" (mousedown)="onMouseDownActionResize('Resize_W', $event)"></div>
+  <div [attr.data-usable]="isResizable()"
+       class="border E" (mousedown)="onMouseDownActionResize('Resize_E', $event)"></div>
+  <div [attr.data-usable]="isMovable() && isResizable()"
+       class="border N" (mousedown)="onMouseDownActionResize('Resize_N', $event)"></div>
+  <div [attr.data-usable]="isResizable()"
+       class="border S" (mousedown)="onMouseDownActionResize('Resize_S', $event)"></div>
+  <div [attr.data-usable]="isMovable() && isResizable()"
+       class="corner NW" (mousedown)="onMouseDownActionResize('Resize_NW', $event)"></div>
+  <div [attr.data-usable]="isMovable() && isResizable()"
+       class="corner NE" (mousedown)="onMouseDownActionResize('Resize_NE', $event)"></div>
+  <div [attr.data-usable]="isMovable() && isResizable()"
+       class="corner SW" (mousedown)="onMouseDownActionResize('Resize_SW', $event)"></div>
+  <div [attr.data-usable]="isResizable()"
+       class="corner SE" (mousedown)="onMouseDownActionResize('Resize_SE', $event)"></div>
 </div>

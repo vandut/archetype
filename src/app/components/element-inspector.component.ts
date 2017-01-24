@@ -19,6 +19,7 @@ export class ElementInspectorComponent {
 
   public enabledPositionTypes: PropertyBinding[] = [
     { id: 'absolute', name: 'Absolute' },
+    { id: 'static', name: 'Static' },
   ];
   public enabledProperties: PropertyBinding[] = [
     { id: 'positionX', name: 'Position left' },

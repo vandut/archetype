@@ -1,6 +1,6 @@
 <div *ngFor="let cssProp of enabledProperties">
-  <label for="inspector-left">{{cssProp}}</label>
-  <input type="text" id="inspector-left" [(ngModel)]="selectedElement?.style[cssProp]" [disabled]="!selectedElement">
+  <label for="inspector-left">{{cssProp.name}}</label>
+  <input type="text" id="inspector-left" [(ngModel)]="selectedElement?.style[cssProp.id]" [disabled]="!selectedElement">
 </div>
 
 <label for="inspector-style-all">Styles Combined</label>

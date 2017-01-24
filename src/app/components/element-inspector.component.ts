@@ -2,6 +2,11 @@ import { Component, Input, HostListener } from '@angular/core';
 import { DragEventNames, DragDetail } from '../services/drag.service';
 import { ElementPaletteComponent } from './element-palette.component';
 
+interface PropertyBinding {
+  id: string;
+  name: string;
+}
+
 @Component({
   selector: 'app-element-inspector',
   templateUrl: './element-inspector.component.html',
@@ -11,8 +16,11 @@ export class ElementInspectorComponent {
 
   public selectedElement: HTMLElement = null;
 
-  public enabledProperties = [
-    'position', 'width', 'height', 'left', 'top'
+  public enabledProperties: PropertyBinding[] = [
+    { id: 'left', name: 'Position left' },
+    { id: 'top', name: 'Position top' },
+    { id: 'width', name: 'Total width' },
+    { id: 'height', name: 'Total height' },
   ];
 
   @Input()

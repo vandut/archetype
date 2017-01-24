@@ -12,16 +12,16 @@ export class ElementCompositorComponent extends BaseDomManipulationComponent {
   private static MANAGED_CSS_CLASS = 'archetype_managed';
 
   @Output()
-  private onSelected = new EventEmitter<HTMLElement>();
+  public onSelected = new EventEmitter<HTMLElement>();
 
   constructor(elementRef: ElementRef) {
     super(elementRef);
   }
 
   @HostListener('document:mousedown', ['$event'])
-  onMouseDown(event: MouseEvent) {
+  public onMouseDown(event: MouseEvent) {
     if (this.isEventTargetInsideComponent(event.target) && !event.ctrlKey) {
-      let target: HTMLElement = <HTMLElement> event.target;
+      const target: HTMLElement = <HTMLElement> event.target;
       if (target.classList.contains(ElementCompositorComponent.MANAGED_CSS_CLASS)) {
         this.onSelected.emit(target);
       } else {
@@ -34,9 +34,9 @@ export class ElementCompositorComponent extends BaseDomManipulationComponent {
   }
 
   addElement(template: string, coordinates: PageCoordinates): HTMLElement {
-    let [x, y] = this.toComponentCoordinates(coordinates);
+    const [x, y] = this.toComponentCoordinates(coordinates);
 
-    let element = HTMLElementChmod.of(HTMLElementFactory.fromTemplate(template))
+    const element = HTMLElementChmod.of(HTMLElementFactory.fromTemplate(template))
       .applyTransformation(t => {
         t.positionType = 'absolute';
         t.positionX = x;

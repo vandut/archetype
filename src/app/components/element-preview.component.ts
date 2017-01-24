@@ -38,7 +38,7 @@ class DraggableElement {
   }
 
   moveTo(offsetX: number, offsetY: number) {
-    let transformer = HTMLElementTransformer.of(this.draggedElement);
+    const transformer = HTMLElementTransformer.of(this.draggedElement);
     transformer.positionX = offsetX;
     transformer.positionY = offsetY;
   }
@@ -55,22 +55,29 @@ export class ElementPreviewComponent extends BaseDomManipulationComponent {
 
   private draggableElement: DraggableElement = null;
 
+  public static addPaddingToPageCoordinates(coordinates: PageCoordinates): PageCoordinates {
+    return {
+      pageX: coordinates.pageX - ElementPreviewComponent.PADDING,
+      pageY: coordinates.pageY - ElementPreviewComponent.PADDING
+    };
+  }
+
   constructor(elementRef: ElementRef) {
     super(elementRef);
   }
 
   @HostListener(DragEventNames.RECEIVE_BEGIN, ['$event.detail'])
-  private onDragBegin(detail: DragDetail<string, MouseEvent>) {
+  public onDragBegin(detail: DragDetail<string, MouseEvent>) {
     if (detail.source instanceof ElementPaletteComponent) {
       this.createPreview(detail.data, detail.cause);
     }
   }
 
   @HostListener(DragEventNames.RECEIVE_MOVE, ['$event.detail'])
-  private onDragMove(detail: DragDetail<string, MouseEvent>) {
+  public onDragMove(detail: DragDetail<string, MouseEvent>) {
     if (detail.source instanceof ElementPaletteComponent) {
-      let inside = this.isPageCoordinatesInsideParentComponent(detail.cause);
-      let visible = this.draggableElement.isVisible();
+      const inside = this.isPageCoordinatesInsideParentComponent(detail.cause);
+      const visible = this.draggableElement.isVisible();
       if (inside) {
         if (!visible) {
           this.showPreview();
@@ -85,7 +92,7 @@ export class ElementPreviewComponent extends BaseDomManipulationComponent {
   }
 
   @HostListener(DragEventNames.RECEIVE_END, ['$event.detail'])
-  private onDragEnd(detail: DragDetail<string, MouseEvent>) {
+  public onDragEnd(detail: DragDetail<string, MouseEvent>) {
     if (detail.source instanceof ElementPaletteComponent) {
       this.removePreview();
     }
@@ -93,7 +100,7 @@ export class ElementPreviewComponent extends BaseDomManipulationComponent {
 
   private createPreview(template: string, coordinates: PageCoordinates) {
     coordinates = ElementPreviewComponent.addPaddingToPageCoordinates(coordinates);
-    let [x, y] = this.toParentElementCoordinates(coordinates);
+    const [x, y] = this.toParentElementCoordinates(coordinates);
     this.draggableElement = new DraggableElement(template);
     this.draggableElement.attach(this.getNativeParentElement());
     this.draggableElement.moveTo(x, y);
@@ -105,7 +112,7 @@ export class ElementPreviewComponent extends BaseDomManipulationComponent {
 
   private movePreviewTo(coordinates: PageCoordinates) {
     coordinates = ElementPreviewComponent.addPaddingToPageCoordinates(coordinates);
-    let [x, y] = this.toParentElementCoordinates(coordinates);
+    const [x, y] = this.toParentElementCoordinates(coordinates);
     this.draggableElement.moveTo(x, y);
   }
 
@@ -116,13 +123,6 @@ export class ElementPreviewComponent extends BaseDomManipulationComponent {
   private removePreview() {
     this.draggableElement.remove();
     this.draggableElement = null;
-  }
-
-  public static addPaddingToPageCoordinates(coordinates: PageCoordinates): PageCoordinates {
-    return {
-      pageX: coordinates.pageX - ElementPreviewComponent.PADDING,
-      pageY: coordinates.pageY - ElementPreviewComponent.PADDING
-    };
   }
 
 }

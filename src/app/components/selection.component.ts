@@ -30,27 +30,28 @@ export class MoveDragMessage extends SelectionDragMessage {}
 export class SelectionComponent {
 
   private _target: HTMLElement;
-  private transformer: HTMLElementTransformer;
+
+  public transformer: HTMLElementTransformer;
 
   @Input()
-  private set target(element: HTMLElement) {
+  public set target(element: HTMLElement) {
     this._target = element;
     this.transformer = HTMLElementTransformer.of(element);
   }
 
   constructor(private dragService: DragService) {}
 
-  private onMouseDownActionMove(event: MouseEvent): boolean {
-    if (event.button == 0) {
-      let message = new MoveDragMessage(this._target, SelectionActionType.Move);
+  public onMouseDownActionMove(event: MouseEvent): boolean {
+    if (event.button === 0) {
+      const message = new MoveDragMessage(this._target, SelectionActionType.Move);
       this.dragService.beginDrag(this, message, event);
       return false;
     }
   }
 
-  private onMouseDownActionResize(type: string, event: MouseEvent): boolean {
-    if (event.button == 0) {
-      let message = new ResizeDragMessage(this._target, SelectionActionType[type]);
+  public onMouseDownActionResize(type: string, event: MouseEvent): boolean {
+    if (event.button === 0) {
+      const message = new ResizeDragMessage(this._target, SelectionActionType[type]);
       this.dragService.beginDrag(this, message, event);
       return false;
     }

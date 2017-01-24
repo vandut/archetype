@@ -21,6 +21,10 @@ export class DragService {
 
   private initiatingDragDetail: DragDetail<any, Event> = null;
 
+  private static broadcastEvent(name: string, detail: DragDetail<any, Event>) {
+    document.dispatchEvent(new CustomEvent(name, {detail: detail}));
+  }
+
   constructor() {
     this.registerListeners();
   }
@@ -29,10 +33,25 @@ export class DragService {
     return !!this.initiatingDragDetail;
   }
 
+  beginDrag(source: any, data: any, cause?: Event) {
+    if (!this.isDragActive()) {
+      this.initiatingDragDetail = new DragDetail(source, data, cause);
+      DragService.broadcastEvent(DragEventNames.DISPATCH_BEGIN, this.initiatingDragDetail);
+    } else {
+      console.warn('Cannot start new drag, existing one is active.');
+    }
+  }
+
+  endDrag(cause?: Event) {
+    const dragDetail = this.copyInitiatingDragDetail(cause);
+    DragService.broadcastEvent(DragEventNames.DISPATCH_END, dragDetail);
+    this.initiatingDragDetail = null;
+  }
+
   private registerListeners() {
     document.addEventListener('mousemove', event => {
       if (this.isDragActive()) {
-        DragService.broadcastEvent(DragEventNames.DISPATCH_MOVE, this.copyInitiatingDragDetail(event))
+        DragService.broadcastEvent(DragEventNames.DISPATCH_MOVE, this.copyInitiatingDragDetail(event));
       }
     });
     document.addEventListener('mouseup', event => {
@@ -42,31 +61,12 @@ export class DragService {
     });
   }
 
-  beginDrag(source: any, data: any, cause?: Event) {
-    if (!this.isDragActive()) {
-      this.initiatingDragDetail = new DragDetail(source, data, cause);
-      DragService.broadcastEvent(DragEventNames.DISPATCH_BEGIN, this.initiatingDragDetail);
-    } else {
-      console.warn("Cannot start new drag, existing one is active.");
-    }
-  }
-
-  endDrag(cause?: Event) {
-    let dragDetail = this.copyInitiatingDragDetail(cause);
-    DragService.broadcastEvent(DragEventNames.DISPATCH_END, dragDetail);
-    this.initiatingDragDetail = null;
-  }
-
   private copyInitiatingDragDetail(cause?: Event) {
     return new DragDetail(
       this.initiatingDragDetail.source,
       this.initiatingDragDetail.data,
       cause
     );
-  }
-
-  private static broadcastEvent(name: string, detail: DragDetail<any, Event>) {
-    document.dispatchEvent(new CustomEvent(name, {detail: detail}));
   }
 
 }

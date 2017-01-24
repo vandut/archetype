@@ -9,21 +9,21 @@ import { ElementPaletteComponent } from './element-palette.component';
 })
 export class ElementInspectorComponent {
 
-  private selectedElement: HTMLElement = null;
+  public selectedElement: HTMLElement = null;
 
-  private enabledProperties = [
+  public enabledProperties = [
     'position', 'width', 'height', 'left', 'top'
   ];
 
   @Input()
-  private selected: HTMLElement = null;
+  public selected: HTMLElement = null;
 
-  selectElement(element: HTMLElement) {
+  public selectElement(element: HTMLElement) {
     this.selectedElement = element;
   }
 
   @HostListener(DragEventNames.RECEIVE_BEGIN, ['$event.detail'])
-  private onDragBegin(detail: DragDetail<string, MouseEvent>) {
+  public onDragBegin(detail: DragDetail<string, MouseEvent>) {
     if (detail.source instanceof ElementPaletteComponent) {
       this.selectElement(null);
     }

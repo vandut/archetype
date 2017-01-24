@@ -22,12 +22,12 @@ export class BaseDomManipulationComponent {
   }
 
   isPageCoordinatesInsideComponent(coordinates: PageCoordinates): boolean {
-    let rect = this.getNativeElement().getBoundingClientRect();
+    const rect = this.getNativeElement().getBoundingClientRect();
     return this.isPageCoordinatesInsideClientRect(rect, coordinates);
   }
 
   isPageCoordinatesInsideParentComponent(coordinates: PageCoordinates): boolean {
-    let rect = this.getNativeParentElement().getBoundingClientRect();
+    const rect = this.getNativeParentElement().getBoundingClientRect();
     return this.isPageCoordinatesInsideClientRect(rect, coordinates);
   }
 
@@ -37,7 +37,7 @@ export class BaseDomManipulationComponent {
   }
 
   toComponentCoordinates(coordinates: PageCoordinates): [number, number] {
-    let rect = this.getNativeElement().getBoundingClientRect();
+    const rect = this.getNativeElement().getBoundingClientRect();
     return [
       coordinates.pageX - rect.left,
       coordinates.pageY - rect.top
@@ -45,7 +45,7 @@ export class BaseDomManipulationComponent {
   }
 
   toParentElementCoordinates(coordinates: PageCoordinates): [number, number] {
-    let rect = this.getNativeParentElement().getBoundingClientRect();
+    const rect = this.getNativeParentElement().getBoundingClientRect();
     return [
       coordinates.pageX - rect.left,
       coordinates.pageY - rect.top

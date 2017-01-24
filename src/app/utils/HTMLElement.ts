@@ -1,7 +1,7 @@
 export class HTMLElementFactory {
 
   static fromTemplate(template: string): HTMLElement {
-    let div = document.createElement('div');
+    const div = document.createElement('div');
     div.innerHTML = template;
     return <HTMLElement> div.firstChild;
   }
@@ -18,11 +18,11 @@ export class HTMLElementFactory {
  */
 export class HTMLElementTransformer {
 
-  private constructor(private element: HTMLElement) {}
-
-  static of(element: HTMLElement): HTMLElementTransformer {
+  public static of(element: HTMLElement): HTMLElementTransformer {
     return new HTMLElementTransformer(element);
   }
+
+  private constructor(private element: HTMLElement) {}
 
   get positionType(): string {
     return this.element.style.position;
@@ -69,11 +69,11 @@ export class HTMLElementTransformer {
 
 export class HTMLElementChmod {
 
-  private constructor(private element: HTMLElement) {}
-
-  static of(element: HTMLElement): HTMLElementChmod {
+  public static of(element: HTMLElement): HTMLElementChmod {
     return new HTMLElementChmod(element);
   }
+
+  private constructor(private element: HTMLElement) {}
 
   done(): HTMLElement {
     return this.element;

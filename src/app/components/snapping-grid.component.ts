@@ -41,19 +41,19 @@ export class SnappingGridComponent implements AfterViewInit {
   }
 
   clearCanvas() {
-    let canvas = this.getCanvas();
-    let context = this.getCanvasContext();
+    const canvas = this.getCanvas();
+    const context = this.getCanvasContext();
     context.clearRect(0, 0, canvas.width, canvas.height);
   }
 
   drawGrid() {
-    let canvas = this.getCanvas();
-    let context = this.getCanvasContext();
+    const canvas = this.getCanvas();
+    const context = this.getCanvasContext();
 
-    context.fillStyle = "rgba(200,200,200,1)";
+    context.fillStyle = 'rgba(200,200,200,1)';
 
-    let columns = Math.ceil(canvas.width / this.spacing);
-    let rows = Math.ceil(canvas.height / this.spacing);
+    const columns = Math.ceil(canvas.width / this.spacing);
+    const rows = Math.ceil(canvas.height / this.spacing);
 
     for (let x = 1; x < columns; x++) {
       for (let y = 1; y < rows; y++) {

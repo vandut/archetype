@@ -37,7 +37,7 @@ export class EditorComponent {
   private operation: Operation<SelectionDragMessage> = null;
 
   @HostListener(DragEventNames.RECEIVE_BEGIN, ['$event.detail'])
-  private onDragBegin(detail: DragDetail<any | SelectionDragMessage, MouseEvent>) {
+  public onDragBegin(detail: DragDetail<any | SelectionDragMessage, MouseEvent>) {
     if (detail.source instanceof SelectionComponent) {
       if (detail.data instanceof ResizeDragMessage) {
         this.operation = new ResizeOperation(detail.data.target, this.elementCompositor.getNativeElement(), detail.cause);
@@ -48,14 +48,14 @@ export class EditorComponent {
   }
 
   @HostListener(DragEventNames.RECEIVE_MOVE, ['$event.detail'])
-  private onDragMove(detail: DragDetail<any | SelectionDragMessage, MouseEvent>) {
+  public onDragMove(detail: DragDetail<any | SelectionDragMessage, MouseEvent>) {
     if (detail.source instanceof SelectionComponent) {
       this.operation.apply(detail.data, detail.cause);
     }
   }
 
   @HostListener(DragEventNames.RECEIVE_END, ['$event.detail'])
-  private onDragEnd(detail: DragDetail<any | SelectionDragMessage, MouseEvent>) {
+  public onDragEnd(detail: DragDetail<any | SelectionDragMessage, MouseEvent>) {
     if (detail.source instanceof ElementPaletteComponent) {
       this.addElement(detail.data, detail.cause);
     } else if (detail.source instanceof SelectionComponent) {
@@ -67,12 +67,12 @@ export class EditorComponent {
   private addElement(template: string, coordinates: PageCoordinates) {
     if (this.elementCompositor.isPageCoordinatesInsideComponent(coordinates)) {
       coordinates = ElementPreviewComponent.addPaddingToPageCoordinates(coordinates);
-      let element = this.elementCompositor.addElement(template, coordinates);
+      const element = this.elementCompositor.addElement(template, coordinates);
       this.onElementSelected(element);
     }
   }
 
-  private onElementSelected(element: HTMLElement) {
+  public onElementSelected(element: HTMLElement) {
     if (element) {
       this.selectionLayer.selectTarget(element);
     } else {
@@ -108,8 +108,8 @@ class MoveOperation extends Operation<MoveDragMessage> {
   }
 
   private adjustForSize() {
-    let adjustedLeft = Math.min(Math.max(0, this.target.positionX), this.host.innerWidth - this.target.totalWidth);
-    let adjustedTop = Math.min(Math.max(0, this.target.positionY), this.host.innerHeight - this.target.totalHeight);
+    const adjustedLeft = Math.min(Math.max(0, this.target.positionX), this.host.innerWidth - this.target.totalWidth);
+    const adjustedTop = Math.min(Math.max(0, this.target.positionY), this.host.innerHeight - this.target.totalHeight);
     this.lastCoordinates = {
       pageX: this.lastCoordinates.pageX + adjustedLeft - this.target.positionX,
       pageY: this.lastCoordinates.pageY + adjustedTop - this.target.positionY
@@ -123,15 +123,15 @@ class MoveOperation extends Operation<MoveDragMessage> {
 class ResizeOperation extends Operation<ResizeDragMessage> {
 
   apply(message: ResizeDragMessage, event: MouseEvent) {
-    let hostRect = this.host.clientRect;
+    const hostRect = this.host.clientRect;
 
     let deltaX = event.pageX - this.lastCoordinates.pageX;
     let deltaY = event.pageY - this.lastCoordinates.pageY;
 
-    let targetX = this.target.positionX;
-    let targetY = this.target.positionY;
-    let targetWidth = this.target.totalWidth;
-    let targetHeight = this.target.totalHeight;
+    const targetX = this.target.positionX;
+    const targetY = this.target.positionY;
+    const targetWidth = this.target.totalWidth;
+    const targetHeight = this.target.totalHeight;
 
     switch (message.action) {
       case SelectionActionType.Resize_W:
@@ -142,7 +142,8 @@ class ResizeOperation extends Operation<ResizeDragMessage> {
       case SelectionActionType.Resize_E:
       case SelectionActionType.Resize_NE:
       case SelectionActionType.Resize_SE:
-        deltaX = Math.round(Math.min(hostRect.width, targetX + targetWidth + deltaX) - (targetX + targetWidth)) - Math.min(0, targetWidth + deltaX);
+        deltaX = Math.round(Math.min(hostRect.width, targetX + targetWidth + deltaX)
+                 - (targetX + targetWidth)) - Math.min(0, targetWidth + deltaX);
         break;
     }
 
@@ -155,7 +156,8 @@ class ResizeOperation extends Operation<ResizeDragMessage> {
       case SelectionActionType.Resize_S:
       case SelectionActionType.Resize_SW:
       case SelectionActionType.Resize_SE:
-        deltaY = Math.round(Math.min(hostRect.height, targetY + targetHeight + deltaY) - (targetY + targetHeight)) - Math.min(0, targetHeight + deltaY);
+        deltaY = Math.round(Math.min(hostRect.height, targetY + targetHeight + deltaY)
+                 - (targetY + targetHeight)) - Math.min(0, targetHeight + deltaY);
         break;
     }
 

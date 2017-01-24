@@ -1,7 +1,11 @@
-<div *ngFor="let cssProp of enabledProperties">
-  <label for="inspector-left">{{cssProp.name}}</label>
-  <input type="text" id="inspector-left" [(ngModel)]="selectedElement?.style[cssProp.id]" [disabled]="!selectedElement">
+<div>
+  <label for="inspector-position">Position type</label>
+  <select id="inspector-position" [(ngModel)]="selectedElement?.proxy.positionType" [disabled]="!selectedElement">
+    <option *ngFor="let c of enabledPositionTypes" [ngValue]="c.id">{{c.name}}</option>
+  </select>
 </div>
 
-<label for="inspector-style-all">Styles Combined</label>
-<textarea id="inspector-style-all" [(ngModel)]="selectedElement?.style.cssText" [disabled]="!selectedElement"></textarea>
+<div *ngFor="let cssProp of enabledProperties">
+  <label for="inspector-left">{{cssProp.name}}</label>
+  <input type="text" id="inspector-left" [(ngModel)]="selectedElement?.proxy[cssProp.id]" [disabled]="!selectedElement">
+</div>

@@ -9,7 +9,7 @@ label {
   display: inline-block;
 }
 
-input, textarea {
+input, textarea, select {
   background: lightgray;
   border: 0;
   margin-bottom: 5px;
@@ -23,6 +23,6 @@ textarea {
   min-height: 150px;
 }
 
-input:disabled, textarea:disabled {
+input:disabled, textarea:disabled, select:disabled {
   background: darkgray;
 }

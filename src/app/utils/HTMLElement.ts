@@ -65,6 +65,10 @@ export class HTMLElementTransformer {
     this.element.style.height = h + 'px';
   }
 
+  get proxy(): HTMLElementTransformer {
+    return this;
+  }
+
 }
 
 export class HTMLElementChmod {

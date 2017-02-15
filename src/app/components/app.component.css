@@ -42,49 +42,13 @@ app-element-palette {
 }
 
 app-element-inspector {
-  border: 1px solid gray;
 }
 
-#app-element-explorer {
+app-element-explorer {
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
   border: 1px solid gray;
-}
-#app-element-explorer ol {
-  background: url('assets/el-expl-all.png') repeat-y;
-  list-style: none;
-  padding: 0;
-}
-#app-element-explorer > ol {
-  padding-right: 10px;
-}
-#app-element-explorer li {
-  padding-left: 24px;
-  padding-top: 2px;
-  background: url('assets/el-expl-child.png') no-repeat;
-}
-#app-element-explorer li:last-child {
-  background: white url('assets/el-expl-child-last.png') no-repeat;
-}
-#app-element-explorer li > div.title {
-  height: 20px;
-  line-height: 20px;
-  margin: 0;
-  display: inline-block;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-  max-width: 100%;
-  cursor: pointer;
-  border: 1px solid transparent;
-}
-#app-element-explorer li > div.selected {
-  /*border: 1px dashed lightblue;*/
-  background-color: aliceblue;
-}
-#app-element-explorer li > .title:hover {
-  background-color: aliceblue;
 }

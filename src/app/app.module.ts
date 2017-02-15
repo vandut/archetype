@@ -12,6 +12,7 @@ import { EditorComponent } from './components/editor.component';
 import { SelectionComponent } from './components/selection.component';
 import { DragService } from './services/drag.service';
 import { ElementInspectorComponent } from './components/element-inspector.component';
+import { ElementExplorerComponent } from './components/element-explorer.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { ElementInspectorComponent } from './components/element-inspector.compon
     ElementSelectionComponent,
     EditorComponent,
     SelectionComponent,
-    ElementInspectorComponent
+    ElementInspectorComponent,
+    ElementExplorerComponent
   ],
   imports: [
     BrowserModule,

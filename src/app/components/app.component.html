@@ -1,28 +1,7 @@
 <app-editor (elementSelected)="inspector.selectElement($event)"></app-editor>
 
 <div class="left-column">
-  <div id="app-element-explorer">
-    <ol>
-      <li>
-        <div class="title">Element One asdasdasdasd </div>
-        <ol>
-          <li><div class="title">Hi</div></li>
-        </ol>
-      </li>
-      <li>
-        <div class="title selected">Element Two</div>
-        <ol>
-          <li><div class="title">Sub-element One</div></li>
-          <li>
-            <div class="title">Sub-element Two</div>
-            <ol>
-              <li><div class="title">Hi</div></li>
-            </ol>
-          </li>
-        </ol>
-      </li>
-    </ol>
-  </div>
+  <app-element-explorer></app-element-explorer>
 </div>
 
 <div class="right-column">

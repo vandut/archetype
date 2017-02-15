@@ -1,0 +1,40 @@
+:host {
+  display: block;
+}
+
+ol {
+  background: url('assets/el-expl-all.png') repeat-y;
+  list-style: none;
+  padding: 0;
+}
+
+:host > ol {
+  padding-right: 10px;
+}
+li {
+  padding-left: 24px;
+  padding-top: 2px;
+  background: url('assets/el-expl-child.png') no-repeat;
+}
+li:last-child {
+  background: white url('assets/el-expl-child-last.png') no-repeat;
+}
+li > div.title {
+  height: 20px;
+  line-height: 20px;
+  margin: 0;
+  display: inline-block;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 100%;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+li > div.selected {
+  /*border: 1px dashed lightblue;*/
+  background-color: aliceblue;
+}
+li > .title:hover {
+  background-color: aliceblue;
+}

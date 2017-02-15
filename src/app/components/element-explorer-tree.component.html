@@ -1,0 +1,6 @@
+<ol>
+  <li *ngFor="let node of nodes" [attr.data-node-id]="node.id">
+    <div class="title">{{node.name}}</div>
+    <app-element-explorer-tree *ngIf="node.children" [nodes]="node.children"></app-element-explorer-tree>
+  </li>
+</ol>

@@ -13,6 +13,7 @@ import { SelectionComponent } from './components/selection.component';
 import { DragService } from './services/drag.service';
 import { ElementInspectorComponent } from './components/element-inspector.component';
 import { ElementExplorerComponent } from './components/element-explorer.component';
+import { ElementExplorerTreeComponent } from './components/element-explorer-tree.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { ElementExplorerComponent } from './components/element-explorer.componen
     EditorComponent,
     SelectionComponent,
     ElementInspectorComponent,
-    ElementExplorerComponent
+    ElementExplorerComponent,
+    ElementExplorerTreeComponent
   ],
   imports: [
     BrowserModule,

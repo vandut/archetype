@@ -12,13 +12,25 @@ export class ElementSelectionService {
   constructor(private elementRepositoryService: ElementRepositoryService) {}
 
   public clearSelection() {
+    if (this.selectedElement) {
+      this.selectedElement.selected = false;
+    }
     this.selectedElement = null;
     this.subject.next(null);
   }
 
   public select(editorElementId: string) {
-    this.selectedElement = this.elementRepositoryService.getEditorElement(editorElementId);
-    this.subject.next(this.selectedElement);
+    let editorElement = this.elementRepositoryService.getEditorElement(editorElementId);
+    if (!editorElement) {
+      this.clearSelection();
+    } else if (this.selectedElement !== editorElement) {
+      if (this.selectedElement) {
+        this.selectedElement.selected = false;
+      }
+      this.selectedElement = editorElement;
+      this.selectedElement.selected = true;
+      this.subject.next(this.selectedElement);
+    }
   }
 
   public subscribeToChanges(observer: PartialObserver<EditorElement>): Rx.Subscription {

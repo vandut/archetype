@@ -4,6 +4,7 @@ import { HTMLElementFactory } from '../utils/HTMLElement';
 export class EditorElement {
   constructor(public id: string,
               public htmlDom: HTMLElement,
+              public selected: boolean,
               public children?: EditorElement[]) {
   }
 }
@@ -38,7 +39,8 @@ export class ElementRepositoryService {
   public addEditorElement(template: string): EditorElement {
     let el = {
       id: this.generateNextElementId(),
-      htmlDom: HTMLElementFactory.fromTemplate(template)
+      htmlDom: HTMLElementFactory.fromTemplate(template),
+      selected: false
     };
     el.htmlDom.dataset[ElementRepositoryService.ID_DATA_ATTR_NAME] = el.id;
     this.elements.push(el);

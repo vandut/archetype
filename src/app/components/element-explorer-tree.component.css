@@ -28,9 +28,7 @@ li > div.title {
   border: 1px solid transparent;
 }
 li > div.selected {
-  /*border: 1px dashed lightblue;*/
   background-color: aliceblue;
 }
 li > .title:hover {
-  background-color: aliceblue;
 }

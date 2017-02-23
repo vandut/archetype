@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { EditorElement } from '../services/element-repository.service';
+import { ElementSelectionService } from '../services/element-selection.service';
 
 @Component({
   selector: 'app-element-explorer-tree',
@@ -10,5 +11,11 @@ export class ElementExplorerTreeComponent {
 
   @Input()
   public tree: EditorElement[] = [];
+
+  constructor(private elementSelectionService: ElementSelectionService) {}
+
+  public onNodeClick(nodeId) {
+    this.elementSelectionService.select(nodeId);
+  }
 
 }

@@ -1,11 +1,5 @@
 import { Component, Input } from '@angular/core';
-
-export class TreeNode {
-  constructor(public id: String,
-              public name: String,
-              public children?: TreeNode[]) {
-  }
-}
+import { EditorElement } from '../services/element-repository.service';
 
 @Component({
   selector: 'app-element-explorer-tree',
@@ -15,6 +9,6 @@ export class TreeNode {
 export class ElementExplorerTreeComponent {
 
   @Input()
-  public nodes: TreeNode[] = [];
+  public tree: EditorElement[] = [];
 
 }

@@ -67,8 +67,8 @@ export class EditorComponent {
   private addElement(template: string, coordinates: PageCoordinates) {
     if (this.elementCompositor.isPageCoordinatesInsideComponent(coordinates)) {
       coordinates = ElementPreviewComponent.addPaddingToPageCoordinates(coordinates);
-      const element = this.elementCompositor.addElement(template, coordinates);
-      this.onElementSelected(element);
+      const editorElement = this.elementCompositor.addElement(template, coordinates);
+      this.onElementSelected(editorElement.htmlDom);
     }
   }
 

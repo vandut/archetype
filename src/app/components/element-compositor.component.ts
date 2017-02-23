@@ -1,7 +1,8 @@
 import { Component, ElementRef, EventEmitter, Output, HostListener } from '@angular/core';
 import { BaseDomManipulationComponent } from './base-dom-manipulation.component';
-import { HTMLElementChmod, HTMLElementFactory } from '../utils/HTMLElement';
+import { HTMLElementChmod } from '../utils/HTMLElement';
 import { PageCoordinates } from '../utils/PageCoordinates';
+import { ElementRepositoryService, EditorElement } from '../services/element-repository.service';
 
 @Component({
   selector: 'app-element-compositor',
@@ -9,12 +10,10 @@ import { PageCoordinates } from '../utils/PageCoordinates';
 })
 export class ElementCompositorComponent extends BaseDomManipulationComponent {
 
-  private static MANAGED_CSS_CLASS = 'archetype_managed';
-
   @Output()
   public onSelected = new EventEmitter<HTMLElement>();
 
-  constructor(elementRef: ElementRef) {
+  constructor(elementRef: ElementRef, private elementRepositoryService: ElementRepositoryService) {
     super(elementRef);
   }
 
@@ -22,7 +21,7 @@ export class ElementCompositorComponent extends BaseDomManipulationComponent {
   public onMouseDown(event: MouseEvent) {
     if (this.isEventTargetInsideComponent(event.target) && !event.ctrlKey) {
       const target: HTMLElement = <HTMLElement> event.target;
-      if (target.classList.contains(ElementCompositorComponent.MANAGED_CSS_CLASS)) {
+      if (target.dataset[ElementRepositoryService.ID_DATA_ATTR_NAME]) {
         this.onSelected.emit(target);
       } else {
         this.onSelected.emit(null);
@@ -33,20 +32,19 @@ export class ElementCompositorComponent extends BaseDomManipulationComponent {
     }
   }
 
-  addElement(template: string, coordinates: PageCoordinates): HTMLElement {
-    const [x, y] = this.toComponentCoordinates(coordinates);
+  addElement(template: string, coordinates: PageCoordinates): EditorElement {
+    const editorElement: EditorElement = this.elementRepositoryService.addEditorElement(template);
 
-    const element = HTMLElementChmod.of(HTMLElementFactory.fromTemplate(template))
+    const [x, y] = this.toComponentCoordinates(coordinates);
+    HTMLElementChmod.of(editorElement.htmlDom)
       .applyTransformation(t => {
         t.positionType = 'absolute';
         t.positionX = x;
         t.positionY = y;
-      })
-      .addClass(ElementCompositorComponent.MANAGED_CSS_CLASS)
-      .done();
+      });
+    this.getNativeElement().appendChild(editorElement.htmlDom);
 
-    this.getNativeElement().appendChild(element);
-    return element;
+    return editorElement;
   }
 
 }

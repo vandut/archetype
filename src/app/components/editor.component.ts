@@ -1,7 +1,5 @@
-import { Component, ViewChild, HostListener, Output, EventEmitter } from '@angular/core';
-import { SnappingGridComponent } from './snapping-grid.component';
+import { Component, ViewChild, HostListener } from '@angular/core';
 import { ElementCompositorComponent } from './element-compositor.component';
-import { ElementSelectionComponent } from './element-selection.component';
 import { PageCoordinates } from '../utils/PageCoordinates';
 import { HTMLElementChmod, HTMLElementTransformer } from '../utils/HTMLElement';
 import { DragDetail, DragEventNames } from '../services/drag.service';
@@ -14,6 +12,7 @@ import {
   SelectionComponent,
   SelectionDragMessage
 } from './selection.component';
+import { ElementSelectionService } from '../services/element-selection.service';
 
 @Component({
   selector: 'app-editor',
@@ -22,19 +21,12 @@ import {
 })
 export class EditorComponent {
 
-  @Output()
-  private elementSelected = new EventEmitter<HTMLElement>();
-
-  @ViewChild(SnappingGridComponent)
-  private snappingGrid: SnappingGridComponent;
-
   @ViewChild(ElementCompositorComponent)
   private elementCompositor: ElementCompositorComponent;
 
-  @ViewChild(ElementSelectionComponent)
-  private selectionLayer: ElementSelectionComponent;
-
   private operation: Operation<SelectionDragMessage> = null;
+
+  constructor(private elementSelectionService: ElementSelectionService) {}
 
   @HostListener(DragEventNames.RECEIVE_BEGIN, ['$event.detail'])
   public onDragBegin(detail: DragDetail<any | SelectionDragMessage, MouseEvent>) {
@@ -68,17 +60,8 @@ export class EditorComponent {
     if (this.elementCompositor.isPageCoordinatesInsideComponent(coordinates)) {
       coordinates = ElementPreviewComponent.addPaddingToPageCoordinates(coordinates);
       const editorElement = this.elementCompositor.addElement(template, coordinates);
-      this.onElementSelected(editorElement.id);
+      this.elementSelectionService.select(editorElement.id);
     }
-  }
-
-  public onElementSelected(editorElementId) {
-    if (editorElementId) {
-      this.selectionLayer.selectTarget(editorElementId);
-    } else {
-      this.selectionLayer.clearSelection();
-    }
-    this.elementSelected.emit(editorElementId);
   }
 
 }

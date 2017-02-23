@@ -1,3 +1,5 @@
 <app-selection
-  *ngFor="let target of selectedElements"
-  [target]="target"></app-selection>
+  *ngIf="selectedElement"
+  [target]="selectedElement.htmlDom">
+
+</app-selection>

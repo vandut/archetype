@@ -15,6 +15,7 @@ import { ElementInspectorComponent } from './components/element-inspector.compon
 import { ElementExplorerComponent } from './components/element-explorer.component';
 import { ElementExplorerTreeComponent } from './components/element-explorer-tree.component';
 import { ElementRepositoryService } from './services/element-repository.service';
+import { ElementSelectionService } from './services/element-selection.service';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { ElementRepositoryService } from './services/element-repository.service'
   ],
   providers: [
     DragService,
-    ElementRepositoryService
+    ElementRepositoryService,
+    ElementSelectionService
   ],
   bootstrap: [AppComponent]
 })

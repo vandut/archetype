@@ -16,6 +16,7 @@ export class ElementRepositoryService {
   private static ID_PREFIX = 'id#';
   private nextElementId = 0;
 
+  // TODO: make this private and changes announced via Rx.Subject
   public elements: EditorElement[] = [];
 
   private generateNextElementId(): string {
@@ -33,6 +34,7 @@ export class ElementRepositoryService {
     return null;
   }
 
+  // TODO: this should be root method that initializes adding new elements
   public addEditorElement(template: string): EditorElement {
     let el = {
       id: this.generateNextElementId(),

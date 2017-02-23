@@ -1,8 +1,9 @@
-import { Component, ElementRef, EventEmitter, Output, HostListener } from '@angular/core';
+import { Component, ElementRef, HostListener } from '@angular/core';
 import { BaseDomManipulationComponent } from './base-dom-manipulation.component';
 import { HTMLElementChmod } from '../utils/HTMLElement';
 import { PageCoordinates } from '../utils/PageCoordinates';
 import { ElementRepositoryService, EditorElement } from '../services/element-repository.service';
+import { ElementSelectionService } from '../services/element-selection.service';
 
 @Component({
   selector: 'app-element-compositor',
@@ -10,10 +11,7 @@ import { ElementRepositoryService, EditorElement } from '../services/element-rep
 })
 export class ElementCompositorComponent extends BaseDomManipulationComponent {
 
-  @Output()
-  public onSelected = new EventEmitter<string>();
-
-  constructor(elementRef: ElementRef, private elementRepositoryService: ElementRepositoryService) {
+  constructor(elementRef: ElementRef, private elementRepositoryService: ElementRepositoryService, private elementSelectionService: ElementSelectionService) {
     super(elementRef);
   }
 
@@ -21,7 +19,7 @@ export class ElementCompositorComponent extends BaseDomManipulationComponent {
   public onMouseDown(event: MouseEvent) {
     if (this.isEventTargetInsideComponent(event.target) && !event.ctrlKey) {
       const target: HTMLElement = <HTMLElement> event.target;
-      this.onSelected.emit(target.dataset[ElementRepositoryService.ID_DATA_ATTR_NAME]);
+      this.elementSelectionService.select(target.dataset[ElementRepositoryService.ID_DATA_ATTR_NAME]);
       if (event.target !== this.getNativeElement()) {
         event.preventDefault();
       }

@@ -68,17 +68,17 @@ export class EditorComponent {
     if (this.elementCompositor.isPageCoordinatesInsideComponent(coordinates)) {
       coordinates = ElementPreviewComponent.addPaddingToPageCoordinates(coordinates);
       const editorElement = this.elementCompositor.addElement(template, coordinates);
-      this.onElementSelected(editorElement.htmlDom);
+      this.onElementSelected(editorElement.id);
     }
   }
 
-  public onElementSelected(element: HTMLElement) {
-    if (element) {
-      this.selectionLayer.selectTarget(element);
+  public onElementSelected(editorElementId) {
+    if (editorElementId) {
+      this.selectionLayer.selectTarget(editorElementId);
     } else {
       this.selectionLayer.clearSelection();
     }
-    this.elementSelected.emit(element);
+    this.elementSelected.emit(editorElementId);
   }
 
 }

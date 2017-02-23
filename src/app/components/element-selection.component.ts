@@ -1,6 +1,7 @@
 import { Component, HostListener } from '@angular/core';
 import { DragDetail, DragEventNames } from '../services/drag.service';
 import { ElementPaletteComponent } from './element-palette.component';
+import { ElementRepositoryService } from '../services/element-repository.service';
 
 @Component({
   selector: 'app-element-selection',
@@ -10,10 +11,13 @@ export class ElementSelectionComponent {
 
   private selectedElements: HTMLElement[] = [];
 
-  public selectTarget(target: HTMLElement) {
+  constructor(private elementRepositoryService: ElementRepositoryService) {}
+
+  public selectTarget(editorElementId: string) {
     this.clearSelection();
+    const target = this.elementRepositoryService.getEditorElement(editorElementId);
     if (target) {
-      this.selectedElements.push(target);
+      this.selectedElements.push(target.htmlDom);
     }
   }
 

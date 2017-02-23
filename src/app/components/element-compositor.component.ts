@@ -11,7 +11,7 @@ import { ElementRepositoryService, EditorElement } from '../services/element-rep
 export class ElementCompositorComponent extends BaseDomManipulationComponent {
 
   @Output()
-  public onSelected = new EventEmitter<HTMLElement>();
+  public onSelected = new EventEmitter<string>();
 
   constructor(elementRef: ElementRef, private elementRepositoryService: ElementRepositoryService) {
     super(elementRef);
@@ -21,11 +21,7 @@ export class ElementCompositorComponent extends BaseDomManipulationComponent {
   public onMouseDown(event: MouseEvent) {
     if (this.isEventTargetInsideComponent(event.target) && !event.ctrlKey) {
       const target: HTMLElement = <HTMLElement> event.target;
-      if (target.dataset[ElementRepositoryService.ID_DATA_ATTR_NAME]) {
-        this.onSelected.emit(target);
-      } else {
-        this.onSelected.emit(null);
-      }
+      this.onSelected.emit(target.dataset[ElementRepositoryService.ID_DATA_ATTR_NAME]);
       if (event.target !== this.getNativeElement()) {
         event.preventDefault();
       }

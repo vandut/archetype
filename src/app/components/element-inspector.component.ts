@@ -2,6 +2,7 @@ import { Component, Input, HostListener } from '@angular/core';
 import { DragEventNames, DragDetail } from '../services/drag.service';
 import { ElementPaletteComponent } from './element-palette.component';
 import { HTMLElementTransformer } from '../utils/HTMLElement';
+import { ElementRepositoryService } from '../services/element-repository.service';
 
 interface PropertyBinding {
   id: string;
@@ -31,8 +32,11 @@ export class ElementInspectorComponent {
   @Input()
   public selected: HTMLElement = null;
 
-  public selectElement(element: HTMLElement) {
-    this.selectedElement = element ? HTMLElementTransformer.of(element) : null;
+  constructor(private elementRepositoryService: ElementRepositoryService) {}
+
+  public selectElement(editorElementId: string) {
+    const element = this.elementRepositoryService.getEditorElement(editorElementId);
+    this.selectedElement = element ? HTMLElementTransformer.of(element.htmlDom) : null;
   }
 
   @HostListener(DragEventNames.RECEIVE_BEGIN, ['$event.detail'])

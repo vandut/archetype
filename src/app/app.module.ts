@@ -16,6 +16,13 @@ import { ElementExplorerComponent } from './components/element-explorer.componen
 import { ElementExplorerTreeComponent } from './components/element-explorer-tree.component';
 import { ElementRepositoryService } from './services/element-repository.service';
 import { ElementSelectionService } from './services/element-selection.service';
+import { HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
+
+export class MyHammerConfig extends HammerGestureConfig  {
+  overrides = <any>{
+    'pan': {direction: Hammer.DIRECTION_ALL}
+  }
+}
 
 @NgModule({
   declarations: [
@@ -39,7 +46,11 @@ import { ElementSelectionService } from './services/element-selection.service';
   providers: [
     DragService,
     ElementRepositoryService,
-    ElementSelectionService
+    ElementSelectionService,
+    {
+      provide: HAMMER_GESTURE_CONFIG,
+      useClass: MyHammerConfig
+    }
   ],
   bootstrap: [AppComponent]
 })

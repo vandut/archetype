@@ -3,8 +3,6 @@ import { ElementCompositorComponent } from './element-compositor.component';
 import { PageCoordinates } from '../utils/PageCoordinates';
 import { HTMLElementChmod, HTMLElementTransformer } from '../utils/HTMLElement';
 import { DragDetail, DragEventNames } from '../services/drag.service';
-import { ElementPreviewComponent } from './element-preview.component';
-import { ElementPaletteComponent } from './element-palette.component';
 import {
   SelectionActionType,
   ResizeDragMessage,
@@ -12,7 +10,6 @@ import {
   SelectionComponent,
   SelectionDragMessage
 } from './selection.component';
-import { ElementSelectionService } from '../services/element-selection.service';
 
 @Component({
   selector: 'app-editor',
@@ -26,7 +23,7 @@ export class EditorComponent {
 
   private operation: Operation<SelectionDragMessage> = null;
 
-  constructor(private elementSelectionService: ElementSelectionService) {}
+  constructor() {}
 
   @HostListener(DragEventNames.RECEIVE_BEGIN, ['$event.detail'])
   public onDragBegin(detail: DragDetail<any | SelectionDragMessage, MouseEvent>) {
@@ -48,19 +45,9 @@ export class EditorComponent {
 
   @HostListener(DragEventNames.RECEIVE_END, ['$event.detail'])
   public onDragEnd(detail: DragDetail<any | SelectionDragMessage, MouseEvent>) {
-    if (detail.source instanceof ElementPaletteComponent) {
-      this.addElement(detail.data, detail.cause);
-    } else if (detail.source instanceof SelectionComponent) {
+    if (detail.source instanceof SelectionComponent) {
       this.operation.apply(detail.data, detail.cause);
       this.operation = null;
-    }
-  }
-
-  private addElement(template: string, coordinates: PageCoordinates) {
-    if (this.elementCompositor.isPageCoordinatesInsideComponent(coordinates)) {
-      coordinates = ElementPreviewComponent.addPaddingToPageCoordinates(coordinates);
-      const editorElement = this.elementCompositor.addElement(template, coordinates);
-      this.elementSelectionService.select(editorElement.id);
     }
   }
 

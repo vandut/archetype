@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HTMLElementFactory } from '../utils/HTMLElement';
+import { HTMLElementFactory, HTMLElementChmod } from '../utils/HTMLElement';
+import * as Rx from 'rxjs/Rx';
+import { PartialObserver } from 'rxjs/Observer';
 
 export class EditorElement {
   constructor(public id: string,
@@ -17,8 +19,8 @@ export class ElementRepositoryService {
   private static ID_PREFIX = 'id#';
   private nextElementId = 0;
 
-  // TODO: make this private and changes announced via Rx.Subject
   public elements: EditorElement[] = [];
+  private newElementAddedSubject: Rx.Subject<EditorElement> = new Rx.Subject();
 
   private generateNextElementId(): string {
     return ElementRepositoryService.ID_PREFIX + this.nextElementId++;
@@ -35,16 +37,34 @@ export class ElementRepositoryService {
     return null;
   }
 
-  // TODO: this should be root method that initializes adding new elements
-  public addEditorElement(template: string): EditorElement {
-    let el = {
+  private generateEditorElement(template: string): EditorElement {
+    let editorElement = {
       id: this.generateNextElementId(),
       htmlDom: HTMLElementFactory.fromTemplate(template),
       selected: false
     };
-    el.htmlDom.dataset[ElementRepositoryService.ID_DATA_ATTR_NAME] = el.id;
-    this.elements.push(el);
-    return el;
+    editorElement.htmlDom.dataset[ElementRepositoryService.ID_DATA_ATTR_NAME] = editorElement.id;
+    return editorElement;
+  }
+
+  private positionElement(editorElement: EditorElement, x: number, y: number) {
+    HTMLElementChmod.of(editorElement.htmlDom)
+      .applyTransformation(t => {
+        t.positionType = 'absolute';
+        t.positionX = x;
+        t.positionY = y;
+      });
+  }
+
+  public addEditorElement(template: string, x: number, y: number) {
+    let editorElement = this.generateEditorElement(template);
+    this.positionElement(editorElement, x, y);
+    this.elements.push(editorElement);
+    this.newElementAddedSubject.next(editorElement);
+  }
+
+  public subscribeToNewElementAdded(observer: PartialObserver<EditorElement>): Rx.Subscription {
+    return this.newElementAddedSubject.subscribe(observer);
   }
 
 }

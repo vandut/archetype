@@ -1,5 +1,5 @@
 <ul>
-    <li class="cursor_grab" (mousedown)="startDrag($event, defaultDivTemplate)">
+    <li class="cursor_grab" (panstart)="onPanStart($event, defaultDivTemplate)" (mousedown)="diffuseClick($event)">
         <div>&lt;div&gt;</div>
     </li>
 </ul>

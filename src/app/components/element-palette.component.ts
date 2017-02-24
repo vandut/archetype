@@ -17,12 +17,15 @@ export class ElementPaletteComponent {
     private dragService: DragService,
     private elementSelectionService: ElementSelectionService) {}
 
-  startDrag(event: MouseEvent, template: string) {
+  diffuseClick(event: MouseEvent) {
     if (event.button === 0) {
-      this.dragService.beginDrag(this, template, event);
-      this.elementSelectionService.clearSelection();
       event.preventDefault();
     }
+  }
+
+  onPanStart(event, template: string) {
+    this.dragService.beginDrag(this, template, event);
+    this.elementSelectionService.clearSelection();
   }
 
 }

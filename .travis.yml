@@ -10,7 +10,7 @@ install:
 script:
   - npm i --silent --no-optional;
   - ng build --prod --aot --base-href "https://vandut.github.io/archetype/"
-  - angular-cli-ghpages --no-silent --repo=https://GH_TOKEN@github.com/vandut/archetype.git --name="Konrad Bielak" --email=konrad.bielak@gmail.com
+  - angular-cli-ghpages --repo=https://GH_TOKEN@github.com/vandut/archetype.git --name="Konrad Bielak" --email=konrad.bielak@gmail.com
 
 branches:
   only:

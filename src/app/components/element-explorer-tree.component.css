@@ -3,17 +3,17 @@
 }
 
 ol {
-  background: url('assets/el-expl-all.png') repeat-y;
+  background: url('../../assets/el-expl-all.png') repeat-y;
   list-style: none;
   padding: 0;
 }
 li {
   padding-left: 24px;
   padding-top: 2px;
-  background: url('assets/el-expl-child.png') no-repeat;
+  background: url('../../assets/el-expl-child.png') no-repeat;
 }
 li:last-child {
-  background: white url('assets/el-expl-child-last.png') no-repeat;
+  background: white url('../../assets/el-expl-child-last.png') no-repeat;
 }
 li > div.title {
   height: 20px;

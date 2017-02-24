@@ -4,8 +4,8 @@ import { ElementRepositoryService } from '../services/element-repository.service
 import { ElementSelectionService } from '../services/element-selection.service';
 import { ElementPreviewComponent } from './element-preview.component';
 import { ElementPaletteComponent } from './element-palette.component';
-import { DragDetail, DragEventNames } from '../services/drag.service';
-import { SelectionDragMessage } from './selection.component';
+import { DragDetail, DragEventNames, DragService } from '../services/drag.service';
+import { SelectionDragMessage, MoveDragMessage, SelectionActionType } from './selection.component';
 import { Subscription } from 'rxjs';
 import { environment } from '../../environments/environment';
 
@@ -20,7 +20,8 @@ export class ElementCompositorComponent extends BaseDomManipulationComponent imp
   constructor(
     elementRef: ElementRef,
     private elementRepositoryService: ElementRepositoryService,
-    private elementSelectionService: ElementSelectionService)
+    private elementSelectionService: ElementSelectionService,
+    private dragService: DragService)
   {
     super(elementRef);
   }
@@ -42,15 +43,31 @@ export class ElementCompositorComponent extends BaseDomManipulationComponent imp
     this.subscription.unsubscribe();
   }
 
-  @HostListener('document:mousedown', ['$event'])
-  public onMouseDown(event: MouseEvent) {
-    if (this.isEventTargetInsideComponent(event.target) && !event.ctrlKey) {
-      const target: HTMLElement = <HTMLElement> event.target;
-      this.elementSelectionService.select(target.dataset[ElementRepositoryService.ID_DATA_ATTR_NAME]);
-      if (event.target !== this.getNativeElement()) {
-        event.preventDefault();
-      }
+  private selectElement(target: HTMLElement) {
+    this.elementSelectionService.select(target.dataset[ElementRepositoryService.ID_DATA_ATTR_NAME]);
+  }
+
+  private startDrag(event: MouseEvent) {
+    const message = new MoveDragMessage(<HTMLElement> event.target, SelectionActionType.Move);
+    this.dragService.beginDrag(this, message, event);
+  }
+
+  @HostListener('mousedown', ['$event'])
+  public diffuseClick(event: MouseEvent) {
+    if (event.button == 0) {
+      event.preventDefault();
     }
+  }
+
+  @HostListener('tap', ['$event'])
+  public onTap(event: HammerInput) {
+    this.selectElement(<HTMLElement> event.srcEvent.target);
+  }
+
+  @HostListener('panstart', ['$event'])
+  public onPress(event: HammerInput) {
+    this.selectElement(<HTMLElement> event.srcEvent.target);
+    this.startDrag(<MouseEvent> event.srcEvent);
   }
 
   @HostListener(DragEventNames.RECEIVE_END, ['$event.detail'])

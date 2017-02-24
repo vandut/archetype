@@ -27,7 +27,7 @@ export class EditorComponent {
 
   @HostListener(DragEventNames.RECEIVE_BEGIN, ['$event.detail'])
   public onDragBegin(detail: DragDetail<any | SelectionDragMessage, MouseEvent>) {
-    if (detail.source instanceof SelectionComponent) {
+    if (detail.source instanceof SelectionComponent || detail.source instanceof ElementCompositorComponent) {
       if (detail.data instanceof ResizeDragMessage) {
         this.operation = new ResizeOperation(detail.data.target, this.elementCompositor.getNativeElement(), detail.cause);
       } else if (detail.data instanceof MoveDragMessage) {
@@ -38,14 +38,14 @@ export class EditorComponent {
 
   @HostListener(DragEventNames.RECEIVE_MOVE, ['$event.detail'])
   public onDragMove(detail: DragDetail<any | SelectionDragMessage, MouseEvent>) {
-    if (detail.source instanceof SelectionComponent) {
+    if (detail.source instanceof SelectionComponent || detail.source instanceof ElementCompositorComponent) {
       this.operation.apply(detail.data, detail.cause);
     }
   }
 
   @HostListener(DragEventNames.RECEIVE_END, ['$event.detail'])
   public onDragEnd(detail: DragDetail<any | SelectionDragMessage, MouseEvent>) {
-    if (detail.source instanceof SelectionComponent) {
+    if (detail.source instanceof SelectionComponent || detail.source instanceof ElementCompositorComponent) {
       this.operation.apply(detail.data, detail.cause);
       this.operation = null;
     }

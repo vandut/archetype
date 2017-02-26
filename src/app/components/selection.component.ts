@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { HTMLElementTransformer } from '../utils/HTMLElement';
-import { DragService } from '../services/drag.service';
+import { LegacyDragService } from '../services/legacy-drag.service';
 
 export enum SelectionActionType {
   Move,
@@ -39,7 +39,7 @@ export class SelectionComponent {
     this.transformer = HTMLElementTransformer.of(element);
   }
 
-  constructor(private dragService: DragService) {}
+  constructor(private dragService: LegacyDragService) {}
 
   public onMouseDownActionMove(event: MouseEvent): boolean {
     if (event.button === 0) {

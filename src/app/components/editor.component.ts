@@ -2,7 +2,7 @@ import { Component, ViewChild, HostListener } from '@angular/core';
 import { ElementCompositorComponent } from './element-compositor.component';
 import { PageCoordinates } from '../utils/PageCoordinates';
 import { HTMLElementChmod, HTMLElementTransformer } from '../utils/HTMLElement';
-import { DragDetail, DragEventNames } from '../services/drag.service';
+import { DragDetail, DragEventNames } from '../services/legacy-drag.service';
 import {
   SelectionActionType,
   ResizeDragMessage,

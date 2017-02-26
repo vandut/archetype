@@ -1,7 +1,7 @@
 import { Component, ElementRef, HostListener, OnInit, OnDestroy } from '@angular/core';
 import { BaseDomManipulationComponent } from './base-dom-manipulation.component';
 import { HTMLElementFactory } from '../utils/HTMLElement';
-import { DragDetail, DragEventNames } from '../services/drag.service';
+import { DragDetail, DragEventNames } from '../services/legacy-drag.service';
 import { ElementPaletteComponent } from './element-palette.component';
 import { PreviewService } from '../services/preview.service';
 

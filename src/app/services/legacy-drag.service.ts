@@ -17,7 +17,7 @@ export class DragDetail<T, E extends Event> {
 }
 
 @Injectable()
-export class DragService {
+export class LegacyDragService {
 
   private initiatingDragDetail: DragDetail<any, Event> = null;
 
@@ -36,7 +36,7 @@ export class DragService {
   beginDrag(source: any, data: any, cause?: Event) {
     if (!this.isDragActive()) {
       this.initiatingDragDetail = new DragDetail(source, data, cause);
-      DragService.broadcastEvent(DragEventNames.DISPATCH_BEGIN, this.initiatingDragDetail);
+      LegacyDragService.broadcastEvent(DragEventNames.DISPATCH_BEGIN, this.initiatingDragDetail);
     } else {
       console.warn('Cannot start new drag, existing one is active.');
     }
@@ -44,14 +44,14 @@ export class DragService {
 
   endDrag(cause?: Event) {
     const dragDetail = this.copyInitiatingDragDetail(cause);
-    DragService.broadcastEvent(DragEventNames.DISPATCH_END, dragDetail);
+    LegacyDragService.broadcastEvent(DragEventNames.DISPATCH_END, dragDetail);
     this.initiatingDragDetail = null;
   }
 
   private registerListeners() {
     document.addEventListener('mousemove', event => {
       if (this.isDragActive()) {
-        DragService.broadcastEvent(DragEventNames.DISPATCH_MOVE, this.copyInitiatingDragDetail(event));
+        LegacyDragService.broadcastEvent(DragEventNames.DISPATCH_MOVE, this.copyInitiatingDragDetail(event));
       }
     });
     document.addEventListener('mouseup', event => {

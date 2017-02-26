@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { DragService } from '../services/drag.service';
+import { LegacyDragService } from '../services/legacy-drag.service';
 import { ElementSelectionService } from '../services/element-selection.service';
 
 @Component({
@@ -14,7 +14,7 @@ export class ElementPaletteComponent {
   private defaultDivTemplate = ElementPaletteComponent.DEFAULT_DIV_TEMPLATE;
 
   constructor(
-    private dragService: DragService,
+    private dragService: LegacyDragService,
     private elementSelectionService: ElementSelectionService) {}
 
   diffuseClick(event: MouseEvent) {

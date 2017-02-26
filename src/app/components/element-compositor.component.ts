@@ -3,7 +3,7 @@ import { BaseDomManipulationComponent } from './base-dom-manipulation.component'
 import { ElementRepositoryService } from '../services/element-repository.service';
 import { ElementSelectionService } from '../services/element-selection.service';
 import { ElementPaletteComponent } from './element-palette.component';
-import { DragDetail, DragEventNames, DragService } from '../services/drag.service';
+import { DragDetail, DragEventNames, LegacyDragService } from '../services/legacy-drag.service';
 import { SelectionDragMessage, MoveDragMessage, SelectionActionType } from './selection.component';
 import { Subscription } from 'rxjs';
 import { environment } from '../../environments/environment';
@@ -21,7 +21,7 @@ export class ElementCompositorComponent extends BaseDomManipulationComponent imp
     elementRef: ElementRef,
     private elementRepositoryService: ElementRepositoryService,
     private elementSelectionService: ElementSelectionService,
-    private dragService: DragService)
+    private dragService: LegacyDragService)
   {
     super(elementRef);
   }

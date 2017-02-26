@@ -10,7 +10,7 @@ import { ElementPreviewComponent } from './components/element-preview.component'
 import { ElementSelectionComponent } from './components/element-selection.component';
 import { EditorComponent } from './components/editor.component';
 import { SelectionComponent } from './components/selection.component';
-import { DragService } from './services/drag.service';
+import { LegacyDragService } from './services/legacy-drag.service';
 import { ElementInspectorComponent } from './components/element-inspector.component';
 import { ElementExplorerComponent } from './components/element-explorer.component';
 import { ElementExplorerTreeComponent } from './components/element-explorer-tree.component';
@@ -47,7 +47,7 @@ export class MyHammerConfig extends HammerGestureConfig  {
     FormsModule
   ],
   providers: [
-    DragService,
+    LegacyDragService,
     PreviewService,
     ElementRepositoryService,
     ElementSelectionService,

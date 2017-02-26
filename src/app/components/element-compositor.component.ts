@@ -2,12 +2,12 @@ import { Component, ElementRef, HostListener, OnInit, OnDestroy } from '@angular
 import { BaseDomManipulationComponent } from './base-dom-manipulation.component';
 import { ElementRepositoryService } from '../services/element-repository.service';
 import { ElementSelectionService } from '../services/element-selection.service';
-import { ElementPreviewComponent } from './element-preview.component';
 import { ElementPaletteComponent } from './element-palette.component';
 import { DragDetail, DragEventNames, DragService } from '../services/drag.service';
 import { SelectionDragMessage, MoveDragMessage, SelectionActionType } from './selection.component';
 import { Subscription } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { PreviewService } from '../services/preview.service';
 
 @Component({
   selector: 'app-element-compositor',
@@ -73,7 +73,7 @@ export class ElementCompositorComponent extends BaseDomManipulationComponent imp
   @HostListener(DragEventNames.RECEIVE_END, ['$event.detail'])
   public onDragEnd(detail: DragDetail<any | SelectionDragMessage, MouseEvent>) {
     if (detail.source instanceof ElementPaletteComponent && this.isPageCoordinatesInsideComponent(detail.cause)) {
-      let coordinates = ElementPreviewComponent.addPaddingToPageCoordinates(detail.cause);
+      let coordinates = PreviewService.addPreviewPadding(detail.cause);
       const [x, y] = this.toComponentCoordinates(coordinates);
       this.elementRepositoryService.addEditorElement(detail.data, x, y);
     }

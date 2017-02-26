@@ -1,5 +1,7 @@
 <ul>
-    <li class="cursor_grab" (panstart)="onPanStart($event, defaultDivTemplate)" (mousedown)="diffuseClick($event)">
-        <div>&lt;div&gt;</div>
+    <li *ngFor="let item of items" class="cursor_grab">
+        <div appDraggable data-drag-mode="preview" data-drag-preview="!copy"
+             [attr.data-palette-template]="item.template"
+             (previewstart)="onPreviewStart($event, item.template)">{{item.name}}</div>
     </li>
 </ul>

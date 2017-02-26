@@ -2,18 +2,18 @@ import { Component, ElementRef, HostListener, OnInit, OnDestroy } from '@angular
 import { BaseDomManipulationComponent } from './base-dom-manipulation.component';
 import { ElementRepositoryService } from '../services/element-repository.service';
 import { ElementSelectionService } from '../services/element-selection.service';
-import { ElementPaletteComponent } from './element-palette.component';
-import { DragDetail, DragEventNames, LegacyDragService } from '../services/legacy-drag.service';
-import { SelectionDragMessage, MoveDragMessage, SelectionActionType } from './selection.component';
+import { LegacyDragService } from '../services/legacy-drag.service';
+import { MoveDragMessage, SelectionActionType } from './selection.component';
 import { Subscription } from 'rxjs';
-import { environment } from '../../environments/environment';
 import { PreviewService } from '../services/preview.service';
+import { DropZoneService, DropZone } from '../services/drop-zone.service';
+import { PageCoordinates } from '../utils/PageCoordinates';
 
 @Component({
   selector: 'app-element-compositor',
   template: ``
 })
-export class ElementCompositorComponent extends BaseDomManipulationComponent implements OnInit, OnDestroy {
+export class ElementCompositorComponent extends BaseDomManipulationComponent implements OnInit, OnDestroy, DropZone {
 
   private subscription: Subscription = null;
 
@@ -21,7 +21,8 @@ export class ElementCompositorComponent extends BaseDomManipulationComponent imp
     elementRef: ElementRef,
     private elementRepositoryService: ElementRepositoryService,
     private elementSelectionService: ElementSelectionService,
-    private dragService: LegacyDragService)
+    private legacyDragService: LegacyDragService,
+    private dropZoneService: DropZoneService)
   {
     super(elementRef);
   }
@@ -33,23 +34,24 @@ export class ElementCompositorComponent extends BaseDomManipulationComponent imp
         this.elementSelectionService.select(editorElement.id);
       }
     });
-    if (!environment.production) {
-      this.elementRepositoryService.addEditorElement(ElementPaletteComponent.DEFAULT_DIV_TEMPLATE, 100, 100);
-      this.elementRepositoryService.addEditorElement(ElementPaletteComponent.DEFAULT_DIV_TEMPLATE, 300, 300);
-    }
+    this.dropZoneService.addDropZone(this);
   }
 
   public ngOnDestroy() {
+    this.dropZoneService.removeDropZone(this);
     this.subscription.unsubscribe();
   }
 
-  private selectElement(target: HTMLElement) {
-    this.elementSelectionService.select(target.dataset[ElementRepositoryService.ID_DATA_ATTR_NAME]);
+  public isInDropZone(coordinates: PageCoordinates): boolean {
+    return this.isPageCoordinatesInsideComponent(coordinates);
   }
 
-  private startDrag(event: MouseEvent) {
-    const message = new MoveDragMessage(<HTMLElement> event.target, SelectionActionType.Move);
-    this.dragService.beginDrag(this, message, event);
+  public onDropZoneActivated(source: HTMLElement, coordinates: PageCoordinates) {
+    coordinates = PreviewService.addPreviewPadding(coordinates);
+    const [x, y] = this.toComponentCoordinates(coordinates);
+    if (source.dataset['paletteTemplate']) {
+      this.elementRepositoryService.addEditorElement(source.dataset['paletteTemplate'], x, y);
+    }
   }
 
   @HostListener('mousedown', ['$event'])
@@ -65,18 +67,18 @@ export class ElementCompositorComponent extends BaseDomManipulationComponent imp
   }
 
   @HostListener('panstart', ['$event'])
-  public onPress(event: HammerInput) {
+  public onPanStart(event: HammerInput) {
     this.selectElement(<HTMLElement> event.srcEvent.target);
     this.startDrag(<MouseEvent> event.srcEvent);
   }
 
-  @HostListener(DragEventNames.RECEIVE_END, ['$event.detail'])
-  public onDragEnd(detail: DragDetail<any | SelectionDragMessage, MouseEvent>) {
-    if (detail.source instanceof ElementPaletteComponent && this.isPageCoordinatesInsideComponent(detail.cause)) {
-      let coordinates = PreviewService.addPreviewPadding(detail.cause);
-      const [x, y] = this.toComponentCoordinates(coordinates);
-      this.elementRepositoryService.addEditorElement(detail.data, x, y);
-    }
+  private selectElement(target: HTMLElement) {
+    this.elementSelectionService.select(target.dataset[ElementRepositoryService.ID_DATA_ATTR_NAME]);
+  }
+
+  private startDrag(event: MouseEvent) {
+    const message = new MoveDragMessage(<HTMLElement> event.target, SelectionActionType.Move);
+    this.legacyDragService.beginDrag(this, message, event);
   }
 
 }

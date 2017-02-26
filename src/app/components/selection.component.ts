@@ -39,12 +39,14 @@ export class SelectionComponent {
     this.transformer = HTMLElementTransformer.of(element);
   }
 
-  constructor(private dragService: LegacyDragService) {}
+  constructor(private legacyDragService: LegacyDragService) {}
+
+  // TODO: apply appDraggable directive
 
   public onMouseDownActionMove(event: MouseEvent): boolean {
     if (event.button === 0) {
       const message = new MoveDragMessage(this._target, SelectionActionType.Move);
-      this.dragService.beginDrag(this, message, event);
+      this.legacyDragService.beginDrag(this, message, event);
       return false;
     }
   }
@@ -52,7 +54,7 @@ export class SelectionComponent {
   public onMouseDownActionResize(type: string, event: MouseEvent): boolean {
     if (event.button === 0) {
       const message = new ResizeDragMessage(this._target, SelectionActionType[type]);
-      this.dragService.beginDrag(this, message, event);
+      this.legacyDragService.beginDrag(this, message, event);
       return false;
     }
   }

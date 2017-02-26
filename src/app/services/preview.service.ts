@@ -20,22 +20,26 @@ export class PreviewService {
   }
 
   public startPreview(target: HTMLElement, coordinates: PageCoordinates) {
-    coordinates = PreviewService.addPreviewPadding(coordinates);
-    const [x, y] = this.canvas.toParentElementCoordinates(coordinates);
-    this.preview = new PreviewHost(target);
-    this.preview.attach(this.canvas.getNativeParentElement());
-    this.preview.moveTo(x, y);
+    if (!this.preview) {
+      coordinates = PreviewService.addPreviewPadding(coordinates);
+      const [x, y] = this.canvas.toParentElementCoordinates(coordinates);
+      this.preview = new PreviewHost(target);
+      this.preview.attach(this.canvas.getNativeParentElement());
+      this.preview.moveTo(x, y);
+    }
   }
 
   public movePreview(coordinates: PageCoordinates) {
-    if (this.canvas.isPageCoordinatesInsideParentComponent(coordinates)) {
-      if (!this.preview.isVisible()) {
-        this.preview.show();
-      }
-      this.movePreviewTo(coordinates);
-    } else {
-      if (this.preview.isVisible()) {
-        this.preview.hide();
+    if (this.preview) {
+      if (this.canvas.isPageCoordinatesInsideParentComponent(coordinates)) {
+        if (!this.preview.isVisible()) {
+          this.preview.show();
+        }
+        this.movePreviewTo(coordinates);
+      } else {
+        if (this.preview.isVisible()) {
+          this.preview.hide();
+        }
       }
     }
   }

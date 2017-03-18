@@ -42,8 +42,8 @@ export class ElementCompositorComponent extends BaseDomManipulationComponent imp
     this.subscription.unsubscribe();
   }
 
-  public isInDropZone(coordinates: PageCoordinates): boolean {
-    return this.isPageCoordinatesInsideComponent(coordinates);
+  public isInDropZone(label: string, coordinates: PageCoordinates): boolean {
+    return label === 'palette' && this.isPageCoordinatesInsideComponent(coordinates);
   }
 
   public onDropZoneActivated(source: HTMLElement, coordinates: PageCoordinates) {

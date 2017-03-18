@@ -29,7 +29,7 @@ export class LegacyDragService {
     this.registerListeners();
   }
 
-  isDragActive(): boolean {
+  private isDragActive(): boolean {
     return !!this.initiatingDragDetail;
   }
 
@@ -42,7 +42,7 @@ export class LegacyDragService {
     }
   }
 
-  endDrag(cause?: Event) {
+  private endDrag(cause?: Event) {
     const dragDetail = this.copyInitiatingDragDetail(cause);
     LegacyDragService.broadcastEvent(DragEventNames.DISPATCH_END, dragDetail);
     this.initiatingDragDetail = null;

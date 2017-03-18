@@ -3,7 +3,7 @@ import { PageCoordinates } from '../utils/PageCoordinates';
 
 export interface DropZone {
   onDropZoneActivated(source: HTMLElement, coordinates: PageCoordinates);
-  isInDropZone(coordinates: PageCoordinates): boolean;
+  isInDropZone(label: string, coordinates: PageCoordinates): boolean;
 }
 
 @Injectable()
@@ -22,8 +22,8 @@ export class DropZoneService {
     }
   }
 
-  public findDropZone(coordinates: PageCoordinates): DropZone {
-    return this.dropZones.find(dz => dz.isInDropZone(coordinates));
+  public findDropZone(label: string, coordinates: PageCoordinates): DropZone {
+    return this.dropZones.find(dz => dz.isInDropZone(label, coordinates));
   }
 
 }

@@ -9,6 +9,7 @@ import { DropZoneService } from '../services/drop-zone.service';
 export class DraggableDirective {
   private static DATA_ATTR_MODE = 'dragMode';
   private static DATA_ATTR_PREVIEW = 'dragPreview';
+  private static DATA_ATTR_LABEL = 'dragLabel';
 
   @Output('previewstart')
   public previewStart: EventEmitter<HammerInput> = new EventEmitter();
@@ -32,6 +33,9 @@ export class DraggableDirective {
         this.previewStart.emit(event);
       }
     }
+    // TODO: Step 1: create dummy div that can be dragged
+    // TODO: Step 2: delegate to legacy drag service
+    // TODO: Step 6: make parent handle child drag
   }
 
   @HostListener('panmove', ['$event'])
@@ -39,6 +43,7 @@ export class DraggableDirective {
     if (DraggableDirective.isModePreview(event.target)) {
       this.previewService.movePreview(DraggableDirective.hammerPoint2Coordinates(event.center));
     }
+    // TODO: Step 3: delegate to legacy drag service
   }
 
   @HostListener('panend', ['$event'])
@@ -47,12 +52,14 @@ export class DraggableDirective {
       this.previewService.endPreview();
     }
     if (DraggableDirective.isDraggable(event.target)) {
+      const label = event.target.dataset[DraggableDirective.DATA_ATTR_LABEL];
       const coordinates = DraggableDirective.hammerPoint2Coordinates(event.center);
-      const dropZone = this.dropZoneService.findDropZone(coordinates);
+      const dropZone = this.dropZoneService.findDropZone(label, coordinates);
       if (dropZone) {
         dropZone.onDropZoneActivated(event.target, coordinates);
       }
     }
+    // TODO: Step 4: delegate to legacy drag service
   }
 
   @HostListener('pancancel', ['$event'])
@@ -60,6 +67,7 @@ export class DraggableDirective {
     if (DraggableDirective.isModePreview(event.target)) {
       this.previewService.endPreview();
     }
+    // TODO: Step 5: delegate to legacy drag service
   }
 
   private static isDraggable(htmlElement: HTMLElement): boolean {
@@ -82,3 +90,6 @@ export class DraggableDirective {
   }
 
 }
+
+
+// TODO: extract logic to class? not needed if parent can handle child drag

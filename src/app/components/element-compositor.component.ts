@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs';
 import { PreviewService } from '../services/preview.service';
 import { DropZoneService, DropZone } from '../services/drop-zone.service';
 import { PageCoordinates } from '../utils/PageCoordinates';
-import { DragMoveService, DragMoveEventListener } from '../services/drag-move.service';
+import { DragMoveService, DragMoveEventListener, DragBaseService } from '../services/drag.service';
 
 @Component({
   selector: 'app-element-compositor',
@@ -33,7 +33,7 @@ export class ElementCompositorComponent extends BaseDomManipulationComponent imp
     this.subscription = this.elementRepositoryService.subscribeToNewElementAdded({
       next: editorElement => {
         DragMoveService.registerMoveListeners(editorElement.htmlDom, this);
-        editorElement.htmlDom.dataset[DragMoveService.DATA_ATTR_CHILDREN_OF] = ElementCompositorComponent.ROOT_PARENT_NAME;
+        editorElement.htmlDom.dataset[DragBaseService.DATA_ATTR_CHILDREN_OF] = ElementCompositorComponent.ROOT_PARENT_NAME;
         this.getNativeElement().children[0].appendChild(editorElement.htmlDom);
         this.elementSelectionService.select(editorElement.id);
       }
@@ -64,32 +64,32 @@ export class ElementCompositorComponent extends BaseDomManipulationComponent imp
     }
   }
 
-  public onTap(target: HTMLElement, point: HammerPoint) {
+  public onTap(target: HTMLElement, point: HammerPoint, data: any) {
     this.selectElement(target);
   }
 
-  public onPanStart(target: HTMLElement, point: HammerPoint) {
+  public onPanStart(target: HTMLElement, point: HammerPoint, data: any) {
     if (this.canHandleDragMove(target)) {
       this.selectElement(target);
-      this.dragMoveService.onPanStart(target, point);
+      this.dragMoveService.onPanStart(target, point, data);
     }
   }
 
-  public onPanMove(target: HTMLElement, point: HammerPoint) {
+  public onPanMove(target: HTMLElement, point: HammerPoint, data: any) {
     if (this.canHandleDragMove(target)) {
-      this.dragMoveService.onPanMove(target, point);
+      this.dragMoveService.onPanMove(target, point, data);
     }
   }
 
-  public onPanEnd(target: HTMLElement, point: HammerPoint) {
+  public onPanEnd(target: HTMLElement, point: HammerPoint, data: any) {
     if (this.canHandleDragMove(target)) {
-      this.dragMoveService.onPanEnd(target, point);
+      this.dragMoveService.onPanEnd(target, point, data);
     }
   }
 
-  public onPanCancel(target: HTMLElement, point: HammerPoint) {
+  public onPanCancel(target: HTMLElement, point: HammerPoint, data: any) {
     if (this.canHandleDragMove(target)) {
-      this.dragMoveService.onPanCancel(target, point);
+      this.dragMoveService.onPanCancel(target, point, data);
     }
   }
 

@@ -1,26 +1,9 @@
 import { Component, Input, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { HTMLElementTransformer } from '../utils/HTMLElement';
-import { LegacyDragService } from '../services/legacy-drag.service';
-import { ForwardingDragMoveEventListener, DragMoveService } from '../services/drag-move.service';
-
-export enum SelectionActionType {
-  Resize_N,
-  Resize_S,
-  Resize_W,
-  Resize_E,
-  Resize_NW,
-  Resize_NE,
-  Resize_SW,
-  Resize_SE
-}
-
-export abstract class SelectionDragMessage {
-  constructor(public target: HTMLElement,
-              public action: SelectionActionType) {}
-}
-
-export class ResizeDragMessage extends SelectionDragMessage {}
-export class MoveDragMessage extends SelectionDragMessage {}
+import {
+  ForwardingDragMoveEventListener, DragMoveService, DragResizeService,
+  DragBaseService
+} from '../services/drag.service';
 
 @Component({
   selector: 'app-selection',
@@ -39,22 +22,29 @@ export class SelectionComponent implements AfterViewInit {
     this.transformer = HTMLElementTransformer.of(element);
   }
 
-  @ViewChild('background')
-  private background: ElementRef;
+  @ViewChild('background') private background: ElementRef;
+  @ViewChild('resizeN')    private resizeN: ElementRef;
+  @ViewChild('resizeS')    private resizeS: ElementRef;
+  @ViewChild('resizeW')    private resizeW: ElementRef;
+  @ViewChild('resizeE')    private resizeE: ElementRef;
+  @ViewChild('resizeNW')   private resizeNW: ElementRef;
+  @ViewChild('resizeNE')   private resizeNE: ElementRef;
+  @ViewChild('resizeSW')   private resizeSW: ElementRef;
+  @ViewChild('resizeSE')   private resizeSE: ElementRef;
 
-  constructor(private legacyDragService: LegacyDragService,
-              private dragMoveService: DragMoveService) {}
+  constructor(private dragMoveService: DragMoveService,
+              private dragResizeService: DragResizeService) {}
 
   ngAfterViewInit() {
-    DragMoveService.registerMoveListeners(this.background.nativeElement, new SelectionTargetDragMoveListener(this.dragMoveService, this));
-  }
-
-  public onMouseDownActionResize(type: string, event: MouseEvent): boolean {
-    if (event.button === 0) {
-      const message = new ResizeDragMessage(this._target, SelectionActionType[type]);
-      this.legacyDragService.beginDrag(this, message, event);
-      return false;
-    }
+    DragMoveService.registerMoveListeners(this.background.nativeElement, new SelectionTargetDragMoveListener(this.dragMoveService,   this, 'Move'));
+    DragMoveService.registerMoveListeners(this.resizeN.nativeElement,    new SelectionTargetDragMoveListener(this.dragResizeService, this, 'Resize_N'));
+    DragMoveService.registerMoveListeners(this.resizeS.nativeElement,    new SelectionTargetDragMoveListener(this.dragResizeService, this, 'Resize_S'));
+    DragMoveService.registerMoveListeners(this.resizeW.nativeElement,    new SelectionTargetDragMoveListener(this.dragResizeService, this, 'Resize_W'));
+    DragMoveService.registerMoveListeners(this.resizeE.nativeElement,    new SelectionTargetDragMoveListener(this.dragResizeService, this, 'Resize_E'));
+    DragMoveService.registerMoveListeners(this.resizeNW.nativeElement,   new SelectionTargetDragMoveListener(this.dragResizeService, this, 'Resize_NW'));
+    DragMoveService.registerMoveListeners(this.resizeNE.nativeElement,   new SelectionTargetDragMoveListener(this.dragResizeService, this, 'Resize_NE'));
+    DragMoveService.registerMoveListeners(this.resizeSW.nativeElement,   new SelectionTargetDragMoveListener(this.dragResizeService, this, 'Resize_SW'));
+    DragMoveService.registerMoveListeners(this.resizeSE.nativeElement,   new SelectionTargetDragMoveListener(this.dragResizeService, this, 'Resize_SE'));
   }
 
   public isMovable(): boolean {
@@ -69,28 +59,30 @@ export class SelectionComponent implements AfterViewInit {
 
 class SelectionTargetDragMoveListener extends ForwardingDragMoveEventListener {
 
-  constructor(dragMoveService: DragMoveService, private selectionComponent: SelectionComponent) {
-    super(dragMoveService);
+  constructor(dragBaseService: DragBaseService,
+              private selectionComponent: SelectionComponent,
+              private customData: any) {
+    super(dragBaseService);
   }
 
-  public onTap(target: HTMLElement, point: HammerPoint) {
-    super.onTap(this.selectionComponent._target, point);
+  public onTap(target: HTMLElement, point: HammerPoint, data: any) {
+    super.onTap(this.selectionComponent._target, point, this.customData);
   }
 
-  public onPanStart(target: HTMLElement, point: HammerPoint) {
-    super.onPanStart(this.selectionComponent._target, point);
+  public onPanStart(target: HTMLElement, point: HammerPoint, data: any) {
+    super.onPanStart(this.selectionComponent._target, point, this.customData);
   }
 
-  public onPanMove(target: HTMLElement, point: HammerPoint) {
-    super.onPanMove(this.selectionComponent._target, point);
+  public onPanMove(target: HTMLElement, point: HammerPoint, data: any) {
+    super.onPanMove(this.selectionComponent._target, point, this.customData);
   }
 
-  public onPanEnd(target: HTMLElement, point: HammerPoint) {
-    super.onPanEnd(this.selectionComponent._target, point);
+  public onPanEnd(target: HTMLElement, point: HammerPoint, data: any) {
+    super.onPanEnd(this.selectionComponent._target, point, this.customData);
   }
 
-  public onPanCancel(target: HTMLElement, point: HammerPoint) {
-    super.onPanCancel(this.selectionComponent._target, point);
+  public onPanCancel(target: HTMLElement, point: HammerPoint, data: any) {
+    super.onPanCancel(this.selectionComponent._target, point, this.customData);
   }
 
 }

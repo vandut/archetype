@@ -1,21 +1,12 @@
 <div class="box" [style.left.px]="transformer.positionX" [style.top.px]="transformer.positionY"
      [style.width.px]="transformer.totalWidth" [style.height.px]="transformer.totalHeight">
-  <div class="background" [attr.data-usable]="isMovable()" #background></div>
-
-  <div [attr.data-usable]="isMovable() && isResizable()"
-       class="border W" (mousedown)="onMouseDownActionResize('Resize_W', $event)"></div>
-  <div [attr.data-usable]="isResizable()"
-       class="border E" (mousedown)="onMouseDownActionResize('Resize_E', $event)"></div>
-  <div [attr.data-usable]="isMovable() && isResizable()"
-       class="border N" (mousedown)="onMouseDownActionResize('Resize_N', $event)"></div>
-  <div [attr.data-usable]="isResizable()"
-       class="border S" (mousedown)="onMouseDownActionResize('Resize_S', $event)"></div>
-  <div [attr.data-usable]="isMovable() && isResizable()"
-       class="corner NW" (mousedown)="onMouseDownActionResize('Resize_NW', $event)"></div>
-  <div [attr.data-usable]="isMovable() && isResizable()"
-       class="corner NE" (mousedown)="onMouseDownActionResize('Resize_NE', $event)"></div>
-  <div [attr.data-usable]="isMovable() && isResizable()"
-       class="corner SW" (mousedown)="onMouseDownActionResize('Resize_SW', $event)"></div>
-  <div [attr.data-usable]="isResizable()"
-       class="corner SE" (mousedown)="onMouseDownActionResize('Resize_SE', $event)"></div>
+  <div class="background" [attr.data-usable]="isMovable()"                  #background></div>
+  <div class="border W"   [attr.data-usable]="isMovable() && isResizable()" #resizeW></div>
+  <div class="border E"   [attr.data-usable]="isResizable()"                #resizeE></div>
+  <div class="border N"   [attr.data-usable]="isMovable() && isResizable()" #resizeN></div>
+  <div class="border S"   [attr.data-usable]="isResizable()"                #resizeS></div>
+  <div class="corner NW"  [attr.data-usable]="isMovable() && isResizable()" #resizeNW></div>
+  <div class="corner NE"  [attr.data-usable]="isMovable() && isResizable()" #resizeNE></div>
+  <div class="corner SW"  [attr.data-usable]="isMovable() && isResizable()" #resizeSW></div>
+  <div class="corner SE"  [attr.data-usable]="isResizable()"                #resizeSE></div>
 </div>

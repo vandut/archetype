@@ -11,7 +11,7 @@ import { DragMoveService, DragMoveEventListener } from '../services/drag-move.se
 @Component({
   selector: 'app-element-compositor',
   template: `<div style="position:absolute;top:0;bottom:0;left:0;right:0"
-                  [attr.data-drag-parent-for]="ElementCompositorComponent.ROOT_PARENT_NAME"></div>`
+                  data-drag-parent-for="root"></div>`
 })
 export class ElementCompositorComponent extends BaseDomManipulationComponent implements OnInit, OnDestroy, DropZone, DragMoveEventListener {
 

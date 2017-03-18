@@ -18,7 +18,7 @@ import { ElementRepositoryService } from './services/element-repository.service'
 import { ElementSelectionService } from './services/element-selection.service';
 import { HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { PreviewService } from './services/preview.service';
-import { DraggableDirective } from './directives/draggable.directive';
+import { DragPreviewDirective } from './directives/drag-preview.directive';
 import { DropZoneService } from './services/drop-zone.service';
 
 export class MyHammerConfig extends HammerGestureConfig  {
@@ -31,7 +31,7 @@ export class MyHammerConfig extends HammerGestureConfig  {
   declarations: [
     AppComponent,
     CopyParentSizeDirective,
-    DraggableDirective,
+    DragPreviewDirective,
     SnappingGridComponent,
     ElementPaletteComponent,
     ElementCompositorComponent,

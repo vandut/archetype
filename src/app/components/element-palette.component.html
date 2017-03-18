@@ -1,6 +1,6 @@
 <ul>
     <li *ngFor="let item of items" class="cursor_grab">
-        <div appDraggable data-drag-mode="preview" data-drag-preview="!copy" data-drag-label="palette"
+        <div appDragPreview data-drag-preview="!copy" data-drag-label="palette"
              [attr.data-palette-template]="item.template"
              (previewstart)="onPreviewStart($event, item.template)">{{item.name}}</div>
     </li>

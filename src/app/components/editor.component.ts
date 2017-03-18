@@ -30,8 +30,6 @@ export class EditorComponent {
     if (detail.source instanceof SelectionComponent || detail.source instanceof ElementCompositorComponent) {
       if (detail.data instanceof ResizeDragMessage) {
         this.operation = new ResizeOperation(detail.data.target, this.elementCompositor.getNativeElement(), detail.cause);
-      } else if (detail.data instanceof MoveDragMessage) {
-        this.operation = new MoveOperation(detail.data.target, this.elementCompositor.getNativeElement(), detail.cause);
       }
     }
   }
@@ -65,28 +63,6 @@ abstract class Operation<Message extends SelectionDragMessage> {
   }
 
   abstract apply(message: Message, event: MouseEvent);
-
-}
-
-class MoveOperation extends Operation<MoveDragMessage> {
-
-  apply(message: MoveDragMessage, event: MouseEvent) {
-    this.target.positionX += event.pageX - this.lastCoordinates.pageX;
-    this.target.positionY += event.pageY - this.lastCoordinates.pageY;
-    this.lastCoordinates = event;
-    this.adjustForSize();
-  }
-
-  private adjustForSize() {
-    const adjustedLeft = Math.min(Math.max(0, this.target.positionX), this.host.innerWidth - this.target.totalWidth);
-    const adjustedTop = Math.min(Math.max(0, this.target.positionY), this.host.innerHeight - this.target.totalHeight);
-    this.lastCoordinates = {
-      pageX: this.lastCoordinates.pageX + adjustedLeft - this.target.positionX,
-      pageY: this.lastCoordinates.pageY + adjustedTop - this.target.positionY
-    };
-    this.target.positionX = adjustedLeft;
-    this.target.positionY = adjustedTop;
-  }
 
 }
 

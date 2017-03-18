@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, OnDestroy } from '@angular/core';
+import { Component, ElementRef, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { BaseDomManipulationComponent } from './base-dom-manipulation.component';
 import { ElementRepositoryService } from '../services/element-repository.service';
 import { ElementSelectionService } from '../services/element-selection.service';
@@ -62,6 +62,11 @@ export class ElementCompositorComponent extends BaseDomManipulationComponent imp
     if (this.canHandleDragMove(event.target)) {
       this.dragMoveService.diffuseClick(event);
     }
+  }
+
+  @HostListener('tap', ['$event'])
+  public onTapHost(event: HammerInput) {
+    this.selectElement(event.target);
   }
 
   public onTap(target: HTMLElement, point: HammerPoint, data: any) {

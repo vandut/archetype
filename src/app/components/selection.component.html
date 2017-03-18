@@ -1,7 +1,7 @@
 <div class="box" [style.left.px]="transformer.positionX" [style.top.px]="transformer.positionY"
      [style.width.px]="transformer.totalWidth" [style.height.px]="transformer.totalHeight">
-  <div [attr.data-usable]="isMovable()"
-       class="background" (mousedown)="onMouseDownActionMove($event)"></div>
+  <div class="background" [attr.data-usable]="isMovable()" #background></div>
+
   <div [attr.data-usable]="isMovable() && isResizable()"
        class="border W" (mousedown)="onMouseDownActionResize('Resize_W', $event)"></div>
   <div [attr.data-usable]="isResizable()"

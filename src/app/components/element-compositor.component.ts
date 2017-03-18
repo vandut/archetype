@@ -1,19 +1,21 @@
-import { Component, ElementRef, HostListener, OnInit, OnDestroy } from '@angular/core';
+import { Component, ElementRef, OnInit, OnDestroy } from '@angular/core';
 import { BaseDomManipulationComponent } from './base-dom-manipulation.component';
 import { ElementRepositoryService } from '../services/element-repository.service';
 import { ElementSelectionService } from '../services/element-selection.service';
-import { LegacyDragService } from '../services/legacy-drag.service';
-import { MoveDragMessage, SelectionActionType } from './selection.component';
 import { Subscription } from 'rxjs';
 import { PreviewService } from '../services/preview.service';
 import { DropZoneService, DropZone } from '../services/drop-zone.service';
 import { PageCoordinates } from '../utils/PageCoordinates';
+import { DragMoveService, DragMoveEventListener } from '../services/drag-move.service';
 
 @Component({
   selector: 'app-element-compositor',
-  template: ``
+  template: `<div style="position:absolute;top:0;bottom:0;left:0;right:0"
+                  [attr.data-drag-parent-for]="ElementCompositorComponent.ROOT_PARENT_NAME"></div>`
 })
-export class ElementCompositorComponent extends BaseDomManipulationComponent implements OnInit, OnDestroy, DropZone {
+export class ElementCompositorComponent extends BaseDomManipulationComponent implements OnInit, OnDestroy, DropZone, DragMoveEventListener {
+
+  public static ROOT_PARENT_NAME = 'root';
 
   private subscription: Subscription = null;
 
@@ -21,8 +23,8 @@ export class ElementCompositorComponent extends BaseDomManipulationComponent imp
     elementRef: ElementRef,
     private elementRepositoryService: ElementRepositoryService,
     private elementSelectionService: ElementSelectionService,
-    private legacyDragService: LegacyDragService,
-    private dropZoneService: DropZoneService)
+    private dropZoneService: DropZoneService,
+    private dragMoveService: DragMoveService)
   {
     super(elementRef);
   }
@@ -30,7 +32,9 @@ export class ElementCompositorComponent extends BaseDomManipulationComponent imp
   public ngOnInit() {
     this.subscription = this.elementRepositoryService.subscribeToNewElementAdded({
       next: editorElement => {
-        this.getNativeElement().appendChild(editorElement.htmlDom);
+        DragMoveService.registerMoveListeners(editorElement.htmlDom, this);
+        editorElement.htmlDom.dataset[DragMoveService.DATA_ATTR_CHILDREN_OF] = ElementCompositorComponent.ROOT_PARENT_NAME;
+        this.getNativeElement().children[0].appendChild(editorElement.htmlDom);
         this.elementSelectionService.select(editorElement.id);
       }
     });
@@ -54,31 +58,51 @@ export class ElementCompositorComponent extends BaseDomManipulationComponent imp
     }
   }
 
-  @HostListener('mousedown', ['$event'])
   public diffuseClick(event: MouseEvent) {
-    if (event.button == 0) {
-      event.preventDefault();
+    if (this.canHandleDragMove(event.target)) {
+      this.dragMoveService.diffuseClick(event);
     }
   }
 
-  @HostListener('tap', ['$event'])
-  public onTap(event: HammerInput) {
-    this.selectElement(<HTMLElement> event.srcEvent.target);
+  public onTap(target: HTMLElement, point: HammerPoint) {
+    this.selectElement(target);
   }
 
-  @HostListener('panstart', ['$event'])
-  public onPanStart(event: HammerInput) {
-    this.selectElement(<HTMLElement> event.srcEvent.target);
-    this.startDrag(<MouseEvent> event.srcEvent);
+  public onPanStart(target: HTMLElement, point: HammerPoint) {
+    if (this.canHandleDragMove(target)) {
+      this.selectElement(target);
+      this.dragMoveService.onPanStart(target, point);
+    }
+  }
+
+  public onPanMove(target: HTMLElement, point: HammerPoint) {
+    if (this.canHandleDragMove(target)) {
+      this.dragMoveService.onPanMove(target, point);
+    }
+  }
+
+  public onPanEnd(target: HTMLElement, point: HammerPoint) {
+    if (this.canHandleDragMove(target)) {
+      this.dragMoveService.onPanEnd(target, point);
+    }
+  }
+
+  public onPanCancel(target: HTMLElement, point: HammerPoint) {
+    if (this.canHandleDragMove(target)) {
+      this.dragMoveService.onPanCancel(target, point);
+    }
+  }
+
+  private canHandleDragMove(target: EventTarget | HTMLElement): boolean {
+    return !!this.getIndexedElementId(<HTMLElement> target);
   }
 
   private selectElement(target: HTMLElement) {
     this.elementSelectionService.select(target.dataset[ElementRepositoryService.ID_DATA_ATTR_NAME]);
   }
 
-  private startDrag(event: MouseEvent) {
-    const message = new MoveDragMessage(<HTMLElement> event.target, SelectionActionType.Move);
-    this.legacyDragService.beginDrag(this, message, event);
+  private getIndexedElementId(htmlElement: HTMLElement) {
+    return htmlElement.dataset[ElementRepositoryService.ID_DATA_ATTR_NAME];
   }
 
 }

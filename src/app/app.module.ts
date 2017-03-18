@@ -20,6 +20,7 @@ import { HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-br
 import { PreviewService } from './services/preview.service';
 import { DragPreviewDirective } from './directives/drag-preview.directive';
 import { DropZoneService } from './services/drop-zone.service';
+import { DragMoveService } from './services/drag-move.service';
 
 export class MyHammerConfig extends HammerGestureConfig  {
   overrides = <any>{
@@ -51,6 +52,7 @@ export class MyHammerConfig extends HammerGestureConfig  {
     LegacyDragService,
     PreviewService,
     DropZoneService,
+    DragMoveService,
     ElementRepositoryService,
     ElementSelectionService,
     {

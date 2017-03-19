@@ -1,7 +1,7 @@
 import { Component, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { ElementRepositoryService } from '../services/element-repository.service';
 import { ElementPaletteComponent } from './element-palette.component';
-import { environment } from '../../environments/environment';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-root',

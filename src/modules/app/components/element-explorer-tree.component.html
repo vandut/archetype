@@ -3,6 +3,9 @@
     <div class="title" [class.selected]="node.selected"
          (tap)="onNodeClick(node.id)"
          dragPreview>{{node.id}}</div>
+    <div class="dropZoneTop" #dropZone data-show="false"></div>
     <app-element-explorer-tree *ngIf="node.children" [tree]="node.children"></app-element-explorer-tree>
+    <div class="dropZoneBottom" #dropZone data-show="false"></div>
+    <!-- TODO: drop zones appear twice, rearrange this to reduce lag and footprint -->
   </li>
 </ol>

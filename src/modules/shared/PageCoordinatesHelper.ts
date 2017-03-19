@@ -35,4 +35,11 @@ export class PageCoordinatesHelper {
     ];
   }
 
+  public static fromHammerPoint(point: HammerPoint): PageCoordinates {
+    return {
+      pageX: point.x,
+      pageY: point.y
+    };
+  }
+
 }

@@ -6,11 +6,13 @@ ol {
   background: url('../../../assets/el-expl-all.png') repeat-y;
   list-style: none;
   padding: 0;
+  position: relative;
 }
 li {
   padding-left: 24px;
   padding-top: 2px;
   background: url('../../../assets/el-expl-child.png') no-repeat;
+  position: relative;
 }
 li:last-child {
   background: white url('../../../assets/el-expl-child-last.png') no-repeat;
@@ -31,4 +33,29 @@ li > div.selected {
   background-color: aliceblue;
 }
 li > .title:hover {
+}
+
+div.dropZoneTop, div.dropZoneBottom {
+  position: absolute;
+  left: 24px;
+  width: 40px;
+  height: 4px;
+}
+div.dropZoneTop[data-show='false'], div.dropZoneBottom[data-show='false'] {
+  background-color: transparent;
+}
+div.dropZoneTop[data-show='true'], div.dropZoneBottom[data-show='true'] {
+  background-color: lightgray;
+}
+div.dropZoneTop {
+  top: -3px;
+}
+div.dropZoneBottom {
+  bottom: -1px;
+}
+div.dropZoneBottom {
+  display: none;
+}
+li:last-child > div.dropZoneBottom {
+  display: block;
 }

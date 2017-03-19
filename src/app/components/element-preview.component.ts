@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, OnDestroy } from '@angular/core';
-import { BaseDomManipulationComponent } from './base-dom-manipulation.component';
-import { PreviewService } from '../services/preview.service';
+import { BaseDomManipulationComponent } from '../../shared/base-dom-manipulation.component';
+import { PreviewService } from '../../drag/preview.service';
 
 @Component({
   selector: 'app-element-preview',

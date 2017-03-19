@@ -1,5 +1,5 @@
 import { ElementRef } from '@angular/core';
-import { PageCoordinates } from '../utils/PageCoordinates';
+import { PageCoordinates } from './PageCoordinates';
 
 export class BaseDomManipulationComponent {
 

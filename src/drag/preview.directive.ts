@@ -1,12 +1,12 @@
 import { Directive, HostListener, EventEmitter, Output } from '@angular/core';
-import { PreviewService } from '../services/preview.service';
-import { PageCoordinates } from '../utils/PageCoordinates';
-import { DropZoneService } from '../services/drop-zone.service';
+import { PreviewService } from './preview.service';
+import { PageCoordinates } from '../shared/PageCoordinates';
+import { DropZoneService } from './drop-zone.service';
 
 @Directive({
-  selector: '[appDragPreview]'
+  selector: '[dragPreview]'
 })
-export class DragPreviewDirective {
+export class PreviewDirective {
   private static DATA_ATTR_ENABLED = 'dragEnabled';
   private static DATA_ATTR_PREVIEW = 'dragPreview';
   private static DATA_ATTR_LABEL = 'dragLabel';
@@ -19,16 +19,16 @@ export class DragPreviewDirective {
 
   @HostListener('mousedown', ['$event'])
   public diffuseClick(event: MouseEvent) {
-    if (event.button === 0 && DragPreviewDirective.isDragEnabled(<HTMLElement> event.target)) {
+    if (event.button === 0 && PreviewDirective.isDragEnabled(<HTMLElement> event.target)) {
       event.preventDefault();
     }
   }
 
   @HostListener('panstart', ['$event'])
   public onPanStart(event: HammerInput) {
-    if (DragPreviewDirective.isDragEnabled(event.target)) {
-      if (DragPreviewDirective.isPreviewCopy(event.target)) {
-        this.previewService.startPreview(event.target, DragPreviewDirective.hammerPoint2Coordinates(event.center));
+    if (PreviewDirective.isDragEnabled(event.target)) {
+      if (PreviewDirective.isPreviewCopy(event.target)) {
+        this.previewService.startPreview(event.target, PreviewDirective.hammerPoint2Coordinates(event.center));
       } else {
         this.previewStart.emit(event);
       }
@@ -37,17 +37,17 @@ export class DragPreviewDirective {
 
   @HostListener('panmove', ['$event'])
   public onPanMove(event: HammerInput) {
-    if (DragPreviewDirective.isDragEnabled(event.target)) {
-      this.previewService.movePreview(DragPreviewDirective.hammerPoint2Coordinates(event.center));
+    if (PreviewDirective.isDragEnabled(event.target)) {
+      this.previewService.movePreview(PreviewDirective.hammerPoint2Coordinates(event.center));
     }
   }
 
   @HostListener('panend', ['$event'])
   public onPanEnd(event: HammerInput) {
-    if (DragPreviewDirective.isDragEnabled(event.target)) {
+    if (PreviewDirective.isDragEnabled(event.target)) {
       this.previewService.endPreview();
-      const label = event.target.dataset[DragPreviewDirective.DATA_ATTR_LABEL];
-      const coordinates = DragPreviewDirective.hammerPoint2Coordinates(event.center);
+      const label = event.target.dataset[PreviewDirective.DATA_ATTR_LABEL];
+      const coordinates = PreviewDirective.hammerPoint2Coordinates(event.center);
       const dropZone = this.dropZoneService.findDropZone(label, coordinates);
       if (dropZone) {
         dropZone.onDropZoneActivated(event.target, coordinates);
@@ -57,17 +57,17 @@ export class DragPreviewDirective {
 
   @HostListener('pancancel', ['$event'])
   public onPanCancel(event: HammerInput) {
-    if (DragPreviewDirective.isDragEnabled(event.target)) {
+    if (PreviewDirective.isDragEnabled(event.target)) {
       this.previewService.endPreview();
     }
   }
 
   private static isDragEnabled(htmlElement: HTMLElement): boolean {
-    return !htmlElement.dataset[DragPreviewDirective.DATA_ATTR_ENABLED] || htmlElement.dataset[DragPreviewDirective.DATA_ATTR_ENABLED] === 'true';
+    return !htmlElement.dataset[PreviewDirective.DATA_ATTR_ENABLED] || htmlElement.dataset[PreviewDirective.DATA_ATTR_ENABLED] === 'true';
   }
 
   private static isPreviewCopy(htmlElement: HTMLElement): boolean {
-    return !htmlElement.dataset[DragPreviewDirective.DATA_ATTR_PREVIEW] || htmlElement.dataset[DragPreviewDirective.DATA_ATTR_PREVIEW] === 'copy';
+    return !htmlElement.dataset[PreviewDirective.DATA_ATTR_PREVIEW] || htmlElement.dataset[PreviewDirective.DATA_ATTR_PREVIEW] === 'copy';
   }
 
   public static hammerPoint2Coordinates(point: HammerPoint): PageCoordinates {

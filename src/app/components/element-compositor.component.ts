@@ -1,12 +1,14 @@
 import { Component, ElementRef, OnInit, OnDestroy, HostListener } from '@angular/core';
-import { BaseDomManipulationComponent } from './base-dom-manipulation.component';
+import { BaseDomManipulationComponent } from '../../shared/base-dom-manipulation.component';
 import { ElementRepositoryService } from '../services/element-repository.service';
 import { ElementSelectionService } from '../services/element-selection.service';
 import { Subscription } from 'rxjs';
-import { PreviewService } from '../services/preview.service';
-import { DropZoneService, DropZone } from '../services/drop-zone.service';
-import { PageCoordinates } from '../utils/PageCoordinates';
-import { DragMoveService, DragMoveEventListener, DragBaseService } from '../services/drag.service';
+import { PreviewService } from '../../drag/preview.service';
+import { DropZoneService, DropZone } from '../../drag/drop-zone.service';
+import { PageCoordinates } from '../../shared/PageCoordinates';
+import { DragMoveEventListener } from '../../drag/DragMoveEventListener';
+import { DragMoveService } from '../../drag/drag-move.service';
+import { DragBaseService } from '../../drag/drag-base.service';
 
 @Component({
   selector: 'app-element-compositor',

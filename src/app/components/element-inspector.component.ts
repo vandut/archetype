@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { HTMLElementTransformer } from '../utils/HTMLElement';
+import { HTMLElementTransformer } from '../../shared/HTMLElement';
 import { ElementSelectionService } from '../services/element-selection.service';
 import { Subscription } from 'rxjs';
 

@@ -1,4 +1,4 @@
-import { BrowserModule, HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
+import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { NgModule } from '@angular/core';
 import { AppComponent } from './components/app.component';
@@ -15,22 +15,12 @@ import { ElementExplorerComponent } from './components/element-explorer.componen
 import { ElementExplorerTreeComponent } from './components/element-explorer-tree.component';
 import { ElementRepositoryService } from './services/element-repository.service';
 import { ElementSelectionService } from './services/element-selection.service';
-import { PreviewService } from './services/preview.service';
-import { DragPreviewDirective } from './directives/drag-preview.directive';
-import { DropZoneService } from './services/drop-zone.service';
-import { DragMoveService, DragResizeService } from './services/drag.service';
-
-export class MyHammerConfig extends HammerGestureConfig  {
-  overrides = <any>{
-    'pan': {direction: Hammer.DIRECTION_ALL}
-  }
-}
+import { DragModule } from '../drag/drag.module';
 
 @NgModule({
   declarations: [
     AppComponent,
     CopyParentSizeDirective,
-    DragPreviewDirective,
     SnappingGridComponent,
     ElementPaletteComponent,
     ElementCompositorComponent,
@@ -44,19 +34,12 @@ export class MyHammerConfig extends HammerGestureConfig  {
   ],
   imports: [
     BrowserModule,
-    FormsModule
+    FormsModule,
+    DragModule
   ],
   providers: [
-    PreviewService,
-    DropZoneService,
-    DragMoveService,
-    DragResizeService,
     ElementRepositoryService,
-    ElementSelectionService,
-    {
-      provide: HAMMER_GESTURE_CONFIG,
-      useClass: MyHammerConfig
-    }
+    ElementSelectionService
   ],
   bootstrap: [AppComponent]
 })

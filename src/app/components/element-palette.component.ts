@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { ElementSelectionService } from '../services/element-selection.service';
-import { PreviewService } from '../services/preview.service';
-import { HTMLElementFactory } from '../utils/HTMLElement';
-import { DragPreviewDirective } from '../directives/drag-preview.directive';
+import { PreviewService } from '../../drag/preview.service';
+import { HTMLElementFactory } from '../../shared/HTMLElement';
+import { PreviewDirective } from '../../drag/preview.directive';
 
 @Component({
   selector: 'app-element-palette',
@@ -26,7 +26,7 @@ export class ElementPaletteComponent {
 
   onPreviewStart(event: HammerInput, template: string) {
     const target = HTMLElementFactory.fromTemplate(template);
-    this.previewService.startPreview(target, DragPreviewDirective.hammerPoint2Coordinates(event.center));
+    this.previewService.startPreview(target, PreviewDirective.hammerPoint2Coordinates(event.center));
     this.elementSelectionService.clearSelection();
   }
 

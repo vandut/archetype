@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { PageCoordinates } from '../utils/PageCoordinates';
-import { BaseDomManipulationComponent } from '../components/base-dom-manipulation.component';
-import { HTMLElementTransformer, HTMLElementChmod } from '../utils/HTMLElement';
+import { PageCoordinates } from '../shared/PageCoordinates';
+import { BaseDomManipulationComponent } from '../shared/base-dom-manipulation.component';
+import { HTMLElementTransformer, HTMLElementChmod } from '../shared/HTMLElement';
 
 @Injectable()
 export class PreviewService {

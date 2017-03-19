@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { PageCoordinates } from '../utils/PageCoordinates';
+import { PageCoordinates } from '../shared/PageCoordinates';
 
 export interface DropZone {
   onDropZoneActivated(source: HTMLElement, coordinates: PageCoordinates);

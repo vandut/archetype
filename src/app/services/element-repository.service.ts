@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HTMLElementFactory, HTMLElementChmod } from '../utils/HTMLElement';
+import { HTMLElementFactory, HTMLElementChmod } from '../../shared/HTMLElement';
 import * as Rx from 'rxjs/Rx';
 import { PartialObserver } from 'rxjs/Observer';
 

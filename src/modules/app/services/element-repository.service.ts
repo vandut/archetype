@@ -37,6 +37,16 @@ export class ElementRepositoryService {
     return null;
   }
 
+  public moveItemBefore(itemId: string, beforeId: string) {
+    // TODO: implement
+    console.log(`move item ${itemId} before ${beforeId}`);
+  }
+
+  public moveItemAfter(itemId: string, afterId: string) {
+    // TODO: implement
+    console.log(`move item ${itemId} after ${afterId}`);
+  }
+
   private generateEditorElement(template: string): EditorElement {
     let editorElement = {
       id: this.generateNextElementId(),

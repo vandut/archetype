@@ -26,7 +26,7 @@ export class ElementExplorerComponent {
   public onPanEnd(event: HammerInput) {
     const result = this.tree.findDropZone(event.center);
     if (result) {
-      console.log(result);
+      this.moveItem(<HTMLElement> event.srcEvent.target, result.nativeElement);
     }
     this.highlightDropZone(null);
   }
@@ -46,6 +46,15 @@ export class ElementExplorerComponent {
     if (ref) {
       this.activedropZone = ref;
       this.activedropZone.nativeElement.dataset['show'] = 'true';
+    }
+  }
+
+  private moveItem(source: HTMLElement, dropZone: HTMLElement) {
+    const sourceId = source.dataset['nodeId'];
+    if (dropZone.dataset['before']) {
+      this.elementRepositoryService.moveItemBefore(sourceId, dropZone.dataset['before']);
+    } else if (dropZone.dataset['after']) {
+      this.elementRepositoryService.moveItemAfter(sourceId, dropZone.dataset['after']);
     }
   }
 

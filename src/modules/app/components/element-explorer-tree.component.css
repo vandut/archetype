@@ -39,23 +39,17 @@ div.dropZoneTop, div.dropZoneBottom {
   position: absolute;
   left: 24px;
   width: 40px;
-  height: 4px;
-}
-div.dropZoneTop[data-show='false'], div.dropZoneBottom[data-show='false'] {
-  background-color: transparent;
-}
-div.dropZoneTop[data-show='true'], div.dropZoneBottom[data-show='true'] {
-  background-color: lightgray;
+  height: 20%;
+  pointer-events: none;
 }
 div.dropZoneTop {
+  border-top: 4px solid transparent;
   top: -3px;
 }
 div.dropZoneBottom {
+  border-bottom: 4px solid transparent;
   bottom: -1px;
 }
-div.dropZoneBottom {
-  display: none;
-}
-li:last-child > div.dropZoneBottom {
-  display: block;
+div.dropZoneTop[data-show='true'], div.dropZoneBottom[data-show='true'] {
+  border-color: lightgray;
 }

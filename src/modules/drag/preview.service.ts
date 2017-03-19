@@ -1,17 +1,18 @@
-import { Injectable } from '@angular/core';
+import { Injectable, ElementRef } from '@angular/core';
 import { PageCoordinates } from '../shared/PageCoordinates';
-import { BaseDomManipulationComponent } from '../shared/base-dom-manipulation.component';
 import { HTMLElementTransformer, HTMLElementChmod } from '../shared/HTMLElement';
+import { DomHelper } from '../shared/DomHelper';
+import { PageCoordinatesHelper } from '../shared/PageCoordinatesHelper';
 
 @Injectable()
 export class PreviewService {
   private static PADDING = 10;
 
-  private canvas: BaseDomManipulationComponent;
+  private canvas: ElementRef;
 
   public preview: PreviewHost = null;
 
-  public registerCanvas(canvas: BaseDomManipulationComponent) {
+  public registerCanvas(canvas: ElementRef) {
     this.canvas = canvas;
   }
 
@@ -22,16 +23,16 @@ export class PreviewService {
   public startPreview(target: HTMLElement, coordinates: PageCoordinates) {
     if (!this.preview) {
       coordinates = PreviewService.addPreviewPadding(coordinates);
-      const [x, y] = this.canvas.toParentElementCoordinates(coordinates);
+      const [x, y] = PageCoordinatesHelper.toParentElementCoordinates(this.canvas, coordinates);
       this.preview = new PreviewHost(target);
-      this.preview.attach(this.canvas.getNativeParentElement());
+      this.preview.attach(DomHelper.getParentElement(this.canvas));
       this.preview.moveTo(x, y);
     }
   }
 
   public movePreview(coordinates: PageCoordinates) {
     if (this.preview) {
-      if (this.canvas.isPageCoordinatesInsideParentComponent(coordinates)) {
+      if (PageCoordinatesHelper.isInsideParentElement(this.canvas, coordinates)) {
         if (!this.preview.isVisible()) {
           this.preview.show();
         }
@@ -46,7 +47,7 @@ export class PreviewService {
 
   private movePreviewTo(coordinates: PageCoordinates) {
     coordinates = PreviewService.addPreviewPadding(coordinates);
-    const [x, y] = this.canvas.toParentElementCoordinates(coordinates);
+    const [x, y] = PageCoordinatesHelper.toParentElementCoordinates(this.canvas, coordinates);
     this.preview.moveTo(x, y);
   }
 

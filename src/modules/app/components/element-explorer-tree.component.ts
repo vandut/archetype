@@ -18,10 +18,4 @@ export class ElementExplorerTreeComponent {
     this.elementSelectionService.select(nodeId);
   }
 
-  public diffuseClick(event: MouseEvent) {
-    if (event.button === 0) {
-      event.preventDefault();
-    }
-  }
-
 }

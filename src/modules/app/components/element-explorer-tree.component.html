@@ -1,7 +1,7 @@
 <ol>
   <li *ngFor="let node of tree" [attr.data-node-id]="node.id">
     <div class="title" [class.selected]="node.selected"
-         (mousedown)="diffuseClick($event)" (tap)="onNodeClick(node.id)"
+         (tap)="onNodeClick(node.id)"
          dragPreview>{{node.id}}</div>
     <app-element-explorer-tree *ngIf="node.children" [tree]="node.children"></app-element-explorer-tree>
   </li>

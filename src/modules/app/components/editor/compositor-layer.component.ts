@@ -13,12 +13,11 @@ import { PageCoordinatesHelper } from '../../../shared/PageCoordinatesHelper';
 
 @Component({
   selector: 'editor-compositor-layer',
-  template: `<div style="position:absolute;top:0;bottom:0;left:0;right:0"
-                  data-drag-parent-for="root"></div>`
+  template: `<div style="position:absolute;top:0;bottom:0;left:0;right:0"></div>`
 })
 export class CompositorLayerComponent implements OnInit, OnDestroy, DropZone, DragMoveEventListener {
 
-  public static ROOT_PARENT_NAME = 'root';
+  private static ROOT_PARENT_NAME = 'root';
 
   private subscription: Subscription = null;
 
@@ -30,11 +29,13 @@ export class CompositorLayerComponent implements OnInit, OnDestroy, DropZone, Dr
     private dragMoveService: DragMoveService) {}
 
   public ngOnInit() {
+    const parentElement = <HTMLElement> DomHelper.getElement(this.elementRef).children[0];
+    DragBaseService.registerParentFor(parentElement, CompositorLayerComponent.ROOT_PARENT_NAME);
     this.subscription = this.elementRepositoryService.subscribeToNewElementAdded({
       next: editorElement => {
         DragMoveService.registerMoveListeners(editorElement.htmlDom, this);
-        editorElement.htmlDom.dataset[DragBaseService.DATA_ATTR_CHILDREN_OF] = CompositorLayerComponent.ROOT_PARENT_NAME;
-        DomHelper.getElement(this.elementRef).children[0].appendChild(editorElement.htmlDom);
+        DragBaseService.registerChildOf(editorElement.htmlDom, CompositorLayerComponent.ROOT_PARENT_NAME);
+        parentElement.appendChild(editorElement.htmlDom);
         this.elementSelectionService.select(editorElement.id);
       }
     });

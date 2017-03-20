@@ -3,13 +3,15 @@ import { DragMoveEventListener } from './DragMoveEventListener';
 
 export abstract class DragBaseService implements DragMoveEventListener {
 
+  public static ATTR_NAME_DRAGGABLE = 'draggable';
   private static DATA_ATTR_PARENT_FOR = 'dragParentFor';
   private static DATA_ATTR_CHILD_OF = 'dragChildOf';
 
   public static registerMoveListeners(target: HTMLElement, listener: DragMoveEventListener) {
-    target.addEventListener('mousedown', event => listener.diffuseClick(event));
+    target.dataset[DragBaseService.ATTR_NAME_DRAGGABLE] = 'true';
     const hammerTime = new Hammer(target);
     hammerTime.get('pan').set({ direction: Hammer.DIRECTION_ALL, threshold: 0 });
+    target.addEventListener('mousedown', event => listener.diffuseClick(event));
     hammerTime.on('tap', event => listener.onTap(event.target, event.center, null));
     hammerTime.on('panstart', event => listener.onPanStart(event.target, event.center, null));
     hammerTime.on('panmove', event => listener.onPanMove(event.target, event.center, null));

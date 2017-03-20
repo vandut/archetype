@@ -6,6 +6,7 @@ import { PreviewDirective } from './preview.directive';
 import { PreviewService } from './preview.service';
 import { DragMoveService } from './drag-move.service';
 import { DragResizeService } from './drag-resize.service';
+import { DragMoveHandlerDirective } from './drag-move-handler.directive';
 
 export class MyHammerConfig extends HammerGestureConfig  {
   overrides = <any>{
@@ -18,10 +19,12 @@ export class MyHammerConfig extends HammerGestureConfig  {
     CommonModule
   ],
   exports: [
-    PreviewDirective
+    PreviewDirective,
+    DragMoveHandlerDirective
   ],
   declarations: [
-    PreviewDirective
+    PreviewDirective,
+    DragMoveHandlerDirective
   ],
   providers: [
     DragMoveService,

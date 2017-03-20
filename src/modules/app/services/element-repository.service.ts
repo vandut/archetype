@@ -38,13 +38,51 @@ export class ElementRepositoryService {
   }
 
   public moveItemBefore(itemId: string, beforeId: string) {
-    // TODO: implement
-    console.log(`move item ${itemId} before ${beforeId}`);
+    if (itemId === beforeId) {
+      return;
+    }
+
+    const item = this.getEditorElement(itemId);
+    const before = this.getEditorElement(beforeId);
+
+    const itemIdx = this.elements.indexOf(item);
+    const beforeIdx = this.elements.indexOf(before);
+
+    console.log(`move item ${itemIdx} before ${beforeIdx}`);
+
+    if (itemIdx > beforeIdx) {
+      this.elements.splice(itemIdx, 1);
+      this.elements.splice(beforeIdx, 0, item);
+    } else {
+      this.elements.splice(beforeIdx, 0, item);
+      this.elements.splice(itemIdx, 1);
+    }
+
+    item.htmlDom.parentNode.insertBefore(item.htmlDom, before.htmlDom.nextSibling);
   }
 
   public moveItemAfter(itemId: string, afterId: string) {
-    // TODO: implement
-    console.log(`move item ${itemId} after ${afterId}`);
+    if (itemId === afterId) {
+      return;
+    }
+
+    const item = this.getEditorElement(itemId);
+    const after = this.getEditorElement(afterId);
+
+    const itemIdx = this.elements.indexOf(item);
+    const afterIdx = this.elements.indexOf(after);
+
+    console.log(`move item ${itemIdx} after ${afterIdx}`);
+
+    if (itemIdx > afterIdx) {
+      this.elements.splice(itemIdx, 1);
+      this.elements.splice(afterIdx + 1, 0, item);
+    } else {
+      this.elements.splice(afterIdx + 1, 0, item);
+      this.elements.splice(itemIdx, 1);
+    }
+
+    after.htmlDom.parentNode.insertBefore(item.htmlDom, after.htmlDom);
   }
 
   private generateEditorElement(template: string): EditorElement {
@@ -69,7 +107,7 @@ export class ElementRepositoryService {
   public addEditorElement(template: string, x: number, y: number) {
     let editorElement = this.generateEditorElement(template);
     this.positionElement(editorElement, x, y);
-    this.elements.push(editorElement);
+    this.elements.splice(0, 0, editorElement);
     this.newElementAddedSubject.next(editorElement);
   }
 

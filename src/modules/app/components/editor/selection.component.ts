@@ -1,14 +1,14 @@
 import { Component, Input, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import { HTMLElementTransformer } from '../../shared/HTMLElement';
-import { DragMoveService } from '../../drag/drag-move.service';
-import { DragResizeService } from '../../drag/drag-resize.service';
-import { ForwardingDragMoveEventListener } from '../../drag/DragMoveEventListener';
-import { DragBaseService } from '../../drag/drag-base.service';
+import { HTMLElementTransformer } from '../../../shared/HTMLElement';
+import { DragMoveService } from '../../../drag/drag-move.service';
+import { DragResizeService } from '../../../drag/drag-resize.service';
+import { ForwardingDragMoveEventListener } from '../../../drag/DragMoveEventListener';
+import { DragBaseService } from '../../../drag/drag-base.service';
 
 @Component({
-  selector: 'app-selection',
-  templateUrl: './selection.component.html',
-  styleUrls: ['./selection.component.css']
+  selector: 'editor-selection',
+  templateUrl: 'selection.component.html',
+  styleUrls: ['selection.component.css']
 })
 export class SelectionComponent implements AfterViewInit {
 

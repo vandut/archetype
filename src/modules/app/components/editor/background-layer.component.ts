@@ -1,11 +1,11 @@
 import { Component, AfterViewInit, ViewChild, ElementRef, Input, HostListener } from '@angular/core';
 
 @Component({
-  selector: 'app-snapping-grid',
-  template: `<canvas #canvas appCopyParentSize></canvas>`,
+  selector: 'editor-background-layer',
+  template: `<canvas #canvas copyParentSize></canvas>`,
   styles: [`canvas { width: 100%; height: 100%; }`]
 })
-export class SnappingGridComponent implements AfterViewInit {
+export class BackgroundLayerComponent implements AfterViewInit {
 
   private _spacing: number = 10;
 

@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { HTMLElementTransformer } from '../../shared/HTMLElement';
-import { ElementSelectionService } from '../services/element-selection.service';
+import { HTMLElementTransformer } from '../../../shared/HTMLElement';
+import { ElementSelectionService } from '../../services/element-selection.service';
 import { Subscription } from 'rxjs';
 
 interface PropertyBinding {
@@ -9,11 +9,11 @@ interface PropertyBinding {
 }
 
 @Component({
-  selector: 'app-element-inspector',
-  templateUrl: './element-inspector.component.html',
-  styleUrls: ['./element-inspector.component.css']
+  selector: 'inspector',
+  templateUrl: 'inspector.component.html',
+  styleUrls: ['inspector.component.css']
 })
-export class ElementInspectorComponent implements OnInit, OnDestroy {
+export class InspectorComponent implements OnInit, OnDestroy {
 
   public selectedElement: HTMLElementTransformer = null;
 

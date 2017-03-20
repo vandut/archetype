@@ -1,7 +1,7 @@
 import { Directive, AfterViewInit, ElementRef, HostListener } from '@angular/core';
 
 @Directive({
-  selector: '[appCopyParentSize]'
+  selector: '[copyParentSize]'
 })
 export class CopyParentSizeDirective implements AfterViewInit {
 

@@ -1,11 +1,11 @@
 import { Component, ElementRef, OnInit, OnDestroy } from '@angular/core';
-import { PreviewService } from '../../drag/preview.service';
+import { PreviewService } from '../../../drag/preview.service';
 
 @Component({
-  selector: 'app-element-preview',
+  selector: 'preview-layer',
   template: ``
 })
-export class ElementPreviewComponent implements OnInit, OnDestroy {
+export class PreviewLayerComponent implements OnInit, OnDestroy {
 
   constructor(private elementRef: ElementRef,
               private previewService: PreviewService) {}

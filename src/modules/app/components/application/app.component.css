@@ -8,7 +8,7 @@
   overflow: hidden;
 }
 
-app-editor {
+editor {
   position: absolute;
   top:0;
   bottom:0;
@@ -36,15 +36,15 @@ div.right-column {
   z-index: 1;
 }
 
-app-element-palette {
+palette {
   border: 1px solid gray;
   margin-bottom: 10px;
 }
 
-app-element-inspector {
+inspector {
 }
 
-app-element-explorer {
+explorer {
   position: absolute;
   top: 0;
   bottom: 0;

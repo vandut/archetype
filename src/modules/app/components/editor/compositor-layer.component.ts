@@ -1,22 +1,22 @@
 import { Component, ElementRef, OnInit, OnDestroy, HostListener } from '@angular/core';
-import { ElementRepositoryService } from '../services/element-repository.service';
-import { ElementSelectionService } from '../services/element-selection.service';
+import { ElementRepositoryService } from '../../services/element-repository.service';
+import { ElementSelectionService } from '../../services/element-selection.service';
 import { Subscription } from 'rxjs';
-import { PreviewService } from '../../drag/preview.service';
-import { DropZoneService, DropZone } from '../../drag/drop-zone.service';
-import { PageCoordinates } from '../../shared/PageCoordinates';
-import { DragMoveEventListener } from '../../drag/DragMoveEventListener';
-import { DragMoveService } from '../../drag/drag-move.service';
-import { DragBaseService } from '../../drag/drag-base.service';
-import { DomHelper } from '../../shared/DomHelper';
-import { PageCoordinatesHelper } from '../../shared/PageCoordinatesHelper';
+import { PreviewService } from '../../../drag/preview.service';
+import { DropZoneService, DropZone } from '../../../drag/drop-zone.service';
+import { PageCoordinates } from '../../../shared/PageCoordinates';
+import { DragMoveEventListener } from '../../../drag/DragMoveEventListener';
+import { DragMoveService } from '../../../drag/drag-move.service';
+import { DragBaseService } from '../../../drag/drag-base.service';
+import { DomHelper } from '../../../shared/DomHelper';
+import { PageCoordinatesHelper } from '../../../shared/PageCoordinatesHelper';
 
 @Component({
-  selector: 'app-element-compositor',
+  selector: 'editor-compositor-layer',
   template: `<div style="position:absolute;top:0;bottom:0;left:0;right:0"
                   data-drag-parent-for="root"></div>`
 })
-export class ElementCompositorComponent implements OnInit, OnDestroy, DropZone, DragMoveEventListener {
+export class CompositorLayerComponent implements OnInit, OnDestroy, DropZone, DragMoveEventListener {
 
   public static ROOT_PARENT_NAME = 'root';
 
@@ -33,7 +33,7 @@ export class ElementCompositorComponent implements OnInit, OnDestroy, DropZone, 
     this.subscription = this.elementRepositoryService.subscribeToNewElementAdded({
       next: editorElement => {
         DragMoveService.registerMoveListeners(editorElement.htmlDom, this);
-        editorElement.htmlDom.dataset[DragBaseService.DATA_ATTR_CHILDREN_OF] = ElementCompositorComponent.ROOT_PARENT_NAME;
+        editorElement.htmlDom.dataset[DragBaseService.DATA_ATTR_CHILDREN_OF] = CompositorLayerComponent.ROOT_PARENT_NAME;
         DomHelper.getElement(this.elementRef).children[0].appendChild(editorElement.htmlDom);
         this.elementSelectionService.select(editorElement.id);
       }

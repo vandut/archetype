@@ -1,16 +1,16 @@
 import { Component, ViewChild, HostListener, ElementRef } from '@angular/core';
-import { ElementRepositoryService } from '../services/element-repository.service';
-import { ElementExplorerTreeComponent } from './element-explorer-tree.component';
+import { ElementRepositoryService } from '../../services/element-repository.service';
+import { ExplorerTreeComponent } from './explorer-tree.component';
 
 @Component({
-  selector: 'app-element-explorer',
-  templateUrl: './element-explorer.component.html',
-  styleUrls: ['./element-explorer.component.css']
+  selector: 'explorer',
+  templateUrl: 'explorer.component.html',
+  styleUrls: ['explorer.component.css']
 })
-export class ElementExplorerComponent {
+export class ExplorerComponent {
 
   @ViewChild('tree')
-  private tree: ElementExplorerTreeComponent;
+  private tree: ExplorerTreeComponent;
 
   private activedropZone: ElementRef = null;
 

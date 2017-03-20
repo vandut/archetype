@@ -1,7 +1,7 @@
 :host {
 }
 
-app-snapping-grid {
+editor-background-layer {
   pointer-events: none;
   position: absolute;
   width: 100%;
@@ -9,7 +9,7 @@ app-snapping-grid {
   z-index: 0;
 }
 
-app-element-compositor {
+editor-compositor-layer {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -17,7 +17,7 @@ app-element-compositor {
   overflow: hidden;
 }
 
-app-element-selection {
+editor-selection-layer {
   pointer-events: none;
   position: absolute;
   width: 100%;

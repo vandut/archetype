@@ -1,14 +1,14 @@
-import { Component, Input, HostListener, ViewChildren, ElementRef } from '@angular/core';
-import { EditorElement } from '../services/element-repository.service';
-import { ElementSelectionService } from '../services/element-selection.service';
-import { PageCoordinatesHelper } from '../../shared/PageCoordinatesHelper';
+import { Component, Input, ViewChildren, ElementRef } from '@angular/core';
+import { EditorElement } from '../../services/element-repository.service';
+import { ElementSelectionService } from '../../services/element-selection.service';
+import { PageCoordinatesHelper } from '../../../shared/PageCoordinatesHelper';
 
 @Component({
-  selector: 'app-element-explorer-tree',
-  templateUrl: './element-explorer-tree.component.html',
-  styleUrls: ['./element-explorer-tree.component.css']
+  selector: 'explorer-tree',
+  templateUrl: 'explorer-tree.component.html',
+  styleUrls: ['explorer-tree.component.css']
 })
-export class ElementExplorerTreeComponent {
+export class ExplorerTreeComponent {
 
   @Input()
   public tree: EditorElement[] = [];
@@ -16,7 +16,7 @@ export class ElementExplorerTreeComponent {
   @ViewChildren('dropZone')
   private dropZones: ElementRef[];
   @ViewChildren('tree')
-  private nestedTrees: ElementExplorerTreeComponent[];
+  private nestedTrees: ExplorerTreeComponent[];
 
   constructor(public elementRef: ElementRef,
               private elementSelectionService: ElementSelectionService) {}

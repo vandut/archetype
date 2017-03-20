@@ -1,22 +1,22 @@
 import { Component } from '@angular/core';
-import { ElementSelectionService } from '../services/element-selection.service';
-import { PreviewService } from '../../drag/preview.service';
-import { HTMLElementFactory } from '../../shared/HTMLElement';
-import { PreviewDirective } from '../../drag/preview.directive';
+import { ElementSelectionService } from '../../services/element-selection.service';
+import { PreviewService } from '../../../drag/preview.service';
+import { HTMLElementFactory } from '../../../shared/HTMLElement';
+import { PreviewDirective } from '../../../drag/preview.directive';
 
 @Component({
-  selector: 'app-element-palette',
-  templateUrl: './element-palette.component.html',
-  styleUrls: ['./element-palette.component.css']
+  selector: 'palette',
+  templateUrl: 'palette.component.html',
+  styleUrls: ['palette.component.css']
 })
-export class ElementPaletteComponent {
+export class PaletteComponent {
 
   public static DEFAULT_DIV_TEMPLATE = '<div style="width: 100px; height: 100px; background: red;">A</div>';
 
   private items = [
     {
       name: 'Stub element',
-      template: ElementPaletteComponent.DEFAULT_DIV_TEMPLATE
+      template: PaletteComponent.DEFAULT_DIV_TEMPLATE
     }
   ];
 

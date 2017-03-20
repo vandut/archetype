@@ -55,14 +55,26 @@ export class ElementRepositoryService {
   }
 
   // TODO: Promise?
-  // TODO: this is flat search, make it deep
   public getEditorElement(id: string): EditorElement {
-    for (let el of this.elements) {
-      if (el.id == id) {
-        return el;
-      }
+    let [a, i] = this.findArrayById(this.elements, id);
+    if (a) {
+      return a[i];
     }
     return null;
+  }
+
+  private findArrayById(array: EditorElement[], id: string): [EditorElement[], number] {
+    for (let idx = 0; idx < array.length; idx++) {
+      if (array[idx].id === id) {
+        return [array, idx];
+      } else if(array[idx].children) {
+        let [a, i] = this.findArrayById(array[idx].children, id);
+        if (a) {
+          return [a, i];
+        }
+      }
+    }
+    return [null, -1];
   }
 
   public moveItemBefore(itemId: string, beforeId: string) {
@@ -70,20 +82,20 @@ export class ElementRepositoryService {
       return;
     }
 
-    const item = this.getEditorElement(itemId);
-    const before = this.getEditorElement(beforeId);
+    const [itemArray, itemIdx] = this.findArrayById(this.elements, itemId);
+    const item = itemArray[itemIdx];
 
-    const itemIdx = this.elements.indexOf(item);
-    const beforeIdx = this.elements.indexOf(before);
+    const [beforeArray, beforeIdx] = this.findArrayById(this.elements, beforeId);
+    const before = beforeArray[beforeIdx];
 
-    console.log(`move item ${itemIdx} before ${beforeIdx}`);
+    console.log(`move item ${itemId} before ${beforeId}`);
 
     if (itemIdx > beforeIdx) {
-      this.elements.splice(itemIdx, 1);
-      this.elements.splice(beforeIdx, 0, item);
+      itemArray.splice(itemIdx, 1);
+      beforeArray.splice(beforeIdx, 0, item);
     } else {
-      this.elements.splice(beforeIdx, 0, item);
-      this.elements.splice(itemIdx, 1);
+      beforeArray.splice(beforeIdx, 0, item);
+      itemArray.splice(itemIdx, 1);
     }
 
     item.htmlDom.parentNode.insertBefore(item.htmlDom, before.htmlDom.nextSibling);
@@ -94,20 +106,20 @@ export class ElementRepositoryService {
       return;
     }
 
-    const item = this.getEditorElement(itemId);
-    const after = this.getEditorElement(afterId);
+    const [itemArray, itemIdx] = this.findArrayById(this.elements, itemId);
+    const item = itemArray[itemIdx];
 
-    const itemIdx = this.elements.indexOf(item);
-    const afterIdx = this.elements.indexOf(after);
+    const [afterArray, afterIdx] = this.findArrayById(this.elements, afterId);
+    const after = afterArray[afterIdx];
 
-    console.log(`move item ${itemIdx} after ${afterIdx}`);
+    console.log(`move item ${itemId} after ${afterId}`);
 
     if (itemIdx > afterIdx) {
-      this.elements.splice(itemIdx, 1);
-      this.elements.splice(afterIdx + 1, 0, item);
+      itemArray.splice(itemIdx, 1);
+      afterArray.splice(afterIdx + 1, 0, item);
     } else {
-      this.elements.splice(afterIdx + 1, 0, item);
-      this.elements.splice(itemIdx, 1);
+      afterArray.splice(afterIdx + 1, 0, item);
+      itemArray.splice(itemIdx, 1);
     }
 
     after.htmlDom.parentNode.insertBefore(item.htmlDom, after.htmlDom);
@@ -118,9 +130,16 @@ export class ElementRepositoryService {
       return;
     }
 
-    // TODO: make sure that insideId in not in fact inside itemId (that would create cycle and detach whole subtree)
+    const [itemArray, itemIdx] = this.findArrayById(this.elements, itemId);
+    const item = itemArray[itemIdx];
+
+    const [insideArray, insideIdx] = this.findArrayById(this.elements, insideId);
+    const inside = insideArray[insideIdx];
 
     console.log(`move item ${itemId} inside ${insideId}`);
+
+    // TODO: make sure that insideId in not in fact inside itemId (that would create cycle and detach whole subtree)
+
 
     // TODO: perform move
   }

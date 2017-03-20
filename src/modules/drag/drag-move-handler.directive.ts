@@ -23,9 +23,8 @@ export class DragMoveHandlerDirective {
 
     target.addEventListener('mousedown', event => DragMoveHandlerDirective.delegateEvent(target, event));
 
-    const events = DragMoveHandlerDirective.DELEGATED_HAMMER_EVENT_TYPES;
-    for (let eventType in events) {
-      hammerTime.on(events[eventType], event => DragMoveHandlerDirective.delegateEvent(target, event));
+    for (let eventType of DragMoveHandlerDirective.DELEGATED_HAMMER_EVENT_TYPES) {
+      hammerTime.on(eventType, event => DragMoveHandlerDirective.delegateEvent(target, event));
     }
   }
 

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HTMLElementFactory, HTMLElementChmod } from '../../shared/HTMLElement';
+import { HTMLElementFactory, HTMLElementChmod, HTMLElementTransformer } from '../../shared/HTMLElement';
 import * as Rx from 'rxjs/Rx';
 import { PartialObserver } from 'rxjs/Observer';
 
@@ -64,6 +64,9 @@ export class ElementRepositoryService {
   }
 
   private findArrayById(array: EditorElement[], id: string): [EditorElement[], number] {
+    if (!array) {
+      return [null, -1];
+    }
     for (let idx = 0; idx < array.length; idx++) {
       if (array[idx].id === id) {
         return [array, idx];
@@ -90,15 +93,17 @@ export class ElementRepositoryService {
 
     console.log(`move item ${itemId} before ${beforeId}`);
 
-    if (itemIdx > beforeIdx) {
-      itemArray.splice(itemIdx, 1);
-      beforeArray.splice(beforeIdx, 0, item);
-    } else {
-      beforeArray.splice(beforeIdx, 0, item);
-      itemArray.splice(itemIdx, 1);
-    }
+    setTimeout(() => {
+      if (itemIdx > beforeIdx) {
+        itemArray.splice(itemIdx, 1);
+        beforeArray.splice(beforeIdx, 0, item);
+      } else {
+        beforeArray.splice(beforeIdx, 0, item);
+        itemArray.splice(itemIdx, 1);
+      }
 
-    item.htmlDom.parentNode.insertBefore(item.htmlDom, before.htmlDom.nextSibling);
+      item.htmlDom.parentNode.insertBefore(item.htmlDom, before.htmlDom.nextSibling);
+    }, 0);
   }
 
   public moveItemAfter(itemId: string, afterId: string) {
@@ -114,15 +119,17 @@ export class ElementRepositoryService {
 
     console.log(`move item ${itemId} after ${afterId}`);
 
-    if (itemIdx > afterIdx) {
-      itemArray.splice(itemIdx, 1);
-      afterArray.splice(afterIdx + 1, 0, item);
-    } else {
-      afterArray.splice(afterIdx + 1, 0, item);
-      itemArray.splice(itemIdx, 1);
-    }
+    setTimeout(() => {
+      if (itemIdx > afterIdx) {
+        itemArray.splice(itemIdx, 1);
+        afterArray.splice(afterIdx + 1, 0, item);
+      } else {
+        afterArray.splice(afterIdx + 1, 0, item);
+        itemArray.splice(itemIdx, 1);
+      }
 
-    after.htmlDom.parentNode.insertBefore(item.htmlDom, after.htmlDom);
+      after.htmlDom.parentNode.insertBefore(item.htmlDom, after.htmlDom);
+    }, 0);
   }
 
   public moveItemInside(itemId: string, insideId: string) {
@@ -138,10 +145,23 @@ export class ElementRepositoryService {
 
     console.log(`move item ${itemId} inside ${insideId}`);
 
-    // TODO: make sure that insideId in not in fact inside itemId (that would create cycle and detach whole subtree)
+    const [a, i] = this.findArrayById(item.children, insideId);
+    if (a) {
+      console.debug(`item ${itemId} is parent of ${insideId}`);
+      return;
+    }
 
+    setTimeout(() => {
+      if (!inside.children) {
+        inside.children = [];
+      }
+      inside.children.splice(0, 0, item);
+      itemArray.splice(itemIdx, 1);
 
-    // TODO: perform move
+      HTMLElementTransformer.of(item.htmlDom).positionType = 'static';
+      HTMLElementTransformer.of(item.htmlDom).positionType = 'absolute';
+      inside.htmlDom.appendChild(item.htmlDom);
+    }, 0);
   }
 
   private generateEditorElement(template: string): EditorElement {

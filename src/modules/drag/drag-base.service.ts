@@ -1,11 +1,10 @@
 import { HTMLElementChmod, HTMLElementTransformer } from '../shared/HTMLElement';
 import { DragMoveEventListener } from './DragMoveEventListener';
+import { ElementRepositoryHelper } from '../app/services/element-repository.service';
 
 export abstract class DragBaseService implements DragMoveEventListener {
 
   public static ATTR_NAME_DRAGGABLE = 'draggable';
-  private static DATA_ATTR_PARENT_FOR = 'dragParentFor';
-  private static DATA_ATTR_CHILD_OF = 'dragChildOf';
 
   public static registerMoveListeners(target: HTMLElement, listener: DragMoveEventListener) {
     target.dataset[DragBaseService.ATTR_NAME_DRAGGABLE] = 'true';
@@ -17,14 +16,6 @@ export abstract class DragBaseService implements DragMoveEventListener {
     hammerTime.on('panmove', event => listener.onPanMove(event.target, event.center, null));
     hammerTime.on('panend', event => listener.onPanEnd(event.target, event.center, null));
     hammerTime.on('pancancel', event => listener.onPanCancel(event.target, event.center, null));
-  }
-
-  public static registerParentFor(target: HTMLElement, name: string) {
-    target.dataset[DragBaseService.DATA_ATTR_PARENT_FOR] = name;
-  }
-
-  public static registerChildOf(target: HTMLElement, parentName: string) {
-    target.dataset[DragBaseService.DATA_ATTR_CHILD_OF] = parentName;
   }
 
   protected firstXY: HammerPoint = null;
@@ -77,10 +68,10 @@ export abstract class DragBaseService implements DragMoveEventListener {
   protected abstract moveToAdvanced(target: HTMLElementTransformer, point: HammerPoint, data: any): HammerPoint;
 
   private findParent(target: HTMLElement): HTMLElementChmod {
-    if (target.dataset[DragBaseService.DATA_ATTR_CHILD_OF]) {
+    if (ElementRepositoryHelper.getIsChildOf(target)) {
       let parent = target.parentElement;
       while (parent !== null) {
-        if (parent.dataset[DragBaseService.DATA_ATTR_PARENT_FOR] === target.dataset[DragBaseService.DATA_ATTR_CHILD_OF]) {
+        if (ElementRepositoryHelper.getIsParentFor(parent) === ElementRepositoryHelper.getIsChildOf(target)) {
           return HTMLElementChmod.of(parent);
         }
         parent = parent.parentElement;

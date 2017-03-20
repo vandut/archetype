@@ -1,11 +1,10 @@
 import { Component, ElementRef, OnInit, OnDestroy, HostListener } from '@angular/core';
-import { ElementRepositoryService } from '../../services/element-repository.service';
+import { ElementRepositoryService, ElementRepositoryHelper } from '../../services/element-repository.service';
 import { ElementSelectionService } from '../../services/element-selection.service';
 import { Subscription } from 'rxjs';
 import { PreviewService } from '../../../drag/preview.service';
 import { DropZoneService, DropZone } from '../../../drag/drop-zone.service';
 import { PageCoordinates } from '../../../shared/PageCoordinates';
-import { DragBaseService } from '../../../drag/drag-base.service';
 import { DomHelper } from '../../../shared/DomHelper';
 import { PageCoordinatesHelper } from '../../../shared/PageCoordinatesHelper';
 import { DragMoveHandlerDirective } from '../../../drag/drag-move-handler.directive';
@@ -15,8 +14,6 @@ import { DragMoveHandlerDirective } from '../../../drag/drag-move-handler.direct
   template: `<div dragMoveHandler style="position:absolute;top:0;bottom:0;left:0;right:0"></div>`
 })
 export class CompositorLayerComponent implements OnInit, OnDestroy, DropZone {
-
-  private static ROOT_PARENT_NAME = 'root';
 
   private subscription: Subscription = null;
 
@@ -28,11 +25,10 @@ export class CompositorLayerComponent implements OnInit, OnDestroy, DropZone {
 
   public ngOnInit() {
     const parentElement = <HTMLElement> DomHelper.getElement(this.elementRef).children[0];
-    DragBaseService.registerParentFor(parentElement, CompositorLayerComponent.ROOT_PARENT_NAME);
+    ElementRepositoryHelper.registerIsParentForRoot(parentElement);
     this.subscription = this.elementRepositoryService.subscribeToNewElementAdded({
       next: editorElement => {
         DragMoveHandlerDirective.registerAsDraggable(editorElement.htmlDom);
-        DragBaseService.registerChildOf(editorElement.htmlDom, CompositorLayerComponent.ROOT_PARENT_NAME);
         parentElement.appendChild(editorElement.htmlDom);
         this.elementSelectionService.select(editorElement.id);
       }

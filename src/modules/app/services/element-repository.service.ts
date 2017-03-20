@@ -11,6 +11,34 @@ export class EditorElement {
   }
 }
 
+export class ElementRepositoryHelper {
+
+  private static ROOT_PARENT_NAME = 'root';
+  private static DATA_ATTR_PARENT_FOR = 'dragParentFor';
+  private static DATA_ATTR_CHILD_OF = 'dragChildOf';
+
+  public static registerIsParentFor(target: HTMLElement, name: string) {
+    target.dataset[ElementRepositoryHelper.DATA_ATTR_PARENT_FOR] = name;
+  }
+  public static getIsParentFor(target: HTMLElement): string {
+    return target.dataset[ElementRepositoryHelper.DATA_ATTR_PARENT_FOR];
+  }
+
+  public static registerIsChildOf(target: HTMLElement, parentName: string) {
+    target.dataset[ElementRepositoryHelper.DATA_ATTR_CHILD_OF] = parentName;
+  }
+  public static getIsChildOf(target: HTMLElement): string {
+    return target.dataset[ElementRepositoryHelper.DATA_ATTR_CHILD_OF];
+  }
+
+  public static registerIsParentForRoot(target: HTMLElement) {
+    ElementRepositoryHelper.registerIsParentFor(target, ElementRepositoryHelper.ROOT_PARENT_NAME);
+  }
+  public static registerIsChildOfRoot(target: HTMLElement) {
+    ElementRepositoryHelper.registerIsChildOf(target, ElementRepositoryHelper.ROOT_PARENT_NAME);
+  }
+}
+
 @Injectable()
 export class ElementRepositoryService {
 
@@ -121,6 +149,7 @@ export class ElementRepositoryService {
     this.positionElement(editorElement, x, y);
     this.elements.splice(0, 0, editorElement);
     this.newElementAddedSubject.next(editorElement);
+    ElementRepositoryHelper.registerIsChildOfRoot(editorElement.htmlDom);
   }
 
   public subscribeToNewElementAdded(observer: PartialObserver<EditorElement>): Rx.Subscription {

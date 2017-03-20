@@ -32,7 +32,8 @@ li > div.title {
 li > div.selected {
   background-color: aliceblue;
 }
-li > .title:hover {
+li > div.title[data-active='true'] {
+  outline: 2px solid lightgray;
 }
 
 div.dropZoneTop, div.dropZoneBottom {
@@ -50,6 +51,6 @@ div.dropZoneBottom {
   border-bottom: 4px solid transparent;
   bottom: -1px;
 }
-div.dropZoneTop[data-show='true'], div.dropZoneBottom[data-show='true'] {
+div.dropZoneTop[data-active='true'], div.dropZoneBottom[data-active='true'] {
   border-color: lightgray;
 }

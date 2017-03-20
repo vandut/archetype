@@ -15,8 +15,8 @@ export class AppComponent implements AfterViewInit {
 
   public ngAfterViewInit() {
     if (!environment.production) {
-      for (let i = 1; i < 9; i++) {
-        this.elementRepositoryService.addEditorElement(PaletteComponent.DEFAULT_DIV_TEMPLATE, i*50, i*50);
+      for (let i = 1; i < 3; i++) {
+        this.elementRepositoryService.addEditorElement(PaletteComponent.DEFAULT_DIV_TEMPLATE, i*120, i*120);
       }
       this.changeDetectionRef.detectChanges();
     }

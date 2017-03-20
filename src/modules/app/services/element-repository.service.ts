@@ -85,6 +85,18 @@ export class ElementRepositoryService {
     after.htmlDom.parentNode.insertBefore(item.htmlDom, after.htmlDom);
   }
 
+  public moveItemInside(itemId: string, insideId: string) {
+    if (itemId === insideId) {
+      return;
+    }
+
+    // TODO: make sure that insideId in not in fact inside itemId (that would create cycle and detach whole subtree)
+
+    console.log(`move item ${itemId} inside ${insideId}`);
+
+    // TODO: perform move
+  }
+
   private generateEditorElement(template: string): EditorElement {
     let editorElement = {
       id: this.generateNextElementId(),

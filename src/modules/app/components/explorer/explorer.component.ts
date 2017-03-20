@@ -38,14 +38,14 @@ export class ExplorerComponent {
 
   private highlightDropZone(ref: ElementRef) {
     if (!ref && this.activedropZone) {
-      this.activedropZone.nativeElement.dataset['show'] = 'false';
+      this.activedropZone.nativeElement.dataset['active'] = 'false';
     }
     if (ref && this.activedropZone && ref !== this.activedropZone) {
-      this.activedropZone.nativeElement.dataset['show'] = 'false';
+      this.activedropZone.nativeElement.dataset['active'] = 'false';
     }
     if (ref) {
       this.activedropZone = ref;
-      this.activedropZone.nativeElement.dataset['show'] = 'true';
+      this.activedropZone.nativeElement.dataset['active'] = 'true';
     }
   }
 
@@ -55,6 +55,8 @@ export class ExplorerComponent {
       this.elementRepositoryService.moveItemBefore(sourceId, dropZone.dataset['before']);
     } else if (dropZone.dataset['after']) {
       this.elementRepositoryService.moveItemAfter(sourceId, dropZone.dataset['after']);
+    } else if (dropZone.dataset['nodeId']) {
+      this.elementRepositoryService.moveItemInside(sourceId, dropZone.dataset['nodeId']);
     }
   }
 

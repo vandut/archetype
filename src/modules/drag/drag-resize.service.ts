@@ -1,26 +1,25 @@
 import { Injectable } from '@angular/core';
 import { DragBaseService } from './drag-base.service';
-import { HTMLElementTransformer } from '../shared/HTMLElement';
 import { Position2D } from '../shared/Position2D';
 
 @Injectable()
 export class DragResizeService extends DragBaseService {
 
-  protected moveToSimple(target: HTMLElementTransformer, point: Position2D, data: any): Position2D {
-    // TODO: not implemented
-    return point;
-  }
+  protected moveTo(point: Position2D, data: any): Position2D {
+    if (!this.draggableItem.parent) {
+      console.warn('Parent undefined');
+      return point;
+    }
 
-  protected moveToAdvanced(target: HTMLElementTransformer, point: Position2D, data: any): Position2D {
-    const hostRect = this.parent.clientRect;
+    const hostRect = this.draggableItem.parent.clientRect;
 
     let deltaX = point.x - this.lastXY.x;
     let deltaY = point.y - this.lastXY.y;
 
-    const targetX = target.positionX;
-    const targetY = target.positionY;
-    const targetWidth = target.totalWidth;
-    const targetHeight = target.totalHeight;
+    const targetX = this.draggableItem.transformer.positionX;
+    const targetY = this.draggableItem.transformer.positionY;
+    const targetWidth = this.draggableItem.transformer.totalWidth;
+    const targetHeight = this.draggableItem.transformer.totalHeight;
 
     switch (data) {
       case 'Resize_W':
@@ -54,13 +53,13 @@ export class DragResizeService extends DragBaseService {
       case 'Resize_N':
       case 'Resize_NW':
       case 'Resize_NE':
-        target.positionY += deltaY;
-        target.totalHeight -= deltaY;
+        this.draggableItem.transformer.positionY += deltaY;
+        this.draggableItem.transformer.totalHeight -= deltaY;
         break;
       case 'Resize_S':
       case 'Resize_SW':
       case 'Resize_SE':
-        target.totalHeight += deltaY;
+        this.draggableItem.transformer.totalHeight += deltaY;
         break;
     }
 
@@ -68,13 +67,13 @@ export class DragResizeService extends DragBaseService {
       case 'Resize_W':
       case 'Resize_NW':
       case 'Resize_SW':
-        target.positionX += deltaX;
-        target.totalWidth -= deltaX;
+        this.draggableItem.transformer.positionX += deltaX;
+        this.draggableItem.transformer.totalWidth -= deltaX;
         break;
       case 'Resize_E':
       case 'Resize_NE':
       case 'Resize_SE':
-        target.totalWidth += deltaX;
+        this.draggableItem.transformer.totalWidth += deltaX;
         break;
     }
 

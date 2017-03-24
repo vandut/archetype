@@ -1,7 +1,6 @@
-import { HTMLElementChmod, HTMLElementTransformer } from '../shared/HTMLElement';
 import { DragMoveEventListener } from './DragMoveEventListener';
-import { ElementRepositoryHelper } from '../app/services/element-repository.service';
 import { Position2D } from '../shared/Position2D';
+import { DraggableItemImpl } from './DraggableItem';
 
 export abstract class DragBaseService implements DragMoveEventListener {
 
@@ -21,7 +20,7 @@ export abstract class DragBaseService implements DragMoveEventListener {
 
   protected firstXY: Position2D = null;
   protected lastXY: Position2D = null;
-  protected parent: HTMLElementChmod = null;
+  protected draggableItem: DraggableItemImpl = null;
 
   public diffuseClick(event: MouseEvent) {
     if (event.button === 0) {
@@ -35,50 +34,27 @@ export abstract class DragBaseService implements DragMoveEventListener {
   public onPanStart(target: HTMLElement, point: Position2D, data: any) {
     this.firstXY = point;
     this.lastXY = point;
-    this.parent = this.findParent(target);
+    this.draggableItem = new DraggableItemImpl(target);
   }
 
   public onPanMove(target: HTMLElement, point: Position2D, data: any) {
-    this.lastXY = this.moveTo(target, point, data);
+    this.lastXY = this.moveTo(point, data);
   }
 
   public onPanEnd(target: HTMLElement, point: Position2D, data: any) {
-    this.moveTo(target, point, data);
+    this.moveTo(point, data);
     this.firstXY = null;
     this.lastXY = null;
-    this.parent = null;
+    this.draggableItem = null;
   }
 
   public onPanCancel(target: HTMLElement, point: Position2D, data: any) {
-    this.moveTo(target, this.firstXY, data);
+    this.moveTo(this.firstXY, data);
     this.firstXY = null;
     this.lastXY = null;
-    this.parent = null;
+    this.draggableItem = null;
   }
 
-  private moveTo(target: HTMLElement, point: Position2D, data: any): Position2D {
-    if (this.parent) {
-      return this.moveToAdvanced(HTMLElementTransformer.of(target), point, data);
-    } else {
-      return this.moveToSimple(HTMLElementTransformer.of(target), point, data);
-    }
-  }
-
-  protected abstract moveToSimple(target: HTMLElementTransformer, point: Position2D, data: any): Position2D;
-
-  protected abstract moveToAdvanced(target: HTMLElementTransformer, point: Position2D, data: any): Position2D;
-
-  private findParent(target: HTMLElement): HTMLElementChmod {
-    if (ElementRepositoryHelper.getIsChildOf(target)) {
-      let parent = target.parentElement;
-      while (parent !== null) {
-        if (ElementRepositoryHelper.getIsParentFor(parent) === ElementRepositoryHelper.getIsChildOf(target)) {
-          return HTMLElementChmod.of(parent);
-        }
-        parent = parent.parentElement;
-      }
-    }
-    return null;
-  }
+  protected abstract moveTo(point: Position2D, data: any): Position2D;
 
 }

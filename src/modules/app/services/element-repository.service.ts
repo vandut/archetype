@@ -104,6 +104,8 @@ export class ElementRepositoryService {
 
       item.htmlDom.parentNode.insertBefore(item.htmlDom, before.htmlDom.nextSibling);
     }, 0);
+
+    // TODO: set parent data attr
   }
 
   public moveItemAfter(itemId: string, afterId: string) {
@@ -130,6 +132,8 @@ export class ElementRepositoryService {
 
       after.htmlDom.parentNode.insertBefore(item.htmlDom, after.htmlDom);
     }, 0);
+
+    // TODO: set parent data attr
   }
 
   public moveItemInside(itemId: string, insideId: string) {
@@ -162,6 +166,8 @@ export class ElementRepositoryService {
       HTMLElementTransformer.of(item.htmlDom).positionType = 'absolute';
       inside.htmlDom.appendChild(item.htmlDom);
     }, 0);
+
+    // TODO: set parent data attr
   }
 
   private generateEditorElement(template: string): EditorElement {

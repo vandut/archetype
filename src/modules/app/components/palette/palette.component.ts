@@ -6,8 +6,8 @@ import { PreviewDirective } from '../../../drag/preview.directive';
 
 @Component({
   selector: 'palette',
-  templateUrl: 'palette.component.html',
-  styleUrls: ['palette.component.css']
+  templateUrl: './palette.component.html',
+  styleUrls: ['./palette.component.css']
 })
 export class PaletteComponent {
 

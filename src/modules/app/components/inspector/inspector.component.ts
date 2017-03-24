@@ -10,8 +10,8 @@ interface PropertyBinding {
 
 @Component({
   selector: 'inspector',
-  templateUrl: 'inspector.component.html',
-  styleUrls: ['inspector.component.css']
+  templateUrl: './inspector.component.html',
+  styleUrls: ['./inspector.component.css']
 })
 export class InspectorComponent implements OnInit, OnDestroy {
 

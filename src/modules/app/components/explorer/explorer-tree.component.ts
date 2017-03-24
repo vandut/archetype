@@ -5,8 +5,8 @@ import { PageCoordinatesHelper } from '../../../shared/PageCoordinatesHelper';
 
 @Component({
   selector: 'explorer-tree',
-  templateUrl: 'explorer-tree.component.html',
-  styleUrls: ['explorer-tree.component.css']
+  templateUrl: './explorer-tree.component.html',
+  styleUrls: ['./explorer-tree.component.css']
 })
 export class ExplorerTreeComponent {
 

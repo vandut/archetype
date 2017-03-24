@@ -4,7 +4,7 @@ node_js:
   - 7.5.0
 
 install:
-  - npm i --silent --no-optional -g @angular/cli@1.0.0-rc.2
+  - npm i --silent --no-optional -g @angular/cli@1.0.0
   - npm i --silent --no-optional -g angular-cli-ghpages
 
 script:

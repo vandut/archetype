@@ -4,8 +4,8 @@ import { ExplorerTreeComponent } from './explorer-tree.component';
 
 @Component({
   selector: 'explorer',
-  templateUrl: 'explorer.component.html',
-  styleUrls: ['explorer.component.css']
+  templateUrl: './explorer.component.html',
+  styleUrls: ['./explorer.component.css']
 })
 export class ExplorerComponent {
 

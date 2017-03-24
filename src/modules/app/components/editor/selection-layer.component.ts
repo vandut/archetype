@@ -4,8 +4,8 @@ import { ElementSelectionService } from '../../services/element-selection.servic
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'editor-selection-layer',
-  templateUrl: 'selection-layer.component.html'
+  selector: './editor-selection-layer',
+  templateUrl: './selection-layer.component.html'
 })
 export class SelectionLayerComponent implements OnInit, OnDestroy {
 

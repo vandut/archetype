@@ -7,8 +7,8 @@ import { DragBaseService } from '../../../drag/drag-base.service';
 
 @Component({
   selector: 'editor-selection',
-  templateUrl: 'selection.component.html',
-  styleUrls: ['selection.component.css']
+  templateUrl: './selection.component.html',
+  styleUrls: ['./selection.component.css']
 })
 export class SelectionComponent implements AfterViewInit {
 

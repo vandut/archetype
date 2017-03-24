@@ -1,16 +1,16 @@
 import { DragBaseService } from './drag-base.service';
 import { Position2D } from '../shared/Position2D';
 
-export interface DragMoveEventListener {
+export interface DragEventListener {
   diffuseClick(event: MouseEvent);
   onTap(target: HTMLElement, point: Position2D, data: any);
   onPanStart(target: HTMLElement, point: Position2D, data: any);
-  onPanMove(target: HTMLElement, point: Position2D, data: any);
-  onPanEnd(target: HTMLElement, point: Position2D, data: any);
-  onPanCancel(target: HTMLElement, point: Position2D, data: any);
+  onPanMove(point: Position2D);
+  onPanEnd(point: Position2D);
+  onPanCancel(point: Position2D);
 }
 
-export class ForwardingDragMoveEventListener implements DragMoveEventListener {
+export class ForwardingDragEventListener implements DragEventListener {
 
   constructor(private dragBaseService: DragBaseService) {}
 
@@ -26,16 +26,16 @@ export class ForwardingDragMoveEventListener implements DragMoveEventListener {
     this.dragBaseService.onPanStart(target, point, data);
   }
 
-  public onPanMove(target: HTMLElement, point: Position2D, data: any) {
-    this.dragBaseService.onPanMove(target, point, data);
+  public onPanMove(point: Position2D) {
+    this.dragBaseService.onPanMove(point);
   }
 
-  public onPanEnd(target: HTMLElement, point: Position2D, data: any) {
-    this.dragBaseService.onPanEnd(target, point, data);
+  public onPanEnd(point: Position2D) {
+    this.dragBaseService.onPanEnd(point);
   }
 
-  public onPanCancel(target: HTMLElement, point: Position2D, data: any) {
-    this.dragBaseService.onPanCancel(target, point, data);
+  public onPanCancel(point: Position2D) {
+    this.dragBaseService.onPanCancel(point);
   }
 
 }

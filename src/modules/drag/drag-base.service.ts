@@ -1,26 +1,13 @@
-import { DragMoveEventListener } from './DragMoveEventListener';
+import { DragEventListener } from './DragEventListener';
 import { Position2D } from '../shared/Position2D';
 import { DraggableItemImpl } from './DraggableItem';
 
-export abstract class DragBaseService implements DragMoveEventListener {
-
-  public static ATTR_NAME_DRAGGABLE = 'draggable';
-
-  public static registerMoveListeners(target: HTMLElement, listener: DragMoveEventListener) {
-    target.dataset[DragBaseService.ATTR_NAME_DRAGGABLE] = 'true';
-    const hammerTime = new Hammer(target);
-    hammerTime.get('pan').set({ direction: Hammer.DIRECTION_ALL, threshold: 0 });
-    target.addEventListener('mousedown', event => listener.diffuseClick(event));
-    hammerTime.on('tap', event => listener.onTap(event.target, event.center, null));
-    hammerTime.on('panstart', event => listener.onPanStart(event.target, event.center, null));
-    hammerTime.on('panmove', event => listener.onPanMove(event.target, event.center, null));
-    hammerTime.on('panend', event => listener.onPanEnd(event.target, event.center, null));
-    hammerTime.on('pancancel', event => listener.onPanCancel(event.target, event.center, null));
-  }
+export abstract class DragBaseService implements DragEventListener {
 
   protected firstXY: Position2D = null;
   protected lastXY: Position2D = null;
   protected draggableItem: DraggableItemImpl = null;
+  protected moveType: string = null;
 
   public diffuseClick(event: MouseEvent) {
     if (event.button === 0) {
@@ -35,26 +22,27 @@ export abstract class DragBaseService implements DragMoveEventListener {
     this.firstXY = point;
     this.lastXY = point;
     this.draggableItem = new DraggableItemImpl(target);
+    this.moveType = data;
   }
 
-  public onPanMove(target: HTMLElement, point: Position2D, data: any) {
-    this.lastXY = this.moveTo(point, data);
+  public onPanMove(point: Position2D) {
+    this.lastXY = this.moveTo(point);
   }
 
-  public onPanEnd(target: HTMLElement, point: Position2D, data: any) {
-    this.moveTo(point, data);
+  public onPanEnd(point: Position2D) {
+    this.moveTo(point);
     this.firstXY = null;
     this.lastXY = null;
     this.draggableItem = null;
   }
 
-  public onPanCancel(target: HTMLElement, point: Position2D, data: any) {
-    this.moveTo(this.firstXY, data);
+  public onPanCancel(point: Position2D) {
+    this.moveTo(this.firstXY);
     this.firstXY = null;
     this.lastXY = null;
     this.draggableItem = null;
   }
 
-  protected abstract moveTo(point: Position2D, data: any): Position2D;
+  protected abstract moveTo(point: Position2D): Position2D;
 
 }

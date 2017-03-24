@@ -1,40 +1,20 @@
 import { Directive, HostListener } from '@angular/core';
 import { DragMoveService } from './drag-move.service';
-import { DragBaseService } from './drag-base.service';
+import { HammerSupport } from './HammerSupport';
 
 @Directive({
   selector: '[dragMoveHandler]'
 })
 export class DragMoveHandlerDirective {
 
-  private static DELEGATED_HAMMER_EVENT_TYPES = [
-    'tap',
-    'panstart',
-    'panmove',
-    'panend',
-    'pancancel'
-  ];
+  public static ATTR_NAME_DRAGGABLE = 'draggable';
 
   public static registerAsDraggable(target: HTMLElement) {
-    target.dataset[DragBaseService.ATTR_NAME_DRAGGABLE] = 'true';
-
-    const hammerTime = new Hammer(target);
-    hammerTime.get('pan').set({ direction: Hammer.DIRECTION_ALL, threshold: 0 });
-
-    target.addEventListener('mousedown', event => DragMoveHandlerDirective.delegateEvent(target, event));
-
-    for (let eventType of DragMoveHandlerDirective.DELEGATED_HAMMER_EVENT_TYPES) {
-      hammerTime.on(eventType, event => DragMoveHandlerDirective.delegateEvent(target, event));
-    }
+    target.dataset[DragMoveHandlerDirective.ATTR_NAME_DRAGGABLE] = 'true';
+    HammerSupport.registerEventDelegator(target)
   }
 
-  private static delegateEvent(delegate: HTMLElement, event: any) {
-    const payload = new CustomEvent(`${event.type}-delegate`, { detail: event, bubbles: true });
-    delegate.dispatchEvent(payload);
-  }
-
-  constructor(
-    private dragMoveService: DragMoveService) {}
+  constructor(private dragMoveService: DragMoveService) {}
 
   @HostListener('mousedown-delegate', ['$event'])
   public diffuseClick(event: CustomEvent) {
@@ -60,26 +40,26 @@ export class DragMoveHandlerDirective {
   @HostListener('panmove-delegate', ['$event'])
   public onPanMove(event: CustomEvent) {
     if (DragMoveHandlerDirective.canHandleDragMove(event.target)) {
-      this.dragMoveService.onPanMove(event.detail.target, event.detail.center, null);
+      this.dragMoveService.onPanMove(event.detail.center);
     }
   }
 
   @HostListener('panend-delegate', ['$event'])
   public onPanEnd(event: CustomEvent) {
     if (DragMoveHandlerDirective.canHandleDragMove(event.target)) {
-      this.dragMoveService.onPanEnd(event.detail.target, event.detail.center, null);
+      this.dragMoveService.onPanEnd(event.detail.center);
     }
   }
 
   @HostListener('pancancel-delegate', ['$event'])
   public onPanCancel(event: CustomEvent) {
     if (DragMoveHandlerDirective.canHandleDragMove(event.target)) {
-      this.dragMoveService.onPanCancel(event.detail.target, event.detail.center, null);
+      this.dragMoveService.onPanCancel(event.detail.center);
     }
   }
 
   private static canHandleDragMove(target: EventTarget | HTMLElement): boolean {
-    return (<HTMLElement> target).dataset[DragBaseService.ATTR_NAME_DRAGGABLE] === 'true';
+    return (<HTMLElement> target).dataset[DragMoveHandlerDirective.ATTR_NAME_DRAGGABLE] === 'true';
   }
 
 }

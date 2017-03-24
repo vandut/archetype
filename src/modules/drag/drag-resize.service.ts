@@ -5,7 +5,7 @@ import { Position2D } from '../shared/Position2D';
 @Injectable()
 export class DragResizeService extends DragBaseService {
 
-  protected moveTo(point: Position2D, data: any): Position2D {
+  protected moveTo(point: Position2D): Position2D {
     if (!this.draggableItem.parent) {
       console.warn('Parent undefined');
       return point;
@@ -21,7 +21,7 @@ export class DragResizeService extends DragBaseService {
     const targetWidth = this.draggableItem.transformer.totalWidth;
     const targetHeight = this.draggableItem.transformer.totalHeight;
 
-    switch (data) {
+    switch (this.moveType) {
       case 'Resize_W':
       case 'Resize_NW':
       case 'Resize_SW':
@@ -35,7 +35,7 @@ export class DragResizeService extends DragBaseService {
         break;
     }
 
-    switch (data) {
+    switch (this.moveType) {
       case 'Resize_N':
       case 'Resize_NW':
       case 'Resize_NE':
@@ -49,7 +49,7 @@ export class DragResizeService extends DragBaseService {
         break;
     }
 
-    switch (data) {
+    switch (this.moveType) {
       case 'Resize_N':
       case 'Resize_NW':
       case 'Resize_NE':
@@ -63,7 +63,7 @@ export class DragResizeService extends DragBaseService {
         break;
     }
 
-    switch (data) {
+    switch (this.moveType) {
       case 'Resize_W':
       case 'Resize_NW':
       case 'Resize_SW':

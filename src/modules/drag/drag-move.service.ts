@@ -5,7 +5,7 @@ import { Position2D } from '../shared/Position2D';
 @Injectable()
 export class DragMoveService extends DragBaseService {
 
-  protected moveTo(point: Position2D, data: any): Position2D {
+  protected moveTo(point: Position2D): Position2D {
     if (this.draggableItem.parent) {
       return this.moveWithParentRestrictions(point);
     } else {

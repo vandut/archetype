@@ -26,7 +26,7 @@ export class ExplorerTreeComponent {
   }
 
   public findDropZone(point: HammerPoint): ElementRef {
-    const coordinates = PageCoordinatesHelper.fromHammerPoint(point);
+    const coordinates = PageCoordinatesHelper.fromPosition2D(point);
     const zone = this.dropZones.find(dropZone => PageCoordinatesHelper.isInsideElement(dropZone, coordinates));
     if (zone) {
       return zone;

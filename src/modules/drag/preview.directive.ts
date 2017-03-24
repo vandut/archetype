@@ -1,6 +1,6 @@
 import { Directive, HostListener, EventEmitter, Output } from '@angular/core';
 import { PreviewService } from './preview.service';
-import { PageCoordinates } from '../shared/PageCoordinates';
+import { PageCoordinatesHelper } from '../shared/PageCoordinatesHelper';
 import { DropZoneService } from './drop-zone.service';
 
 @Directive({
@@ -28,7 +28,7 @@ export class PreviewDirective {
   public onPanStart(event: HammerInput) {
     if (PreviewDirective.isDragEnabled(event.target)) {
       if (PreviewDirective.isPreviewCopy(event.target)) {
-        this.previewService.startPreview(event.target, PreviewDirective.hammerPoint2Coordinates(event.center));
+        this.previewService.startPreview(event.target, PageCoordinatesHelper.fromPosition2D(event.center));
       } else {
         this.previewStart.emit(event);
       }
@@ -38,7 +38,7 @@ export class PreviewDirective {
   @HostListener('panmove', ['$event'])
   public onPanMove(event: HammerInput) {
     if (PreviewDirective.isDragEnabled(event.target)) {
-      this.previewService.movePreview(PreviewDirective.hammerPoint2Coordinates(event.center));
+      this.previewService.movePreview(PageCoordinatesHelper.fromPosition2D(event.center));
     }
   }
 
@@ -47,7 +47,7 @@ export class PreviewDirective {
     if (PreviewDirective.isDragEnabled(event.target)) {
       this.previewService.endPreview();
       const label = event.target.dataset[PreviewDirective.DATA_ATTR_LABEL];
-      const coordinates = PreviewDirective.hammerPoint2Coordinates(event.center);
+      const coordinates = PageCoordinatesHelper.fromPosition2D(event.center);
       const dropZone = this.dropZoneService.findDropZone(label, coordinates);
       if (dropZone) {
         dropZone.onDropZoneActivated(event.target, coordinates);
@@ -68,13 +68,6 @@ export class PreviewDirective {
 
   private static isPreviewCopy(htmlElement: HTMLElement): boolean {
     return !htmlElement.dataset[PreviewDirective.DATA_ATTR_PREVIEW] || htmlElement.dataset[PreviewDirective.DATA_ATTR_PREVIEW] === 'copy';
-  }
-
-  public static hammerPoint2Coordinates(point: HammerPoint): PageCoordinates {
-    return {
-      pageX: point.x,
-      pageY: point.y
-    };
   }
 
 }

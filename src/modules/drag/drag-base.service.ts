@@ -1,6 +1,7 @@
 import { HTMLElementChmod, HTMLElementTransformer } from '../shared/HTMLElement';
 import { DragMoveEventListener } from './DragMoveEventListener';
 import { ElementRepositoryHelper } from '../app/services/element-repository.service';
+import { Position2D } from '../shared/Position2D';
 
 export abstract class DragBaseService implements DragMoveEventListener {
 
@@ -18,8 +19,8 @@ export abstract class DragBaseService implements DragMoveEventListener {
     hammerTime.on('pancancel', event => listener.onPanCancel(event.target, event.center, null));
   }
 
-  protected firstXY: HammerPoint = null;
-  protected lastXY: HammerPoint = null;
+  protected firstXY: Position2D = null;
+  protected lastXY: Position2D = null;
   protected parent: HTMLElementChmod = null;
 
   public diffuseClick(event: MouseEvent) {
@@ -28,34 +29,34 @@ export abstract class DragBaseService implements DragMoveEventListener {
     }
   }
 
-  public onTap(target: HTMLElement, point: HammerPoint, data: any) {
+  public onTap(target: HTMLElement, point: Position2D, data: any) {
   }
 
-  public onPanStart(target: HTMLElement, point: HammerPoint, data: any) {
+  public onPanStart(target: HTMLElement, point: Position2D, data: any) {
     this.firstXY = point;
     this.lastXY = point;
     this.parent = this.findParent(target);
   }
 
-  public onPanMove(target: HTMLElement, point: HammerPoint, data: any) {
+  public onPanMove(target: HTMLElement, point: Position2D, data: any) {
     this.lastXY = this.moveTo(target, point, data);
   }
 
-  public onPanEnd(target: HTMLElement, point: HammerPoint, data: any) {
+  public onPanEnd(target: HTMLElement, point: Position2D, data: any) {
     this.moveTo(target, point, data);
     this.firstXY = null;
     this.lastXY = null;
     this.parent = null;
   }
 
-  public onPanCancel(target: HTMLElement, point: HammerPoint, data: any) {
+  public onPanCancel(target: HTMLElement, point: Position2D, data: any) {
     this.moveTo(target, this.firstXY, data);
     this.firstXY = null;
     this.lastXY = null;
     this.parent = null;
   }
 
-  private moveTo(target: HTMLElement, point: HammerPoint, data: any): HammerPoint {
+  private moveTo(target: HTMLElement, point: Position2D, data: any): Position2D {
     if (this.parent) {
       return this.moveToAdvanced(HTMLElementTransformer.of(target), point, data);
     } else {
@@ -63,9 +64,9 @@ export abstract class DragBaseService implements DragMoveEventListener {
     }
   }
 
-  protected abstract moveToSimple(target: HTMLElementTransformer, point: HammerPoint, data: any): HammerPoint;
+  protected abstract moveToSimple(target: HTMLElementTransformer, point: Position2D, data: any): Position2D;
 
-  protected abstract moveToAdvanced(target: HTMLElementTransformer, point: HammerPoint, data: any): HammerPoint;
+  protected abstract moveToAdvanced(target: HTMLElementTransformer, point: Position2D, data: any): Position2D;
 
   private findParent(target: HTMLElement): HTMLElementChmod {
     if (ElementRepositoryHelper.getIsChildOf(target)) {

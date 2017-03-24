@@ -1,16 +1,17 @@
 import { Injectable } from '@angular/core';
 import { DragBaseService } from './drag-base.service';
 import { HTMLElementTransformer } from '../shared/HTMLElement';
+import { Position2D } from '../shared/Position2D';
 
 @Injectable()
 export class DragResizeService extends DragBaseService {
 
-  protected moveToSimple(target: HTMLElementTransformer, point: HammerPoint, data: any): HammerPoint {
+  protected moveToSimple(target: HTMLElementTransformer, point: Position2D, data: any): Position2D {
     // TODO: not implemented
     return point;
   }
 
-  protected moveToAdvanced(target: HTMLElementTransformer, point: HammerPoint, data: any): HammerPoint {
+  protected moveToAdvanced(target: HTMLElementTransformer, point: Position2D, data: any): Position2D {
     const hostRect = this.parent.clientRect;
 
     let deltaX = point.x - this.lastXY.x;

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { ElementSelectionService } from '../../services/element-selection.service';
 import { PreviewService } from '../../../drag/preview.service';
 import { HTMLElementFactory } from '../../../shared/HTMLElement';
-import { PreviewDirective } from '../../../drag/preview.directive';
+import { PageCoordinatesHelper } from '../../../shared/PageCoordinatesHelper';
 
 @Component({
   selector: 'palette',
@@ -26,7 +26,7 @@ export class PaletteComponent {
 
   onPreviewStart(event: HammerInput, template: string) {
     const target = HTMLElementFactory.fromTemplate(template);
-    this.previewService.startPreview(target, PreviewDirective.hammerPoint2Coordinates(event.center));
+    this.previewService.startPreview(target, PageCoordinatesHelper.fromPosition2D(event.center));
     this.elementSelectionService.clearSelection();
   }
 

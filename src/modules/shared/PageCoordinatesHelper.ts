@@ -1,6 +1,7 @@
 import { PageCoordinates } from './PageCoordinates';
 import { ElementRef } from '@angular/core';
 import { DomHelper } from './DomHelper';
+import { Position2D } from './Position2D';
 
 export class PageCoordinatesHelper {
 
@@ -35,10 +36,10 @@ export class PageCoordinatesHelper {
     ];
   }
 
-  public static fromHammerPoint(point: HammerPoint): PageCoordinates {
+  public static fromPosition2D(position: Position2D): PageCoordinates {
     return {
-      pageX: point.x,
-      pageY: point.y
+      pageX: position.x,
+      pageY: position.y
     };
   }
 

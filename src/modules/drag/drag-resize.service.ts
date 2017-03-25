@@ -6,22 +6,25 @@ import { Position2D } from '../shared/Position2D';
 export class DragResizeService extends DragBaseService {
 
   protected moveTo(point: Position2D): Position2D {
-    if (!this.draggableItem.parent) {
+    const transformer = this.draggableItem.transformer;
+    const parentChmod = this.draggableItem.parentChmod;
+    const lastPosition = this.lastXY;
+    const moveType = this.moveType;
+
+    if (!parentChmod) {
       console.warn('Parent undefined');
       return point;
     }
 
-    const hostRect = this.draggableItem.parent.clientRect;
+    let deltaX = point.x - lastPosition.x;
+    let deltaY = point.y - lastPosition.y;
 
-    let deltaX = point.x - this.lastXY.x;
-    let deltaY = point.y - this.lastXY.y;
+    const targetX = transformer.positionX;
+    const targetY = transformer.positionY;
+    const targetWidth = transformer.totalWidth;
+    const targetHeight = transformer.totalHeight;
 
-    const targetX = this.draggableItem.transformer.positionX;
-    const targetY = this.draggableItem.transformer.positionY;
-    const targetWidth = this.draggableItem.transformer.totalWidth;
-    const targetHeight = this.draggableItem.transformer.totalHeight;
-
-    switch (this.moveType) {
+    switch (moveType) {
       case 'Resize_W':
       case 'Resize_NW':
       case 'Resize_SW':
@@ -30,12 +33,12 @@ export class DragResizeService extends DragBaseService {
       case 'Resize_E':
       case 'Resize_NE':
       case 'Resize_SE':
-        deltaX = Math.round(Math.min(hostRect.width, targetX + targetWidth + deltaX)
+        deltaX = Math.round(Math.min(parentChmod.clientRect.width, targetX + targetWidth + deltaX)
             - (targetX + targetWidth)) - Math.min(0, targetWidth + deltaX);
         break;
     }
 
-    switch (this.moveType) {
+    switch (moveType) {
       case 'Resize_N':
       case 'Resize_NW':
       case 'Resize_NE':
@@ -44,42 +47,42 @@ export class DragResizeService extends DragBaseService {
       case 'Resize_S':
       case 'Resize_SW':
       case 'Resize_SE':
-        deltaY = Math.round(Math.min(hostRect.height, targetY + targetHeight + deltaY)
+        deltaY = Math.round(Math.min(parentChmod.clientRect.height, targetY + targetHeight + deltaY)
             - (targetY + targetHeight)) - Math.min(0, targetHeight + deltaY);
         break;
     }
 
-    switch (this.moveType) {
+    switch (moveType) {
       case 'Resize_N':
       case 'Resize_NW':
       case 'Resize_NE':
-        this.draggableItem.transformer.positionY += deltaY;
-        this.draggableItem.transformer.totalHeight -= deltaY;
+        transformer.positionY += deltaY;
+        transformer.totalHeight -= deltaY;
         break;
       case 'Resize_S':
       case 'Resize_SW':
       case 'Resize_SE':
-        this.draggableItem.transformer.totalHeight += deltaY;
+        transformer.totalHeight += deltaY;
         break;
     }
 
-    switch (this.moveType) {
+    switch (moveType) {
       case 'Resize_W':
       case 'Resize_NW':
       case 'Resize_SW':
-        this.draggableItem.transformer.positionX += deltaX;
-        this.draggableItem.transformer.totalWidth -= deltaX;
+        transformer.positionX += deltaX;
+        transformer.totalWidth -= deltaX;
         break;
       case 'Resize_E':
       case 'Resize_NE':
       case 'Resize_SE':
-        this.draggableItem.transformer.totalWidth += deltaX;
+        transformer.totalWidth += deltaX;
         break;
     }
 
     return {
-      x: this.lastXY.x + deltaX,
-      y: this.lastXY.y + deltaY
+      x: lastPosition.x + deltaX,
+      y: lastPosition.y + deltaY
     };
   }
 

@@ -65,4 +65,83 @@ export class DraggableItemImpl implements DraggableItem {
     return last;
   }
 
+  public moveWallTo(position: Position2D, lastPosition: Position2D, moveType: string): Position2D {
+    const transformer = this.transformer;
+    const parentChmod = this.parentChmod;
+
+    if (!parentChmod) {
+      console.warn('Parent undefined');
+      return position;
+    }
+
+    let deltaX = position.x - lastPosition.x;
+    let deltaY = position.y - lastPosition.y;
+
+    const targetX = transformer.positionX;
+    const targetY = transformer.positionY;
+    const targetWidth = transformer.totalWidth;
+    const targetHeight = transformer.totalHeight;
+
+    switch (moveType) {
+      case 'Resize_W':
+      case 'Resize_NW':
+      case 'Resize_SW':
+        deltaX = Math.max(0, targetX + deltaX) - targetX + Math.min(0, targetWidth - deltaX);
+        break;
+      case 'Resize_E':
+      case 'Resize_NE':
+      case 'Resize_SE':
+        deltaX = Math.round(Math.min(parentChmod.clientRect.width, targetX + targetWidth + deltaX)
+            - (targetX + targetWidth)) - Math.min(0, targetWidth + deltaX);
+        break;
+    }
+
+    switch (moveType) {
+      case 'Resize_N':
+      case 'Resize_NW':
+      case 'Resize_NE':
+        deltaY = Math.max(0, targetY + deltaY) - targetY + Math.min(0, targetHeight - deltaY);
+        break;
+      case 'Resize_S':
+      case 'Resize_SW':
+      case 'Resize_SE':
+        deltaY = Math.round(Math.min(parentChmod.clientRect.height, targetY + targetHeight + deltaY)
+            - (targetY + targetHeight)) - Math.min(0, targetHeight + deltaY);
+        break;
+    }
+
+    switch (moveType) {
+      case 'Resize_N':
+      case 'Resize_NW':
+      case 'Resize_NE':
+        transformer.positionY += deltaY;
+        transformer.totalHeight -= deltaY;
+        break;
+      case 'Resize_S':
+      case 'Resize_SW':
+      case 'Resize_SE':
+        transformer.totalHeight += deltaY;
+        break;
+    }
+
+    switch (moveType) {
+      case 'Resize_W':
+      case 'Resize_NW':
+      case 'Resize_SW':
+        transformer.positionX += deltaX;
+        transformer.totalWidth -= deltaX;
+        break;
+      case 'Resize_E':
+      case 'Resize_NE':
+      case 'Resize_SE':
+        transformer.totalWidth += deltaX;
+        break;
+    }
+
+    return {
+      x: lastPosition.x + deltaX,
+      y: lastPosition.y + deltaY
+    };
+  }
+
 }

@@ -4,8 +4,7 @@ import { HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-br
 import { DropZoneService } from './drop-zone.service';
 import { PreviewDirective } from './preview.directive';
 import { PreviewService } from './preview.service';
-import { DragMoveService } from './drag-move.service';
-import { DragResizeService } from './drag-resize.service';
+import { DragMoveService, DragResizeService } from './drag.service';
 import { DragMoveHandlerDirective } from './drag-move-handler.directive';
 
 export class MyHammerConfig extends HammerGestureConfig  {

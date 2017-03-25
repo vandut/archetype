@@ -1,8 +1,9 @@
 import { DragEventListener } from './DragEventListener';
 import { Position2D } from '../shared/Position2D';
 import { DraggableItemImpl } from './DraggableItem';
+import { Injectable } from '@angular/core';
 
-export abstract class DragBaseService implements DragEventListener {
+abstract class DragBaseService implements DragEventListener {
 
   protected firstXY: Position2D = null;
   protected lastXY: Position2D = null;
@@ -44,5 +45,23 @@ export abstract class DragBaseService implements DragEventListener {
   }
 
   protected abstract moveTo(point: Position2D): Position2D;
+
+}
+
+@Injectable()
+export class DragMoveService extends DragBaseService {
+
+  protected moveTo(position: Position2D): Position2D {
+    return this.draggableItem.moveToPosition(position, this.lastXY);
+  }
+
+}
+
+@Injectable()
+export class DragResizeService extends DragBaseService {
+
+  protected moveTo(position: Position2D): Position2D {
+    return this.draggableItem.moveWallTo(position, this.lastXY, this.moveType);
+  }
 
 }

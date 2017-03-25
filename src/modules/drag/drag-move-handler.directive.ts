@@ -1,5 +1,5 @@
 import { Directive, HostListener } from '@angular/core';
-import { DragMoveService } from './drag-move.service';
+import { DragMoveService } from './drag.service';
 import { HammerSupport } from './HammerSupport';
 import { DraggableItemImpl } from './DraggableItem';
 

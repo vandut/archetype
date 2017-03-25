@@ -1,9 +1,7 @@
 import { Component, Input, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { HTMLElementTransformer } from '../../../shared/HTMLElement';
-import { DragMoveService } from '../../../drag/drag-move.service';
-import { DragResizeService } from '../../../drag/drag-resize.service';
-import { ForwardingDragEventListener } from '../../../drag/DragEventListener';
-import { DragBaseService } from '../../../drag/drag-base.service';
+import { DragMoveService, DragResizeService } from '../../../drag/drag.service';
+import { DragEventListenerWrapper, DragEventListener } from '../../../drag/DragEventListener';
 import { Position2D } from '../../../shared/Position2D';
 import { HammerSupport } from '../../../drag/HammerSupport';
 import { DraggableItemImpl } from '../../../drag/DraggableItem';
@@ -60,12 +58,12 @@ export class SelectionComponent implements AfterViewInit {
 
 }
 
-class SelectionTargetDragListener extends ForwardingDragEventListener {
+class SelectionTargetDragListener extends DragEventListenerWrapper {
 
-  constructor(dragBaseService: DragBaseService,
+  constructor(listener: DragEventListener,
               private selectionComponent: SelectionComponent,
               private customData: any) {
-    super(dragBaseService);
+    super(listener);
   }
 
   public onTap(draggableItem: DraggableItemImpl, point: Position2D, data: any) {

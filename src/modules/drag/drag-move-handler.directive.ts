@@ -1,5 +1,5 @@
 import { Directive, HostListener } from '@angular/core';
-import { DragMoveService } from './drag.service';
+import { DragService } from './drag.service';
 import { HammerSupport } from './HammerSupport';
 import { DraggableItemImpl } from './DraggableItem';
 
@@ -15,47 +15,47 @@ export class DragMoveHandlerDirective {
     HammerSupport.registerEventDelegator(target)
   }
 
-  constructor(private dragMoveService: DragMoveService) {}
+  constructor(private dragService: DragService) {}
 
   @HostListener('mousedown-delegate', ['$event'])
   public diffuseClick(event: CustomEvent) {
     if (DragMoveHandlerDirective.canHandleDragMove(event.target)) {
-      this.dragMoveService.diffuseClick(event.detail);
+      this.dragService.diffuseClick(event.detail);
     }
   }
 
   @HostListener('tap-delegate', ['$event'])
   public onTap(event: CustomEvent) {
     if (DragMoveHandlerDirective.canHandleDragMove(event.target)) {
-      this.dragMoveService.onTap(new DraggableItemImpl(event.detail.target), event.detail.center, null);
+      this.dragService.onTap(new DraggableItemImpl(event.detail.target), event.detail.center);
     }
   }
 
   @HostListener('panstart-delegate', ['$event'])
   public onPanStart(event: CustomEvent) {
     if (DragMoveHandlerDirective.canHandleDragMove(event.target)) {
-      this.dragMoveService.onPanStart(new DraggableItemImpl(event.detail.target), event.detail.center, null);
+      this.dragService.onPanStart(new DraggableItemImpl(event.detail.target), event.detail.center, null);
     }
   }
 
   @HostListener('panmove-delegate', ['$event'])
   public onPanMove(event: CustomEvent) {
     if (DragMoveHandlerDirective.canHandleDragMove(event.target)) {
-      this.dragMoveService.onPanMove(event.detail.center);
+      this.dragService.onPanMove(event.detail.center);
     }
   }
 
   @HostListener('panend-delegate', ['$event'])
   public onPanEnd(event: CustomEvent) {
     if (DragMoveHandlerDirective.canHandleDragMove(event.target)) {
-      this.dragMoveService.onPanEnd(event.detail.center);
+      this.dragService.onPanEnd(event.detail.center);
     }
   }
 
   @HostListener('pancancel-delegate', ['$event'])
   public onPanCancel(event: CustomEvent) {
     if (DragMoveHandlerDirective.canHandleDragMove(event.target)) {
-      this.dragMoveService.onPanCancel(event.detail.center);
+      this.dragService.onPanCancel(event.detail.center);
     }
   }
 

@@ -65,7 +65,7 @@ export class DraggableItemImpl implements DraggableItem {
     return last;
   }
 
-  public moveWallTo(position: Position2D, lastPosition: Position2D, moveType: string): Position2D {
+  public moveWallTo(position: Position2D, lastPosition: Position2D, resizeType: string): Position2D {
     const transformer = this.transformer;
     const parentChmod = this.parentChmod;
 
@@ -82,7 +82,7 @@ export class DraggableItemImpl implements DraggableItem {
     const targetWidth = transformer.totalWidth;
     const targetHeight = transformer.totalHeight;
 
-    switch (moveType) {
+    switch (resizeType) {
       case 'Resize_W':
       case 'Resize_NW':
       case 'Resize_SW':
@@ -96,7 +96,7 @@ export class DraggableItemImpl implements DraggableItem {
         break;
     }
 
-    switch (moveType) {
+    switch (resizeType) {
       case 'Resize_N':
       case 'Resize_NW':
       case 'Resize_NE':
@@ -110,7 +110,7 @@ export class DraggableItemImpl implements DraggableItem {
         break;
     }
 
-    switch (moveType) {
+    switch (resizeType) {
       case 'Resize_N':
       case 'Resize_NW':
       case 'Resize_NE':
@@ -124,7 +124,7 @@ export class DraggableItemImpl implements DraggableItem {
         break;
     }
 
-    switch (moveType) {
+    switch (resizeType) {
       case 'Resize_W':
       case 'Resize_NW':
       case 'Resize_SW':

@@ -1,6 +1,6 @@
 import { Component, Input, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { HTMLElementTransformer } from '../../../shared/HTMLElement';
-import { DragMoveService, DragResizeService } from '../../../drag/drag.service';
+import { DragService } from '../../../drag/drag.service';
 import { DragEventListenerWrapper, DragEventListener } from '../../../drag/DragEventListener';
 import { Position2D } from '../../../shared/Position2D';
 import { HammerSupport } from '../../../drag/HammerSupport';
@@ -33,19 +33,18 @@ export class SelectionComponent implements AfterViewInit {
   @ViewChild('resizeSW')   private resizeSW: ElementRef;
   @ViewChild('resizeSE')   private resizeSE: ElementRef;
 
-  constructor(private dragMoveService: DragMoveService,
-              private dragResizeService: DragResizeService) {}
+  constructor(private dragService: DragService) {}
 
   ngAfterViewInit() {
-    HammerSupport.registerDragEventListener(this.background.nativeElement, new SelectionTargetDragListener(this.dragMoveService,   this, 'Move'));
-    HammerSupport.registerDragEventListener(this.resizeN.nativeElement,    new SelectionTargetDragListener(this.dragResizeService, this, 'Resize_N'));
-    HammerSupport.registerDragEventListener(this.resizeS.nativeElement,    new SelectionTargetDragListener(this.dragResizeService, this, 'Resize_S'));
-    HammerSupport.registerDragEventListener(this.resizeW.nativeElement,    new SelectionTargetDragListener(this.dragResizeService, this, 'Resize_W'));
-    HammerSupport.registerDragEventListener(this.resizeE.nativeElement,    new SelectionTargetDragListener(this.dragResizeService, this, 'Resize_E'));
-    HammerSupport.registerDragEventListener(this.resizeNW.nativeElement,   new SelectionTargetDragListener(this.dragResizeService, this, 'Resize_NW'));
-    HammerSupport.registerDragEventListener(this.resizeNE.nativeElement,   new SelectionTargetDragListener(this.dragResizeService, this, 'Resize_NE'));
-    HammerSupport.registerDragEventListener(this.resizeSW.nativeElement,   new SelectionTargetDragListener(this.dragResizeService, this, 'Resize_SW'));
-    HammerSupport.registerDragEventListener(this.resizeSE.nativeElement,   new SelectionTargetDragListener(this.dragResizeService, this, 'Resize_SE'));
+    HammerSupport.registerDragEventListener(this.background.nativeElement, new SelectionTargetDragListener(this.dragService,   this));
+    HammerSupport.registerDragEventListener(this.resizeN.nativeElement,    new SelectionTargetDragListener(this.dragService, this, 'Resize_N'));
+    HammerSupport.registerDragEventListener(this.resizeS.nativeElement,    new SelectionTargetDragListener(this.dragService, this, 'Resize_S'));
+    HammerSupport.registerDragEventListener(this.resizeW.nativeElement,    new SelectionTargetDragListener(this.dragService, this, 'Resize_W'));
+    HammerSupport.registerDragEventListener(this.resizeE.nativeElement,    new SelectionTargetDragListener(this.dragService, this, 'Resize_E'));
+    HammerSupport.registerDragEventListener(this.resizeNW.nativeElement,   new SelectionTargetDragListener(this.dragService, this, 'Resize_NW'));
+    HammerSupport.registerDragEventListener(this.resizeNE.nativeElement,   new SelectionTargetDragListener(this.dragService, this, 'Resize_NE'));
+    HammerSupport.registerDragEventListener(this.resizeSW.nativeElement,   new SelectionTargetDragListener(this.dragService, this, 'Resize_SW'));
+    HammerSupport.registerDragEventListener(this.resizeSE.nativeElement,   new SelectionTargetDragListener(this.dragService, this, 'Resize_SE'));
   }
 
   public isMovable(): boolean {
@@ -62,30 +61,30 @@ class SelectionTargetDragListener extends DragEventListenerWrapper {
 
   constructor(listener: DragEventListener,
               private selectionComponent: SelectionComponent,
-              private customData: any) {
+              private customResizeType?: string) {
     super(listener);
   }
 
-  public onTap(draggableItem: DraggableItemImpl, point: Position2D, data: any) {
+  public onTap(draggableItem: DraggableItemImpl, position: Position2D) {
     const delegate = new DraggableItemImpl(this.selectionComponent._target);
-    super.onTap(delegate, point, this.customData);
+    super.onTap(delegate, position);
   }
 
-  public onPanStart(draggableItem: DraggableItemImpl, point: Position2D, data: any) {
+  public onPanStart(draggableItem: DraggableItemImpl, position: Position2D, resizeType: string) {
     const delegate = new DraggableItemImpl(this.selectionComponent._target);
-    super.onPanStart(delegate, point, this.customData);
+    super.onPanStart(delegate, position, this.customResizeType);
   }
 
-  public onPanMove(point: Position2D) {
-    super.onPanMove(point);
+  public onPanMove(position: Position2D) {
+    super.onPanMove(position);
   }
 
-  public onPanEnd(point: HammerPoint) {
-    super.onPanEnd(point);
+  public onPanEnd(position: Position2D) {
+    super.onPanEnd(position);
   }
 
-  public onPanCancel(point: HammerPoint) {
-    super.onPanCancel(point);
+  public onPanCancel(position: Position2D) {
+    super.onPanCancel(position);
   }
 
 }

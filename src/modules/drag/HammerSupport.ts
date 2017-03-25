@@ -11,7 +11,7 @@ export class HammerSupport {
 
   public static registerDragEventListener(target: HTMLElement, listener: DragEventListener) {
     const hammer = HammerSupport.configureHammer(target);
-    hammer.on('tap',       event => listener.onTap(new DraggableItemImpl(event.target), event.center, null));
+    hammer.on('tap',       event => listener.onTap(new DraggableItemImpl(event.target), event.center));
     hammer.on('panstart',  event => listener.onPanStart(new DraggableItemImpl(event.target), event.center, null));
     hammer.on('panmove',   event => listener.onPanMove(event.center));
     hammer.on('panend',    event => listener.onPanEnd(event.center));

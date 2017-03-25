@@ -3,11 +3,11 @@ import { DraggableItemImpl } from './DraggableItem';
 
 export interface DragEventListener {
   diffuseClick(event: MouseEvent);
-  onTap(draggableItem: DraggableItemImpl, point: Position2D, data: any);
-  onPanStart(draggableItem: DraggableItemImpl, point: Position2D, data: any);
-  onPanMove(point: Position2D);
-  onPanEnd(point: Position2D);
-  onPanCancel(point: Position2D);
+  onTap(draggableItem: DraggableItemImpl, position: Position2D);
+  onPanStart(draggableItem: DraggableItemImpl, position: Position2D, resizeType: string);
+  onPanMove(position: Position2D);
+  onPanEnd(position: Position2D);
+  onPanCancel(position: Position2D);
 }
 
 export class DragEventListenerWrapper implements DragEventListener {
@@ -18,24 +18,24 @@ export class DragEventListenerWrapper implements DragEventListener {
     this.listener.diffuseClick(event);
   }
 
-  public onTap(draggableItem: DraggableItemImpl, point: Position2D, data: any) {
-    this.listener.onTap(draggableItem, point, data);
+  public onTap(draggableItem: DraggableItemImpl, position: Position2D) {
+    this.listener.onTap(draggableItem, position);
   }
 
-  public onPanStart(draggableItem: DraggableItemImpl, point: Position2D, data: any) {
-    this.listener.onPanStart(draggableItem, point, data);
+  public onPanStart(draggableItem: DraggableItemImpl, position: Position2D, resizeType: string) {
+    this.listener.onPanStart(draggableItem, position, resizeType);
   }
 
-  public onPanMove(point: Position2D) {
-    this.listener.onPanMove(point);
+  public onPanMove(position: Position2D) {
+    this.listener.onPanMove(position);
   }
 
-  public onPanEnd(point: Position2D) {
-    this.listener.onPanEnd(point);
+  public onPanEnd(position: Position2D) {
+    this.listener.onPanEnd(position);
   }
 
-  public onPanCancel(point: Position2D) {
-    this.listener.onPanCancel(point);
+  public onPanCancel(position: Position2D) {
+    this.listener.onPanCancel(position);
   }
 
 }

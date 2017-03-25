@@ -4,7 +4,7 @@ import { Position2D } from '../shared/Position2D';
 
 export interface DraggableItem {
 
-  getDraggableParent(): DraggableItem;
+  getParentDraggable(): DraggableItem;
   getChmod(): HTMLElementChmod;
 
 }
@@ -12,18 +12,22 @@ export interface DraggableItem {
 // TODO: make this class the only accessor of HTML DOM in Drag module
 export class DraggableItemImpl implements DraggableItem {
 
+  private parent: DraggableItem = null;
   private chmod: HTMLElementChmod;
-  public parentChmod: HTMLElementChmod;
-  public transformer: HTMLElementTransformer;
+  private transformer: HTMLElementTransformer;
 
-  constructor(public target: HTMLElement) {
+  constructor(private target: HTMLElement) {
+    const parentElement = DraggableItemImpl.findParent(target);
+    if (parentElement) {
+      this.parent = new DraggableItemImpl(parentElement);
+    }
+
     this.chmod = HTMLElementChmod.of(target);
-    this.parentChmod = HTMLElementChmod.of(DraggableItemImpl.findParent(target));
     this.transformer = HTMLElementTransformer.of(target);
   }
 
-  getDraggableParent(): DraggableItem {
-    throw new Error("Not Implemented!");
+  getParentDraggable(): DraggableItem {
+    return this.parent;
   }
 
   getChmod(): HTMLElementChmod {
@@ -45,17 +49,16 @@ export class DraggableItemImpl implements DraggableItem {
 
   public moveToPosition(position: Position2D, lastPosition: Position2D): Position2D {
     const transformer = this.transformer;
-    const parentChmod = this.parentChmod;
 
     transformer.positionX += position.x - lastPosition.x;
     transformer.positionY += position.y - lastPosition.y;
 
-    if (!parentChmod) {
+    if (!this.parent) {
       return position;
     }
 
-    const adjustedLeft = Math.min(Math.max(0, transformer.positionX), parentChmod.innerWidth - transformer.totalWidth);
-    const adjustedTop = Math.min(Math.max(0, transformer.positionY), parentChmod.innerHeight - transformer.totalHeight);
+    const adjustedLeft = Math.min(Math.max(0, transformer.positionX), this.parent.getChmod().innerWidth - transformer.totalWidth);
+    const adjustedTop = Math.min(Math.max(0, transformer.positionY), this.parent.getChmod().innerHeight - transformer.totalHeight);
     const last = {
       x: position.x + adjustedLeft - transformer.positionX,
       y: position.y + adjustedTop - transformer.positionY
@@ -67,9 +70,8 @@ export class DraggableItemImpl implements DraggableItem {
 
   public moveWallTo(position: Position2D, lastPosition: Position2D, resizeType: string): Position2D {
     const transformer = this.transformer;
-    const parentChmod = this.parentChmod;
 
-    if (!parentChmod) {
+    if (!this.parent) {
       console.warn('Parent undefined');
       return position;
     }
@@ -91,7 +93,7 @@ export class DraggableItemImpl implements DraggableItem {
       case 'Resize_E':
       case 'Resize_NE':
       case 'Resize_SE':
-        deltaX = Math.round(Math.min(parentChmod.clientRect.width, targetX + targetWidth + deltaX)
+        deltaX = Math.round(Math.min(this.parent.getChmod().clientRect.width, targetX + targetWidth + deltaX)
             - (targetX + targetWidth)) - Math.min(0, targetWidth + deltaX);
         break;
     }
@@ -105,7 +107,7 @@ export class DraggableItemImpl implements DraggableItem {
       case 'Resize_S':
       case 'Resize_SW':
       case 'Resize_SE':
-        deltaY = Math.round(Math.min(parentChmod.clientRect.height, targetY + targetHeight + deltaY)
+        deltaY = Math.round(Math.min(this.parent.getChmod().clientRect.height, targetY + targetHeight + deltaY)
             - (targetY + targetHeight)) - Math.min(0, targetHeight + deltaY);
         break;
     }

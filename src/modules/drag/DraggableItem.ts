@@ -4,7 +4,7 @@ import { Position2D } from '../shared/Position2D';
 
 export interface DraggableItem {
 
-  getHTMLElement(): HTMLElement;
+  getDom(): HTMLElement;
   getParent(): DraggableItem;
   getChmod(): HTMLElementChmod;
   getTransformer(): HTMLElementTransformer;
@@ -36,7 +36,7 @@ export class DraggableItemImpl implements DraggableItem {
     this.transformer = HTMLElementTransformer.of(target);
   }
 
-  public getHTMLElement(): HTMLElement {
+  public getDom(): HTMLElement {
     return this.target;
   }
 

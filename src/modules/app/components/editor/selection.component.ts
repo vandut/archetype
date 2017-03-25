@@ -53,7 +53,7 @@ export class SelectionComponent implements AfterViewInit {
   }
 
   public isResizable(): boolean {
-    return getComputedStyle(this.selectionTarget.getHTMLElement()).display === 'block';
+    return getComputedStyle(this.selectionTarget.getDom()).display === 'block';
   }
 
 }

@@ -14,7 +14,7 @@ export class DraggableItemImpl implements DraggableItem {
   public transformer: HTMLElementTransformer;
 
   constructor(public target: HTMLElement) {
-    this.parent = DraggableItemImpl.findParent(target);
+    this.parent = HTMLElementChmod.of(DraggableItemImpl.findParent(target));
     this.transformer = HTMLElementTransformer.of(target);
   }
 
@@ -22,12 +22,12 @@ export class DraggableItemImpl implements DraggableItem {
     throw new Error("Not Implemented!");
   }
 
-  public static findParent(target: HTMLElement): HTMLElementChmod {
+  private static findParent(target: HTMLElement): HTMLElement {
     if (ElementRepositoryHelper.getIsChildOf(target)) {
       let parent = target.parentElement;
       while (parent !== null) {
         if (ElementRepositoryHelper.getIsParentFor(parent) === ElementRepositoryHelper.getIsChildOf(target)) {
-          return HTMLElementChmod.of(parent);
+          return parent;
         }
         parent = parent.parentElement;
       }

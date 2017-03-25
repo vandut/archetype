@@ -1,6 +1,7 @@
 import { Directive, HostListener } from '@angular/core';
 import { DragMoveService } from './drag-move.service';
 import { HammerSupport } from './HammerSupport';
+import { DraggableItemImpl } from './DraggableItem';
 
 @Directive({
   selector: '[dragMoveHandler]'
@@ -26,14 +27,14 @@ export class DragMoveHandlerDirective {
   @HostListener('tap-delegate', ['$event'])
   public onTap(event: CustomEvent) {
     if (DragMoveHandlerDirective.canHandleDragMove(event.target)) {
-      this.dragMoveService.onTap(event.detail.target, event.detail.center, null);
+      this.dragMoveService.onTap(new DraggableItemImpl(event.detail.target), event.detail.center, null);
     }
   }
 
   @HostListener('panstart-delegate', ['$event'])
   public onPanStart(event: CustomEvent) {
     if (DragMoveHandlerDirective.canHandleDragMove(event.target)) {
-      this.dragMoveService.onPanStart(event.detail.target, event.detail.center, null);
+      this.dragMoveService.onPanStart(new DraggableItemImpl(event.detail.target), event.detail.center, null);
     }
   }
 

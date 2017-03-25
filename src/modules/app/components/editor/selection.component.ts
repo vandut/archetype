@@ -6,6 +6,7 @@ import { ForwardingDragEventListener } from '../../../drag/DragEventListener';
 import { DragBaseService } from '../../../drag/drag-base.service';
 import { Position2D } from '../../../shared/Position2D';
 import { HammerSupport } from '../../../drag/HammerSupport';
+import { DraggableItemImpl } from '../../../drag/DraggableItem';
 
 @Component({
   selector: 'editor-selection',
@@ -67,12 +68,14 @@ class SelectionTargetDragListener extends ForwardingDragEventListener {
     super(dragBaseService);
   }
 
-  public onTap(target: HTMLElement, point: HammerPoint, data: any) {
-    super.onTap(this.selectionComponent._target, point, this.customData);
+  public onTap(draggableItem: DraggableItemImpl, point: Position2D, data: any) {
+    const delegate = new DraggableItemImpl(this.selectionComponent._target);
+    super.onTap(delegate, point, this.customData);
   }
 
-  public onPanStart(target: HTMLElement, point: HammerPoint, data: any) {
-    super.onPanStart(this.selectionComponent._target, point, this.customData);
+  public onPanStart(draggableItem: DraggableItemImpl, point: Position2D, data: any) {
+    const delegate = new DraggableItemImpl(this.selectionComponent._target);
+    super.onPanStart(delegate, point, this.customData);
   }
 
   public onPanMove(point: Position2D) {

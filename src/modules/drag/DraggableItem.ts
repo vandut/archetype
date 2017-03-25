@@ -7,6 +7,7 @@ export interface DraggableItem {
 
 }
 
+// TODO: make this class the only accessor of HTML DOM in Drag module
 export class DraggableItemImpl implements DraggableItem {
 
   public parent: HTMLElementChmod;

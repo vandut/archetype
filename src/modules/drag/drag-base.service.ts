@@ -15,13 +15,13 @@ export abstract class DragBaseService implements DragEventListener {
     }
   }
 
-  public onTap(target: HTMLElement, point: Position2D, data: any) {
+  public onTap(draggableItem: DraggableItemImpl, point: Position2D, data: any) {
   }
 
-  public onPanStart(target: HTMLElement, point: Position2D, data: any) {
+  public onPanStart(draggableItem: DraggableItemImpl, point: Position2D, data: any) {
     this.firstXY = point;
     this.lastXY = point;
-    this.draggableItem = new DraggableItemImpl(target);
+    this.draggableItem = draggableItem;
     this.moveType = data;
   }
 

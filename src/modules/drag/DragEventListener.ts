@@ -1,10 +1,11 @@
 import { DragBaseService } from './drag-base.service';
 import { Position2D } from '../shared/Position2D';
+import { DraggableItemImpl } from './DraggableItem';
 
 export interface DragEventListener {
   diffuseClick(event: MouseEvent);
-  onTap(target: HTMLElement, point: Position2D, data: any);
-  onPanStart(target: HTMLElement, point: Position2D, data: any);
+  onTap(draggableItem: DraggableItemImpl, point: Position2D, data: any);
+  onPanStart(draggableItem: DraggableItemImpl, point: Position2D, data: any);
   onPanMove(point: Position2D);
   onPanEnd(point: Position2D);
   onPanCancel(point: Position2D);
@@ -18,12 +19,12 @@ export class ForwardingDragEventListener implements DragEventListener {
     this.dragBaseService.diffuseClick(event);
   }
 
-  public onTap(target: HTMLElement, point: Position2D, data: any) {
-    this.dragBaseService.onTap(target, point, data);
+  public onTap(draggableItem: DraggableItemImpl, point: Position2D, data: any) {
+    this.dragBaseService.onTap(draggableItem, point, data);
   }
 
-  public onPanStart(target: HTMLElement, point: Position2D, data: any) {
-    this.dragBaseService.onPanStart(target, point, data);
+  public onPanStart(draggableItem: DraggableItemImpl, point: Position2D, data: any) {
+    this.dragBaseService.onPanStart(draggableItem, point, data);
   }
 
   public onPanMove(point: Position2D) {

@@ -8,6 +8,7 @@ import { PageCoordinates } from '../../../shared/PageCoordinates';
 import { DomHelper } from '../../../shared/DomHelper';
 import { PageCoordinatesHelper } from '../../../shared/PageCoordinatesHelper';
 import { DragMoveHandlerDirective } from '../../../drag/drag-move-handler.directive';
+import { DraggableItemService } from '../../../drag/draggable-item.service';
 
 @Component({
   selector: 'editor-compositor-layer',
@@ -21,14 +22,16 @@ export class CompositorLayerComponent implements OnInit, OnDestroy, DropZone {
     private elementRef: ElementRef,
     private elementRepositoryService: ElementRepositoryService,
     private elementSelectionService: ElementSelectionService,
-    private dropZoneService: DropZoneService) {}
+    private dropZoneService: DropZoneService,
+    private draggableItemService: DraggableItemService) {}
 
   public ngOnInit() {
     const parentElement = <HTMLElement> DomHelper.getElement(this.elementRef).children[0];
     ElementRepositoryHelper.registerIsParentForRoot(parentElement);
     this.subscription = this.elementRepositoryService.subscribeToNewElementAdded({
       next: editorElement => {
-        DragMoveHandlerDirective.registerAsDraggable(editorElement.htmlDom);
+        const draggableItem = this.draggableItemService.getDraggableItem(editorElement.htmlDom);
+        DragMoveHandlerDirective.registerAsDraggable(draggableItem);
         parentElement.appendChild(editorElement.htmlDom);
         this.elementSelectionService.select(editorElement.id);
       }

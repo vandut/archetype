@@ -1,5 +1,9 @@
-<div class="box" [style.left.px]="transformer.positionX" [style.top.px]="transformer.positionY"
-     [style.width.px]="transformer.totalWidth" [style.height.px]="transformer.totalHeight">
+<div class="box"
+     [style.left.px]="selectionTarget.getTransformer().positionX"
+     [style.top.px]="selectionTarget.getTransformer().positionY"
+     [style.width.px]="selectionTarget.getTransformer().totalWidth"
+     [style.height.px]="selectionTarget.getTransformer().totalHeight">
+
   <div class="background" [attr.data-usable]="isMovable()"                  #background></div>
   <div class="border W"   [attr.data-usable]="isMovable() && isResizable()" #resizeW></div>
   <div class="border E"   [attr.data-usable]="isResizable()"                #resizeE></div>
@@ -9,4 +13,5 @@
   <div class="corner NE"  [attr.data-usable]="isMovable() && isResizable()" #resizeNE></div>
   <div class="corner SW"  [attr.data-usable]="isMovable() && isResizable()" #resizeSW></div>
   <div class="corner SE"  [attr.data-usable]="isResizable()"                #resizeSE></div>
+
 </div>

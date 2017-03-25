@@ -4,13 +4,23 @@ import { Position2D } from '../shared/Position2D';
 
 export interface DraggableItem {
 
-  getParentDraggable(): DraggableItem;
+  getHTMLElement(): HTMLElement;
+  getParent(): DraggableItem;
   getChmod(): HTMLElementChmod;
+  getTransformer(): HTMLElementTransformer;
+
+  enableDrag();
+  isDragEnabled(): boolean;
+
+  moveToPosition(position: Position2D, lastPosition: Position2D): Position2D;
+  moveWallTo(position: Position2D, lastPosition: Position2D, resizeType: string): Position2D;
 
 }
 
 // TODO: make this class the only accessor of HTML DOM in Drag module
 export class DraggableItemImpl implements DraggableItem {
+
+  public static ATTR_NAME_DRAGGABLE = 'draggable';
 
   private parent: DraggableItem = null;
   private chmod: HTMLElementChmod;
@@ -26,12 +36,20 @@ export class DraggableItemImpl implements DraggableItem {
     this.transformer = HTMLElementTransformer.of(target);
   }
 
-  getParentDraggable(): DraggableItem {
+  public getHTMLElement(): HTMLElement {
+    return this.target;
+  }
+
+  public getParent(): DraggableItem {
     return this.parent;
   }
 
-  getChmod(): HTMLElementChmod {
+  public getChmod(): HTMLElementChmod {
     return this.chmod;
+  }
+
+  public getTransformer(): HTMLElementTransformer {
+    return this.transformer;
   }
 
   private static findParent(target: HTMLElement): HTMLElement {
@@ -45,6 +63,14 @@ export class DraggableItemImpl implements DraggableItem {
       }
     }
     return null;
+  }
+
+  enableDrag(){
+    this.target.dataset[DraggableItemImpl.ATTR_NAME_DRAGGABLE] = 'true';
+  }
+
+  isDragEnabled(): boolean {
+    return this.target.dataset[DraggableItemImpl.ATTR_NAME_DRAGGABLE] === 'true';
   }
 
   public moveToPosition(position: Position2D, lastPosition: Position2D): Position2D {

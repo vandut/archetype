@@ -1,6 +1,6 @@
 import { DragEventListener } from './DragEventListener';
 import { Position2D } from '../shared/Position2D';
-import { DraggableItemImpl } from './DraggableItem';
+import { DraggableItem } from './DraggableItem';
 import { Injectable } from '@angular/core';
 
 @Injectable()
@@ -8,7 +8,7 @@ export class DragService implements DragEventListener {
 
   protected firstXY: Position2D = null;
   protected lastXY: Position2D = null;
-  protected draggableItem: DraggableItemImpl = null;
+  protected draggableItem: DraggableItem = null;
   protected resizeType?: string = null;
 
   public diffuseClick(event: MouseEvent) {
@@ -17,10 +17,10 @@ export class DragService implements DragEventListener {
     }
   }
 
-  public onTap(draggableItem: DraggableItemImpl, position: Position2D) {
+  public onTap(draggableItem: DraggableItem, position: Position2D) {
   }
 
-  public onPanStart(draggableItem: DraggableItemImpl, position: Position2D, resizeType: string) {
+  public onPanStart(draggableItem: DraggableItem, position: Position2D, resizeType?: string) {
     this.firstXY = position;
     this.lastXY = position;
     this.draggableItem = draggableItem;

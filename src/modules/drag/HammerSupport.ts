@@ -1,39 +1,39 @@
 import { DragEventListener } from './DragEventListener';
-import { DraggableItemImpl } from './DraggableItem';
+import { DraggableItem } from './DraggableItem';
 
 export class HammerSupport {
 
-  private static configureHammer(target: HTMLElement): HammerManager {
-    const hammer = new Hammer(target);
+  private static configureHammer(draggableItem: DraggableItem): HammerManager {
+    const hammer = new Hammer(draggableItem.getHTMLElement());
     hammer.get('pan').set({ direction: Hammer.DIRECTION_ALL, threshold: 0 });
     return hammer;
   }
 
-  public static registerDragEventListener(target: HTMLElement, listener: DragEventListener) {
-    const hammer = HammerSupport.configureHammer(target);
-    hammer.on('tap',       event => listener.onTap(new DraggableItemImpl(event.target), event.center));
-    hammer.on('panstart',  event => listener.onPanStart(new DraggableItemImpl(event.target), event.center, null));
+  public static registerDragEventListener(draggableItem: DraggableItem, listener: DragEventListener) {
+    const hammer = HammerSupport.configureHammer(draggableItem);
+    hammer.on('tap',       event => listener.onTap(draggableItem, event.center));
+    hammer.on('panstart',  event => listener.onPanStart(draggableItem, event.center, null));
     hammer.on('panmove',   event => listener.onPanMove(event.center));
     hammer.on('panend',    event => listener.onPanEnd(event.center));
     hammer.on('pancancel', event => listener.onPanCancel(event.center));
 
-    target.addEventListener('mousedown', event => listener.diffuseClick(event));
+    draggableItem.getHTMLElement().addEventListener('mousedown', event => listener.diffuseClick(event));
   }
 
-  public static registerEventDelegator(target: HTMLElement) {
-    const hammer = HammerSupport.configureHammer(target);
-    hammer.on('tap',       event => HammerSupport.delegateEvent(target, event));
-    hammer.on('panstart',  event => HammerSupport.delegateEvent(target, event));
-    hammer.on('panmove',   event => HammerSupport.delegateEvent(target, event));
-    hammer.on('panend',    event => HammerSupport.delegateEvent(target, event));
-    hammer.on('pancancel', event => HammerSupport.delegateEvent(target, event));
+  public static registerEventDelegator(draggableItem: DraggableItem) {
+    const hammer = HammerSupport.configureHammer(draggableItem);
+    hammer.on('tap',       event => HammerSupport.delegateEvent(draggableItem, event));
+    hammer.on('panstart',  event => HammerSupport.delegateEvent(draggableItem, event));
+    hammer.on('panmove',   event => HammerSupport.delegateEvent(draggableItem, event));
+    hammer.on('panend',    event => HammerSupport.delegateEvent(draggableItem, event));
+    hammer.on('pancancel', event => HammerSupport.delegateEvent(draggableItem, event));
 
-    target.addEventListener('mousedown', event => HammerSupport.delegateEvent(target, event));
+    draggableItem.getHTMLElement().addEventListener('mousedown', event => HammerSupport.delegateEvent(draggableItem, event));
   }
 
-  private static delegateEvent(delegate: HTMLElement, event: any) {
+  private static delegateEvent(draggableItem: DraggableItem, event: any) {
     const payload = new CustomEvent(`${event.type}-delegate`, { detail: event, bubbles: true });
-    delegate.dispatchEvent(payload);
+    draggableItem.getHTMLElement().dispatchEvent(payload);
   }
 
 }

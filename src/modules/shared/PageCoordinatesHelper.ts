@@ -28,12 +28,12 @@ export class PageCoordinatesHelper {
     ];
   }
 
-  public static toParentElementCoordinates(elementRef: ElementRef, coordinates: PageCoordinates): [number, number] {
+  public static toParentElementCoordinates(elementRef: ElementRef, coordinates: PageCoordinates): PageCoordinates {
     const rect = DomHelper.getParentElement(elementRef).getBoundingClientRect();
-    return [
-      coordinates.pageX - rect.left,
-      coordinates.pageY - rect.top
-    ];
+    return {
+      pageX: coordinates.pageX - rect.left,
+      pageY: coordinates.pageY - rect.top
+    };
   }
 
   public static fromPosition2D(position: Position2D): PageCoordinates {

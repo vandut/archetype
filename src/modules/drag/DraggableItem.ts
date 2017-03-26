@@ -12,6 +12,13 @@ export interface DraggableItem {
   enableDrag();
   isDragEnabled(): boolean;
 
+  show();
+  hide();
+  isVisible(): boolean;
+
+  makeChildOf(draggableItem: DraggableItem);
+  remove();
+
   moveToPosition(position: Position2D, lastPosition: Position2D): Position2D;
   moveWallTo(position: Position2D, lastPosition: Position2D, resizeType: string): Position2D;
 
@@ -65,16 +72,42 @@ export class DraggableItemImpl implements DraggableItem {
     return null;
   }
 
-  enableDrag(){
+  public enableDrag(){
     this.target.dataset[DraggableItemImpl.ATTR_NAME_DRAGGABLE] = 'true';
   }
 
-  isDragEnabled(): boolean {
+  public isDragEnabled(): boolean {
     return this.target.dataset[DraggableItemImpl.ATTR_NAME_DRAGGABLE] === 'true';
+  }
+
+  public show()  {
+    this.target.style.visibility = null;
+  }
+
+  public hide()  {
+    this.target.style.visibility = 'hidden';
+  }
+
+  public isVisible(): boolean {
+    return !this.target.style.visibility;
+  }
+
+  public makeChildOf(draggableItem: DraggableItem) {
+    draggableItem.getDom().appendChild(this.target);
+  }
+
+  public remove() {
+    this.target.remove();
   }
 
   public moveToPosition(position: Position2D, lastPosition: Position2D): Position2D {
     const transformer = this.transformer;
+
+    if (lastPosition === null) {
+      transformer.positionX = position.x;
+      transformer.positionY = position.y;
+      return null;
+    }
 
     transformer.positionX += position.x - lastPosition.x;
     transformer.positionY += position.y - lastPosition.y;

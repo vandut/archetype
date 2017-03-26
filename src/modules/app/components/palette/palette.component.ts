@@ -26,7 +26,8 @@ export class PaletteComponent {
 
   onPreviewStart(event: HammerInput, template: string) {
     const target = HTMLElementFactory.fromTemplate(template);
-    this.previewService.startPreview(target, PageCoordinatesHelper.fromPosition2D(event.center));
+    const coordinates = PageCoordinatesHelper.fromPosition2D(event.center);
+    this.previewService.startPreview(target, coordinates);
     this.elementSelectionService.clearSelection();
   }
 

@@ -1,16 +1,20 @@
 import { Injectable, ElementRef } from '@angular/core';
 import { PageCoordinates } from '../shared/PageCoordinates';
-import { HTMLElementTransformer, HTMLElementChmod } from '../shared/HTMLElement';
 import { DomHelper } from '../shared/DomHelper';
 import { PageCoordinatesHelper } from '../shared/PageCoordinatesHelper';
+import { DraggableItem } from './DraggableItem';
+import { Position2DHelper } from '../shared/Position2D';
+import { DraggableItemService } from './draggable-item.service';
 
+// TODO: Remove this class in favour of DragService and PreviewDirective
 @Injectable()
 export class PreviewService {
   private static PADDING = 10;
 
   private canvas: ElementRef;
+  private draggableItem: DraggableItem = null;
 
-  public preview: PreviewHost = null;
+  constructor(private draggableItemService: DraggableItemService) {}
 
   public registerCanvas(canvas: ElementRef) {
     this.canvas = canvas;
@@ -21,40 +25,37 @@ export class PreviewService {
   }
 
   public startPreview(target: HTMLElement, coordinates: PageCoordinates) {
-    if (!this.preview) {
-      coordinates = PreviewService.addPreviewPadding(coordinates);
-      const [x, y] = PageCoordinatesHelper.toParentElementCoordinates(this.canvas, coordinates);
-      this.preview = new PreviewHost(target);
-      this.preview.attach(DomHelper.getParentElement(this.canvas));
-      this.preview.moveTo(x, y);
+    if (!this.draggableItem) {
+      this.draggableItem = this.draggableItemService.getPreviewOf(target, DomHelper.getParentElement(this.canvas));
+      this.movePreviewTo(coordinates);
     }
   }
 
   public movePreview(coordinates: PageCoordinates) {
-    if (this.preview) {
+    if (this.draggableItem) {
       if (PageCoordinatesHelper.isInsideParentElement(this.canvas, coordinates)) {
-        if (!this.preview.isVisible()) {
-          this.preview.show();
+        if (!this.draggableItem.isVisible()) {
+          this.draggableItem.show();
         }
         this.movePreviewTo(coordinates);
       } else {
-        if (this.preview.isVisible()) {
-          this.preview.hide();
+        if (this.draggableItem.isVisible()) {
+          this.draggableItem.hide();
         }
       }
     }
   }
 
   private movePreviewTo(coordinates: PageCoordinates) {
+    coordinates = PageCoordinatesHelper.toParentElementCoordinates(this.canvas, coordinates);
     coordinates = PreviewService.addPreviewPadding(coordinates);
-    const [x, y] = PageCoordinatesHelper.toParentElementCoordinates(this.canvas, coordinates);
-    this.preview.moveTo(x, y);
+    this.draggableItem.moveToPosition(Position2DHelper.fromPageCoordinates(coordinates), null);
   }
 
   public endPreview() {
-    if (this.preview) {
-      this.preview.remove();
-      this.preview = null;
+    if (this.draggableItem) {
+      this.draggableItem.remove();
+      this.draggableItem = null;
     }
   }
 
@@ -63,46 +64,6 @@ export class PreviewService {
       pageX: coordinates.pageX - PreviewService.PADDING,
       pageY: coordinates.pageY - PreviewService.PADDING
     };
-  }
-
-}
-
-class PreviewHost {
-
-  private host: HTMLElement;
-
-  constructor(src: HTMLElement) {
-    this.host = HTMLElementChmod.of(<HTMLElement> src.cloneNode(true))
-      .positionOnTop()
-      .setOpacity(0.25)
-      .addClass('cursor_grabbing')
-      .done();
-  }
-
-  attach(parent: Node) {
-    parent.appendChild(this.host);
-  }
-
-  remove() {
-    this.host.remove();
-  }
-
-  isVisible(): boolean {
-    return !this.host.style.visibility;
-  }
-
-  show() {
-    this.host.style.visibility = null;
-  }
-
-  hide() {
-    this.host.style.visibility = 'hidden';
-  }
-
-  moveTo(offsetX: number, offsetY: number) {
-    const transformer = HTMLElementTransformer.of(this.host);
-    transformer.positionX = offsetX;
-    transformer.positionY = offsetY;
   }
 
 }

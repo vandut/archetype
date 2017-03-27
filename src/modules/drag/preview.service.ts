@@ -9,7 +9,6 @@ import { DraggableItemService } from './draggable-item.service';
 // TODO: Remove this class in favour of DragService and PreviewDirective
 @Injectable()
 export class PreviewService {
-  private static PADDING = 10;
 
   private canvas: ElementRef;
   private draggableItem: DraggableItem = null;
@@ -48,7 +47,6 @@ export class PreviewService {
 
   private movePreviewTo(coordinates: PageCoordinates) {
     coordinates = PageCoordinatesHelper.toParentElementCoordinates(this.canvas, coordinates);
-    coordinates = PreviewService.addPreviewPadding(coordinates);
     this.draggableItem.moveToPosition(Position2DHelper.fromPageCoordinates(coordinates), null);
   }
 
@@ -57,13 +55,6 @@ export class PreviewService {
       this.draggableItem.remove();
       this.draggableItem = null;
     }
-  }
-
-  public static addPreviewPadding(coordinates: PageCoordinates): PageCoordinates {
-    return {
-      pageX: coordinates.pageX - PreviewService.PADDING,
-      pageY: coordinates.pageY - PreviewService.PADDING
-    };
   }
 
 }

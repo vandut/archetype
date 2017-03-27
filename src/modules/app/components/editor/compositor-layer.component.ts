@@ -1,9 +1,8 @@
-import { Component, ElementRef, OnInit, OnDestroy, HostListener } from '@angular/core';
-import { ElementRepositoryService, ElementRepositoryHelper } from '../../services/element-repository.service';
+import { Component, ElementRef, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { ElementRepositoryHelper, ElementRepositoryService } from '../../services/element-repository.service';
 import { ElementSelectionService } from '../../services/element-selection.service';
 import { Subscription } from 'rxjs';
-import { PreviewService } from '../../../drag/preview.service';
-import { DropZoneService, DropZone } from '../../../drag/drop-zone.service';
+import { DropZone, DropZoneService } from '../../../drag/drop-zone.service';
 import { PageCoordinates } from '../../../shared/PageCoordinates';
 import { DomHelper } from '../../../shared/DomHelper';
 import { PageCoordinatesHelper } from '../../../shared/PageCoordinatesHelper';
@@ -49,7 +48,6 @@ export class CompositorLayerComponent implements OnInit, OnDestroy, DropZone {
   }
 
   public onDropZoneActivated(source: HTMLElement, coordinates: PageCoordinates) {
-    coordinates = PreviewService.addPreviewPadding(coordinates);
     const [x, y] = PageCoordinatesHelper.toElementCoordinates(this.elementRef, coordinates);
     if (source.dataset['paletteTemplate']) {
       this.elementRepositoryService.addEditorElement(source.dataset['paletteTemplate'], x, y);

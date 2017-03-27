@@ -1,0 +1,15 @@
+:host {
+  position: relative;
+  z-index: 9999;
+}
+
+:host /deep/ > * {
+  opacity: 0.25;
+  position: absolute;
+  z-index: 9999;
+
+  cursor: move;
+  cursor: -webkit-grabbing;
+  cursor:    -moz-grabbing;
+  cursor:         grabbing;
+}

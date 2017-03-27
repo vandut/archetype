@@ -3,7 +3,8 @@ import { PreviewService } from '../../../drag/preview.service';
 
 @Component({
   selector: 'preview-layer',
-  template: ``
+  template: ``,
+  styleUrls: [ './preview-layer.component.css' ]
 })
 export class PreviewLayerComponent implements OnInit, OnDestroy {
 

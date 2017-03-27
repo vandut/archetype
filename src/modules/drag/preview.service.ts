@@ -26,7 +26,7 @@ export class PreviewService {
 
   public startPreview(target: HTMLElement, coordinates: PageCoordinates) {
     if (!this.draggableItem) {
-      this.draggableItem = this.draggableItemService.getPreviewOf(target, DomHelper.getParentElement(this.canvas));
+      this.draggableItem = this.draggableItemService.getPreviewOf(target, DomHelper.getElement(this.canvas));
       this.movePreviewTo(coordinates);
     }
   }

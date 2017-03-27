@@ -1,14 +1,13 @@
-import { Injectable, ElementRef } from '@angular/core';
-import { PageCoordinates } from '../shared/PageCoordinates';
+import { ElementRef, Injectable } from '@angular/core';
 import { DomHelper } from '../shared/DomHelper';
-import { PageCoordinatesHelper } from '../shared/PageCoordinatesHelper';
 import { DraggableItem } from './DraggableItem';
-import { Position2DHelper } from '../shared/Position2D';
+import { Position2D, Position2DHelper } from '../shared/Position2D';
 import { DraggableItemService } from './draggable-item.service';
+import { DragEventListener } from './DragEventListener';
 
 // TODO: Remove this class in favour of DragService and PreviewDirective
 @Injectable()
-export class PreviewService {
+export class PreviewService implements DragEventListener {
 
   private canvas: ElementRef;
   private draggableItem: DraggableItem = null;
@@ -23,38 +22,44 @@ export class PreviewService {
     this.canvas = null;
   }
 
-  public startPreview(target: HTMLElement, coordinates: PageCoordinates) {
-    if (!this.draggableItem) {
-      this.draggableItem = this.draggableItemService.getPreviewOf(target, DomHelper.getElement(this.canvas));
-      this.movePreviewTo(coordinates);
+  public diffuseClick(event: MouseEvent) {
+    if (event.button === 0) {
+      event.preventDefault();
     }
   }
 
-  public movePreview(coordinates: PageCoordinates) {
-    if (this.draggableItem) {
-      if (PageCoordinatesHelper.isInsideParentElement(this.canvas, coordinates)) {
-        if (!this.draggableItem.isVisible()) {
-          this.draggableItem.show();
-        }
-        this.movePreviewTo(coordinates);
-      } else {
-        if (this.draggableItem.isVisible()) {
-          this.draggableItem.hide();
-        }
+  public onTap(draggableItem: DraggableItem, position: Position2D) {
+  }
+
+  public onPanStart(draggableItem: DraggableItem, position: Position2D, resizeType?: string) {
+    const canvasDraggableItem = this.draggableItemService.getDraggableItem(DomHelper.getElement(this.canvas));
+    draggableItem.makeChildOf(canvasDraggableItem);
+    this.draggableItem = draggableItem;
+    this.onPanMove(position);
+  }
+
+  public onPanMove(position: Position2D) {
+    if (Position2DHelper.isInsideParentElement(this.canvas, position)) {
+      if (!this.draggableItem.isVisible()) {
+        this.draggableItem.show();
+      }
+    } else {
+      if (this.draggableItem.isVisible()) {
+        this.draggableItem.hide();
       }
     }
+    position = Position2DHelper.toParentElementPosition2D(this.canvas, position);
+    this.draggableItem.moveToPosition(position, null);
   }
 
-  private movePreviewTo(coordinates: PageCoordinates) {
-    coordinates = PageCoordinatesHelper.toParentElementCoordinates(this.canvas, coordinates);
-    this.draggableItem.moveToPosition(Position2DHelper.fromPageCoordinates(coordinates), null);
+  public onPanEnd(position: Position2D) {
+    this.draggableItem.remove();
+    this.draggableItem = null;
   }
 
-  public endPreview() {
-    if (this.draggableItem) {
-      this.draggableItem.remove();
-      this.draggableItem = null;
-    }
+  public onPanCancel(position: Position2D) {
+    this.draggableItem.remove();
+    this.draggableItem = null;
   }
 
 }

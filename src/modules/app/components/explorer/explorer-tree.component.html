@@ -4,7 +4,7 @@
     <div class="title" [class.selected]="node.selected"
          (tap)="onNodeClick(node.id)"
          [attr.data-node-id]="node.id"
-         dragPreview #dropZone data-active="false">{{node.id}}</div>
+         dragPreview #dropZone data-draggable="true" data-active="false">{{node.id}}</div>
     <explorer-tree *ngIf="node.children" [tree]="node.children" #tree></explorer-tree>
     <div class="dropZoneBottom" #dropZone data-active="false" [attr.data-after]="node.id"></div>
   </li>

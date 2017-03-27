@@ -8,11 +8,9 @@ export class DraggableItemService {
     return new DraggableItemImpl(<HTMLElement> target);
   }
 
-  public getPreviewOf(target: HTMLElement | EventTarget, previewContainer: HTMLElement): DraggableItem {
+  public copyDraggableItem(target: HTMLElement | EventTarget): DraggableItem {
     const clone = <HTMLElement> (<HTMLElement> target).cloneNode(true);
-    const draggableItem = new DraggableItemImpl(clone);
-    draggableItem.makeChildOf(this.getDraggableItem(previewContainer));
-    return draggableItem;
+    return new DraggableItemImpl(clone);
   }
 
 }

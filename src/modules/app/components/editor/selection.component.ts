@@ -70,7 +70,7 @@ class SelectionTargetDragListener extends DragEventListenerWrapper {
     super.onTap(this.selectionComponent.selectionTarget, position);
   }
 
-  public onPanStart(draggableItem: DraggableItem, position: Position2D, resizeType: string) {
+  public onPanStart(draggableItem: DraggableItem, position: Position2D, resizeType?: string) {
     super.onPanStart(this.selectionComponent.selectionTarget, position, this.customResizeType);
   }
 

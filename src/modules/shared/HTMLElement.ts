@@ -34,7 +34,7 @@ export class HTMLElementTransformer {
   }
 
   get positionX(): number {
-    return this.element.offsetLeft;
+    return HTMLElementTransformer.stringPx(this.element.style.left);//this.element.offsetLeft;
   }
 
   set positionX(x: number) {
@@ -46,7 +46,7 @@ export class HTMLElementTransformer {
   }
 
   get positionY(): number {
-    return this.element.offsetTop;
+    return HTMLElementTransformer.stringPx(this.element.style.top);//this.element.offsetTop;
   }
 
   set positionY(y: number) {
@@ -58,7 +58,7 @@ export class HTMLElementTransformer {
   }
 
   get totalWidth(): number {
-    return this.element.offsetWidth;
+    return HTMLElementTransformer.stringPx(this.element.style.width);//this.element.offsetWidth;
   }
 
   set totalWidth(w: number) {
@@ -66,7 +66,7 @@ export class HTMLElementTransformer {
   }
 
   get totalHeight(): number {
-    return this.element.offsetHeight;
+    return HTMLElementTransformer.stringPx(this.element.style.height);//this.element.offsetHeight;
   }
 
   set totalHeight(h: number) {
@@ -85,6 +85,10 @@ export class HTMLElementTransformer {
       this.positionX = 0;
       this.positionY = 0;
     }
+  }
+
+  private static stringPx(value: string): number {
+    return Number(value.slice(0, -2));
   }
 
 }

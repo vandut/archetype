@@ -11,7 +11,6 @@ import { DraggableItemService } from './draggable-item.service';
 export class PreviewDirective {
   private static PADDING = 10;
 
-  private static DATA_ATTR_DRAGGABLE = 'draggable';
   private static DATA_ATTR_PREVIEW = 'dragPreview';
   private static DATA_ATTR_LABEL = 'dragLabel';
 

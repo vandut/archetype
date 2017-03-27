@@ -45,7 +45,7 @@ export class DragService implements DragEventListener {
     this.draggableItem = null;
   }
 
-  protected moveTo(position: Position2D): Position2D {
+  private moveTo(position: Position2D): Position2D {
     if (this.resizeType) {
       return this.draggableItem.moveWallTo(position, this.lastXY, this.resizeType);
     } else {

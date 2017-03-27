@@ -4,7 +4,7 @@ import { DraggableItem } from './DraggableItem';
 export interface DragEventListener {
   diffuseClick(event: MouseEvent);
   onTap(draggableItem: DraggableItem, position: Position2D);
-  onPanStart(draggableItem: DraggableItem, position: Position2D, resizeType: string);
+  onPanStart(draggableItem: DraggableItem, position: Position2D, resizeType?: string);
   onPanMove(position: Position2D);
   onPanEnd(position: Position2D);
   onPanCancel(position: Position2D);
@@ -22,7 +22,7 @@ export class DragEventListenerWrapper implements DragEventListener {
     this.listener.onTap(draggableItem, position);
   }
 
-  public onPanStart(draggableItem: DraggableItem, position: Position2D, resizeType: string) {
+  public onPanStart(draggableItem: DraggableItem, position: Position2D, resizeType?: string) {
     this.listener.onPanStart(draggableItem, position, resizeType);
   }
 

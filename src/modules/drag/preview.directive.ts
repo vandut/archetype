@@ -71,13 +71,13 @@ export class PreviewDirective {
   }
 
   private findDropZone(item: DraggableItem, position: Position2D): DropZone {
-    const label = item.getDom().dataset[PreviewDirective.DATA_ATTR_LABEL];
+    const label = item.getData(PreviewDirective.DATA_ATTR_LABEL);
     position = PreviewDirective.addPreviewPadding(position);
     return this.dropZoneService.findDropZone(label, position);
   }
 
   private prepareClonedItem(targetItem: DraggableItem): DraggableItem {
-    const template = targetItem.getDom().dataset[PreviewDirective.DATA_ATTR_PREVIEW_TEMPLATE];
+    const template = targetItem.getData(PreviewDirective.DATA_ATTR_PREVIEW_TEMPLATE);
 
     if (template) {
       return this.draggableItemService.createDraggableItemFromTemplate(template);

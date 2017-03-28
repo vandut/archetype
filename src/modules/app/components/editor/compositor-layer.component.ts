@@ -49,8 +49,8 @@ export class CompositorLayerComponent implements OnInit, OnDestroy, DropZone {
 
   public onDropZoneActivated(sourceItem: DraggableItem, position: Position2D) {
     const {x, y} = Position2DHelper.toElementPosition(this.elementRef, position);
-    if (sourceItem.getDom().dataset['dragPreviewTemplate']) {
-      this.elementRepositoryService.addEditorElement(sourceItem.getDom().dataset['dragPreviewTemplate'], x, y);
+    if (sourceItem.getData('dragPreviewTemplate')) {
+      this.elementRepositoryService.addEditorElement(sourceItem.getData('dragPreviewTemplate'), x, y);
     }
   }
 

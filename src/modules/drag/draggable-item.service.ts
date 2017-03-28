@@ -65,6 +65,10 @@ class DraggableItemImpl implements DraggableItem {
     return this.transformer;
   }
 
+  public getData(key: string): string {
+    return this.dom.dataset[key];
+  }
+
   public enableDrag(){
     this.dom.dataset[DraggableItemImpl.ATTR_NAME_DRAGGABLE] = 'true';
   }

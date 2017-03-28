@@ -10,6 +10,8 @@ export interface DraggableItem {
   getChmod(): HTMLElementChmod;
   getTransformer(): HTMLElementTransformer;
 
+  getData(key: string): string;
+
   enableDrag();
   isDragEnabled(): boolean;
 

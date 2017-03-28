@@ -1,7 +1,7 @@
-import { Component, Input, ViewChildren, ElementRef } from '@angular/core';
+import { Component, ElementRef, Input, ViewChildren } from '@angular/core';
 import { EditorElement } from '../../services/element-repository.service';
 import { ElementSelectionService } from '../../services/element-selection.service';
-import { PageCoordinatesHelper } from '../../../shared/PageCoordinatesHelper';
+import { Position2D, Position2DHelper } from '../../../shared/Position2D';
 
 @Component({
   selector: 'explorer-tree',
@@ -25,15 +25,14 @@ export class ExplorerTreeComponent {
     this.elementSelectionService.select(nodeId);
   }
 
-  public findDropZone(point: HammerPoint): ElementRef {
-    const coordinates = PageCoordinatesHelper.fromPosition2D(point);
-    const zone = this.dropZones.find(dropZone => PageCoordinatesHelper.isInsideElement(dropZone, coordinates));
+  public findDropZone(position: Position2D): ElementRef {
+    const zone = this.dropZones.find(dropZone => Position2DHelper.isInsideElement(dropZone, position));
     if (zone) {
       return zone;
     }
-    const nestedTree = this.nestedTrees.find(tree => PageCoordinatesHelper.isInsideElement(tree.elementRef, coordinates));
+    const nestedTree = this.nestedTrees.find(tree => Position2DHelper.isInsideElement(tree.elementRef, position));
     if (nestedTree) {
-      return nestedTree.findDropZone(point);
+      return nestedTree.findDropZone(position);
     }
   }
 

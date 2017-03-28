@@ -1,8 +1,6 @@
 import { Directive, HostListener } from '@angular/core';
 import { PreviewCanvasService } from './preview-canvas.service';
-import { PageCoordinatesHelper } from '../shared/PageCoordinatesHelper';
 import { DropZone, DropZoneService } from './drop-zone.service';
-import { PageCoordinates } from '../shared/PageCoordinates';
 import { DraggableItemService } from './draggable-item.service';
 import { Position2D, Position2DHelper } from '../shared/Position2D';
 import { DomHelper } from '../shared/DomHelper';
@@ -56,9 +54,8 @@ export class PreviewDirective {
     this.dragService.onPanEnd(event.center);
     const dropZone = this.findDropZone(this.sourceItem, event.center);
     if (dropZone) {
-      let coordinates = PageCoordinatesHelper.fromPosition2D(event.center);
-      coordinates = PreviewDirective.addPreviewPadding(coordinates);
-      dropZone.onDropZoneActivated(this.sourceItem, coordinates);
+      const position = PreviewDirective.addPreviewPadding(event.center);
+      dropZone.onDropZoneActivated(this.sourceItem, position);
     }
     this.draggableItem.remove();
     this.draggableItem = null;
@@ -75,9 +72,8 @@ export class PreviewDirective {
 
   private findDropZone(item: DraggableItem, position: Position2D): DropZone {
     const label = item.getDom().dataset[PreviewDirective.DATA_ATTR_LABEL];
-    let coordinates = PageCoordinatesHelper.fromPosition2D(position);
-    coordinates = PreviewDirective.addPreviewPadding(coordinates);
-    return this.dropZoneService.findDropZone(label, coordinates);
+    position = PreviewDirective.addPreviewPadding(position);
+    return this.dropZoneService.findDropZone(label, position);
   }
 
   private prepareClonedItem(targetItem: DraggableItem): DraggableItem {
@@ -93,7 +89,7 @@ export class PreviewDirective {
   private anchorItem(item: DraggableItem, position: Position2D) {
     const canvas = this.previewCanvasService.getCanvas();
     const canvasItem = this.draggableItemService.getDraggableItem(DomHelper.getElement(canvas));
-    const parentPosition = Position2DHelper.toParentElementPosition2D(canvas, position);
+    const parentPosition = Position2DHelper.toParentElementPosition(canvas, position);
 
     item.makeChildOf(canvasItem);
     item.moveToPosition(parentPosition, null);
@@ -115,10 +111,10 @@ export class PreviewDirective {
     }
   }
 
-  private static addPreviewPadding(coordinates: PageCoordinates): PageCoordinates {
+  private static addPreviewPadding(position: Position2D): Position2D {
     return {
-      pageX: coordinates.pageX - PreviewDirective.PADDING,
-      pageY: coordinates.pageY - PreviewDirective.PADDING
+      x: position.x - PreviewDirective.PADDING,
+      y: position.y - PreviewDirective.PADDING
     };
   }
 

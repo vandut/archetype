@@ -3,12 +3,11 @@ import { ElementRepositoryHelper, ElementRepositoryService } from '../../service
 import { ElementSelectionService } from '../../services/element-selection.service';
 import { Subscription } from 'rxjs';
 import { DropZone, DropZoneService } from '../../../drag/drop-zone.service';
-import { PageCoordinates } from '../../../shared/PageCoordinates';
 import { DomHelper } from '../../../shared/DomHelper';
-import { PageCoordinatesHelper } from '../../../shared/PageCoordinatesHelper';
 import { DragMoveHandlerDirective } from '../../../drag/drag-move-handler.directive';
 import { DraggableItemService } from '../../../drag/draggable-item.service';
 import { DraggableItem } from '../../../drag/DraggableItem';
+import { Position2D, Position2DHelper } from '../../../shared/Position2D';
 
 @Component({
   selector: 'editor-compositor-layer',
@@ -44,12 +43,12 @@ export class CompositorLayerComponent implements OnInit, OnDestroy, DropZone {
     this.subscription.unsubscribe();
   }
 
-  public isInDropZone(label: string, coordinates: PageCoordinates): boolean {
-    return label === 'palette' && PageCoordinatesHelper.isInsideElement(this.elementRef, coordinates);
+  public isInDropZone(label: string, position: Position2D): boolean {
+    return label === 'palette' && Position2DHelper.isInsideElement(this.elementRef, position);
   }
 
-  public onDropZoneActivated(sourceItem: DraggableItem, coordinates: PageCoordinates) {
-    const [x, y] = PageCoordinatesHelper.toElementCoordinates(this.elementRef, coordinates);
+  public onDropZoneActivated(sourceItem: DraggableItem, position: Position2D) {
+    const {x, y} = Position2DHelper.toElementPosition(this.elementRef, position);
     if (sourceItem.getDom().dataset['dragPreviewTemplate']) {
       this.elementRepositoryService.addEditorElement(sourceItem.getDom().dataset['dragPreviewTemplate'], x, y);
     }

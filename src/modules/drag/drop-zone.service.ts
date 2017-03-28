@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { PageCoordinates } from '../shared/PageCoordinates';
 import { DraggableItem } from './DraggableItem';
+import { Position2D } from '../shared/Position2D';
 
 export interface DropZone {
-  onDropZoneActivated(sourceItem: DraggableItem, coordinates: PageCoordinates);
-  isInDropZone(label: string, coordinates: PageCoordinates): boolean;
+  onDropZoneActivated(sourceItem: DraggableItem, position: Position2D);
+  isInDropZone(label: string, position: Position2D): boolean;
 }
 
 @Injectable()
@@ -23,8 +23,8 @@ export class DropZoneService {
     }
   }
 
-  public findDropZone(label: string, coordinates: PageCoordinates): DropZone {
-    return this.dropZones.find(dz => dz.isInDropZone(label, coordinates));
+  public findDropZone(label: string, position: Position2D): DropZone {
+    return this.dropZones.find(dz => dz.isInDropZone(label, position));
   }
 
 }

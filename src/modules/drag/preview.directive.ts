@@ -77,7 +77,7 @@ export class PreviewDirective {
   }
 
   private prepareClonedItem(targetItem: DraggableItem): DraggableItem {
-    const template = PreviewDirective.getPreviewTemplate(targetItem);
+    const template = targetItem.getDom().dataset[PreviewDirective.DATA_ATTR_PREVIEW_TEMPLATE];
 
     if (template) {
       return this.draggableItemService.createDraggableItemFromTemplate(template);
@@ -93,10 +93,6 @@ export class PreviewDirective {
 
     item.makeChildOf(canvasItem);
     item.moveToPosition(parentPosition, null);
-  }
-
-  private static getPreviewTemplate(item: DraggableItem): string {
-    return item.getDom().dataset[PreviewDirective.DATA_ATTR_PREVIEW_TEMPLATE];
   }
 
   private adjustPreviewVisibility(position: Position2D) {

@@ -40,9 +40,9 @@ class DraggableItemImpl implements DraggableItem {
   private chmod: HTMLElementChmod;
   private transformer: HTMLElementTransformer;
 
-  constructor(private target: HTMLElement, private parent: DraggableItem) {
-    this.chmod = HTMLElementChmod.of(target);
-    this.transformer = HTMLElementTransformer.of(target);
+  constructor(private dom: HTMLElement, private parent: DraggableItem) {
+    this.chmod = HTMLElementChmod.of(dom);
+    this.transformer = HTMLElementTransformer.of(dom);
   }
 
   public getRootlessCopy(): DraggableItem {
@@ -50,7 +50,7 @@ class DraggableItemImpl implements DraggableItem {
   }
 
   public getDom(): HTMLElement {
-    return this.target;
+    return this.dom;
   }
 
   public getParent(): DraggableItem {
@@ -66,31 +66,39 @@ class DraggableItemImpl implements DraggableItem {
   }
 
   public enableDrag(){
-    this.target.dataset[DraggableItemImpl.ATTR_NAME_DRAGGABLE] = 'true';
+    this.dom.dataset[DraggableItemImpl.ATTR_NAME_DRAGGABLE] = 'true';
   }
 
   public isDragEnabled(): boolean {
-    return this.target.dataset[DraggableItemImpl.ATTR_NAME_DRAGGABLE] === 'true';
+    return this.dom.dataset[DraggableItemImpl.ATTR_NAME_DRAGGABLE] === 'true';
   }
 
   public show()  {
-    this.target.style.visibility = null;
+    this.dom.style.visibility = null;
   }
 
   public hide()  {
-    this.target.style.visibility = 'hidden';
+    this.dom.style.visibility = 'hidden';
   }
 
   public isVisible(): boolean {
-    return !this.target.style.visibility;
+    return !this.dom.style.visibility;
+  }
+
+  public isMovable(): boolean {
+    return this.transformer.positionType !== 'static';
+  }
+
+  public isResizable(): boolean {
+    return getComputedStyle(this.dom).display === 'block';
   }
 
   public makeChildOf(draggableItem: DraggableItem) {
-    draggableItem.getDom().appendChild(this.target);
+    draggableItem.getDom().appendChild(this.dom);
   }
 
   public remove() {
-    this.target.remove();
+    this.dom.remove();
   }
 
   public moveToPosition(position: Position2D, lastPosition: Position2D): Position2D {

@@ -48,14 +48,6 @@ export class SelectionComponent implements AfterViewInit {
     return this.draggableItemService.getDraggableItem(target.nativeElement);
   }
 
-  public isMovable(): boolean {
-    return this.selectionTarget.getTransformer().positionType !== 'static';
-  }
-
-  public isResizable(): boolean {
-    return getComputedStyle(this.selectionTarget.getDom()).display === 'block';
-  }
-
 }
 
 class SelectionTargetDragListener extends DragEventListenerWrapper {

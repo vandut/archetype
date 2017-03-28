@@ -17,6 +17,9 @@ export interface DraggableItem {
   hide();
   isVisible(): boolean;
 
+  isMovable(): boolean;
+  isResizable(): boolean;
+
   makeChildOf(draggableItem: DraggableItem);
   remove();
 

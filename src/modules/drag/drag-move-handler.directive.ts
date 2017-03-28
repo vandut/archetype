@@ -19,7 +19,7 @@ export class DragMoveHandlerDirective {
   @HostListener('mousedown-delegate', ['$event'])
   public diffuseClick(event: CustomEvent) {
     const draggableItem = this.draggableItemService.getDraggableItem(event.target);
-    if (draggableItem.isDragEnabled()) {
+    if (this.isAllowed(draggableItem)) {
       this.dragService.diffuseClick(event.detail);
     }
   }
@@ -27,7 +27,7 @@ export class DragMoveHandlerDirective {
   @HostListener('tap-delegate', ['$event'])
   public onTap(event: CustomEvent) {
     const draggableItem = this.draggableItemService.getDraggableItem(event.target);
-    if (draggableItem.isDragEnabled()) {
+    if (this.isAllowed(draggableItem)) {
       this.dragService.onTap(draggableItem, event.detail.center);
     }
   }
@@ -35,7 +35,7 @@ export class DragMoveHandlerDirective {
   @HostListener('panstart-delegate', ['$event'])
   public onPanStart(event: CustomEvent) {
     const draggableItem = this.draggableItemService.getDraggableItem(event.target);
-    if (draggableItem.isDragEnabled()) {
+    if (this.isAllowed(draggableItem)) {
       this.dragService.onPanStart(draggableItem, event.detail.center);
     }
   }
@@ -43,7 +43,7 @@ export class DragMoveHandlerDirective {
   @HostListener('panmove-delegate', ['$event'])
   public onPanMove(event: CustomEvent) {
     const draggableItem = this.draggableItemService.getDraggableItem(event.target);
-    if (draggableItem.isDragEnabled()) {
+    if (this.isAllowed(draggableItem)) {
       this.dragService.onPanMove(event.detail.center);
     }
   }
@@ -51,7 +51,7 @@ export class DragMoveHandlerDirective {
   @HostListener('panend-delegate', ['$event'])
   public onPanEnd(event: CustomEvent) {
     const draggableItem = this.draggableItemService.getDraggableItem(event.target);
-    if (draggableItem.isDragEnabled()) {
+    if (this.isAllowed(draggableItem)) {
       this.dragService.onPanEnd(event.detail.center);
     }
   }
@@ -59,9 +59,13 @@ export class DragMoveHandlerDirective {
   @HostListener('pancancel-delegate', ['$event'])
   public onPanCancel(event: CustomEvent) {
     const draggableItem = this.draggableItemService.getDraggableItem(event.target);
-    if (draggableItem.isDragEnabled()) {
+    if (this.isAllowed(draggableItem)) {
       this.dragService.onPanCancel(event.detail.center);
     }
+  }
+
+  private isAllowed(draggableItem: DraggableItem) {
+    return draggableItem.isDragEnabled() && draggableItem.isMovable();
   }
 
 }

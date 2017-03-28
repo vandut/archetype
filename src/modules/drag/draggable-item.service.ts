@@ -9,11 +9,26 @@ export class DraggableItemService {
 
   public createDraggableItemFromTemplate(template: string): DraggableItem {
     const target = HTMLElementFactory.fromTemplate(template);
-    return this.getDraggableItem(target);
+    return new DraggableItemImpl(target, null);
   }
 
   public getDraggableItem(target: HTMLElement | EventTarget): DraggableItem {
-    return new DraggableItemImpl(<HTMLElement> target);
+    const parentElement = this.findTargetParent(<HTMLElement> target);
+    const parentItem = parentElement === null ? null : new DraggableItemImpl(parentElement, null);
+    return new DraggableItemImpl(<HTMLElement> target, parentItem);
+  }
+
+  private findTargetParent(target: HTMLElement): HTMLElement {
+    if (ElementRepositoryHelper.getIsChildOf(target)) {
+      let parent = target.parentElement;
+      while (parent !== null) {
+        if (ElementRepositoryHelper.getIsParentFor(parent) === ElementRepositoryHelper.getIsChildOf(target)) {
+          return parent;
+        }
+        parent = parent.parentElement;
+      }
+    }
+    return null;
   }
 
 }
@@ -22,22 +37,16 @@ class DraggableItemImpl implements DraggableItem {
 
   public static ATTR_NAME_DRAGGABLE = 'draggable';
 
-  private parent: DraggableItem = null;
   private chmod: HTMLElementChmod;
   private transformer: HTMLElementTransformer;
 
-  constructor(private target: HTMLElement) {
-    const parentElement = DraggableItemImpl.findParent(target);
-    if (parentElement) {
-      this.parent = new DraggableItemImpl(parentElement);
-    }
-
+  constructor(private target: HTMLElement, private parent: DraggableItem) {
     this.chmod = HTMLElementChmod.of(target);
     this.transformer = HTMLElementTransformer.of(target);
   }
 
   public getRootlessCopy(): DraggableItem {
-    return new DraggableItemImpl(<HTMLElement> this.getDom().cloneNode(true));
+    return new DraggableItemImpl(<HTMLElement> this.getDom().cloneNode(true), null);
   }
 
   public getDom(): HTMLElement {
@@ -54,19 +63,6 @@ class DraggableItemImpl implements DraggableItem {
 
   public getTransformer(): HTMLElementTransformer {
     return this.transformer;
-  }
-
-  private static findParent(target: HTMLElement): HTMLElement {
-    if (ElementRepositoryHelper.getIsChildOf(target)) {
-      let parent = target.parentElement;
-      while (parent !== null) {
-        if (ElementRepositoryHelper.getIsParentFor(parent) === ElementRepositoryHelper.getIsChildOf(target)) {
-          return parent;
-        }
-        parent = parent.parentElement;
-      }
-    }
-    return null;
   }
 
   public enableDrag(){

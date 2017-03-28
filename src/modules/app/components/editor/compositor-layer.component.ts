@@ -49,8 +49,8 @@ export class CompositorLayerComponent implements OnInit, OnDestroy, DropZone {
 
   public onDropZoneActivated(source: HTMLElement, coordinates: PageCoordinates) {
     const [x, y] = PageCoordinatesHelper.toElementCoordinates(this.elementRef, coordinates);
-    if (source.dataset['paletteTemplate']) {
-      this.elementRepositoryService.addEditorElement(source.dataset['paletteTemplate'], x, y);
+    if (source.dataset['dragPreviewTemplate']) {
+      this.elementRepositoryService.addEditorElement(source.dataset['dragPreviewTemplate'], x, y);
     }
   }
 

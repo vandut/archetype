@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, OnDestroy } from '@angular/core';
-import { PreviewService } from '../../../drag/preview.service';
+import { PreviewCanvasService } from '../../../drag/preview-canvas.service';
 
 @Component({
   selector: 'preview-layer',
@@ -9,14 +9,14 @@ import { PreviewService } from '../../../drag/preview.service';
 export class PreviewLayerComponent implements OnInit, OnDestroy {
 
   constructor(private elementRef: ElementRef,
-              private previewService: PreviewService) {}
+              private previewCanvasService: PreviewCanvasService) {}
 
   public ngOnInit(): void {
-    this.previewService.registerCanvas(this.elementRef);
+    this.previewCanvasService.registerCanvas(this.elementRef);
   }
 
   public ngOnDestroy(): void {
-    this.previewService.clearCanvas();
+    this.previewCanvasService.clearCanvas();
   }
 
 }

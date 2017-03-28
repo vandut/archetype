@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { DropZoneService } from './drop-zone.service';
 import { PreviewDirective } from './preview.directive';
-import { PreviewService } from './preview.service';
+import { PreviewCanvasService } from './preview-canvas.service';
 import { DragService } from './drag.service';
 import { DragMoveHandlerDirective } from './drag-move-handler.directive';
 import { DraggableItemService } from './draggable-item.service';
@@ -29,7 +29,7 @@ export class MyHammerConfig extends HammerGestureConfig  {
   providers: [
     DragService,
     DropZoneService,
-    PreviewService,
+    PreviewCanvasService,
     DraggableItemService,
     {
       provide: HAMMER_GESTURE_CONFIG,

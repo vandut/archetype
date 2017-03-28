@@ -4,6 +4,8 @@ import { Position2D } from '../shared/Position2D';
 
 export interface DraggableItem {
 
+  getRootlessCopy(): DraggableItem;
+
   getDom(): HTMLElement;
   getParent(): DraggableItem;
   getChmod(): HTMLElementChmod;
@@ -41,6 +43,10 @@ export class DraggableItemImpl implements DraggableItem {
 
     this.chmod = HTMLElementChmod.of(target);
     this.transformer = HTMLElementTransformer.of(target);
+  }
+
+  public getRootlessCopy(): DraggableItem {
+    return new DraggableItemImpl(<HTMLElement> this.getDom().cloneNode(true));
   }
 
   public getDom(): HTMLElement {

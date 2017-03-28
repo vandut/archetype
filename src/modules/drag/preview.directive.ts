@@ -4,7 +4,6 @@ import { PageCoordinatesHelper } from '../shared/PageCoordinatesHelper';
 import { DropZone, DropZoneService } from './drop-zone.service';
 import { PageCoordinates } from '../shared/PageCoordinates';
 import { DraggableItemService } from './draggable-item.service';
-import { HTMLElementFactory } from '../shared/HTMLElement';
 import { Position2D, Position2DHelper } from '../shared/Position2D';
 import { DomHelper } from '../shared/DomHelper';
 import { DraggableItem } from './DraggableItem';
@@ -59,7 +58,7 @@ export class PreviewDirective {
     if (dropZone) {
       let coordinates = PageCoordinatesHelper.fromPosition2D(event.center);
       coordinates = PreviewDirective.addPreviewPadding(coordinates);
-      dropZone.onDropZoneActivated(event.target, coordinates);
+      dropZone.onDropZoneActivated(this.sourceItem, coordinates);
     }
     this.draggableItem.remove();
     this.draggableItem = null;
@@ -85,14 +84,10 @@ export class PreviewDirective {
     const template = PreviewDirective.getPreviewTemplate(targetItem);
 
     if (template) {
-      return this.draggableItemFromTemplate(template);
+      return this.draggableItemService.createDraggableItemFromTemplate(template);
     } else {
       return targetItem.getRootlessCopy();
     }
-  }
-
-  private draggableItemFromTemplate(template: string): DraggableItem {
-    return this.draggableItemService.getDraggableItem(HTMLElementFactory.fromTemplate(template));
   }
 
   private anchorItem(item: DraggableItem, position: Position2D) {

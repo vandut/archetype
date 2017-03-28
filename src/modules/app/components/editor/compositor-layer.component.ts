@@ -8,6 +8,7 @@ import { DomHelper } from '../../../shared/DomHelper';
 import { PageCoordinatesHelper } from '../../../shared/PageCoordinatesHelper';
 import { DragMoveHandlerDirective } from '../../../drag/drag-move-handler.directive';
 import { DraggableItemService } from '../../../drag/draggable-item.service';
+import { DraggableItem } from '../../../drag/DraggableItem';
 
 @Component({
   selector: 'editor-compositor-layer',
@@ -47,10 +48,10 @@ export class CompositorLayerComponent implements OnInit, OnDestroy, DropZone {
     return label === 'palette' && PageCoordinatesHelper.isInsideElement(this.elementRef, coordinates);
   }
 
-  public onDropZoneActivated(source: HTMLElement, coordinates: PageCoordinates) {
+  public onDropZoneActivated(sourceItem: DraggableItem, coordinates: PageCoordinates) {
     const [x, y] = PageCoordinatesHelper.toElementCoordinates(this.elementRef, coordinates);
-    if (source.dataset['dragPreviewTemplate']) {
-      this.elementRepositoryService.addEditorElement(source.dataset['dragPreviewTemplate'], x, y);
+    if (sourceItem.getDom().dataset['dragPreviewTemplate']) {
+      this.elementRepositoryService.addEditorElement(sourceItem.getDom().dataset['dragPreviewTemplate'], x, y);
     }
   }
 

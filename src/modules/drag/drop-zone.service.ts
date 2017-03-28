@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { PageCoordinates } from '../shared/PageCoordinates';
+import { DraggableItem } from './DraggableItem';
 
 export interface DropZone {
-  onDropZoneActivated(source: HTMLElement, coordinates: PageCoordinates);
+  onDropZoneActivated(sourceItem: DraggableItem, coordinates: PageCoordinates);
   isInDropZone(label: string, coordinates: PageCoordinates): boolean;
 }
 

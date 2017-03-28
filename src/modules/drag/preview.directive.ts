@@ -19,6 +19,7 @@ export class PreviewDirective {
   private static DATA_ATTR_PREVIEW_TEMPLATE = 'dragPreviewTemplate';
   private static DATA_ATTR_LABEL = 'dragLabel';
 
+  private sourceItem: DraggableItem = null;
   private draggableItem: DraggableItem = null;
 
   constructor(private previewCanvasService: PreviewCanvasService,
@@ -33,12 +34,13 @@ export class PreviewDirective {
 
   @HostListener('panstart', ['$event'])
   public onPanStart(event: HammerInput) {
-    if (this.draggableItem) {
-      console.warn("PreviewDirective: expecting this.draggableItem to be null");
+    if (this.sourceItem || this.draggableItem) {
+      console.warn("PreviewDirective: expecting sourceItem and draggableItem to be null");
     }
-    const targetItem = this.draggableItemService.getDraggableItem(event.target);
-    if (targetItem.isDragEnabled()) {
-      this.draggableItem = this.prepareClonedItem(targetItem);
+    const sourceItem = this.draggableItemService.getDraggableItem(event.target);
+    if (sourceItem.isDragEnabled()) {
+      this.sourceItem = sourceItem;
+      this.draggableItem = this.prepareClonedItem(this.sourceItem);
       this.anchorItem(this.draggableItem, event.center);
       this.dragService.onPanStart(this.draggableItem, event.center);
     }
@@ -53,7 +55,7 @@ export class PreviewDirective {
   @HostListener('panend', ['$event'])
   public onPanEnd(event: HammerInput) {
     this.dragService.onPanEnd(event.center);
-    const dropZone = this.findDropZone(event.target, event.center);
+    const dropZone = this.findDropZone(this.sourceItem, event.center);
     if (dropZone) {
       let coordinates = PageCoordinatesHelper.fromPosition2D(event.center);
       coordinates = PreviewDirective.addPreviewPadding(coordinates);
@@ -61,13 +63,7 @@ export class PreviewDirective {
     }
     this.draggableItem.remove();
     this.draggableItem = null;
-  }
-
-  private findDropZone(target: HTMLElement, position: Position2D): DropZone {
-    const label = target.dataset[PreviewDirective.DATA_ATTR_LABEL];
-    let coordinates = PageCoordinatesHelper.fromPosition2D(position);
-    coordinates = PreviewDirective.addPreviewPadding(coordinates);
-    return this.dropZoneService.findDropZone(label, coordinates);
+    this.sourceItem = null;
   }
 
   @HostListener('pancancel', ['$event'])
@@ -75,10 +71,18 @@ export class PreviewDirective {
     this.dragService.onPanCancel(event.center);
     this.draggableItem.remove();
     this.draggableItem = null;
+    this.sourceItem = null;
+  }
+
+  private findDropZone(item: DraggableItem, position: Position2D): DropZone {
+    const label = item.getDom().dataset[PreviewDirective.DATA_ATTR_LABEL];
+    let coordinates = PageCoordinatesHelper.fromPosition2D(position);
+    coordinates = PreviewDirective.addPreviewPadding(coordinates);
+    return this.dropZoneService.findDropZone(label, coordinates);
   }
 
   private prepareClonedItem(targetItem: DraggableItem): DraggableItem {
-    const template = PreviewDirective.getPreviewTemplate(targetItem.getDom());
+    const template = PreviewDirective.getPreviewTemplate(targetItem);
 
     if (template) {
       return this.draggableItemFromTemplate(template);
@@ -100,8 +104,8 @@ export class PreviewDirective {
     item.moveToPosition(parentPosition, null);
   }
 
-  private static getPreviewTemplate(htmlElement: HTMLElement): string {
-    return htmlElement.dataset[PreviewDirective.DATA_ATTR_PREVIEW_TEMPLATE];
+  private static getPreviewTemplate(item: DraggableItem): string {
+    return item.getDom().dataset[PreviewDirective.DATA_ATTR_PREVIEW_TEMPLATE];
   }
 
   private adjustPreviewVisibility(position: Position2D) {

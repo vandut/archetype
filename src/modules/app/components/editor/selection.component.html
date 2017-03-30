@@ -1,8 +1,8 @@
 <div class="box"
-     [style.left.px]="selectionTarget.getTransformer().positionX"
-     [style.top.px]="selectionTarget.getTransformer().positionY"
-     [style.width.px]="selectionTarget.getTransformer().totalWidth"
-     [style.height.px]="selectionTarget.getTransformer().totalHeight">
+     [style.left.px]="selectionTarget.sizer.left"
+     [style.top.px]="selectionTarget.sizer.top"
+     [style.width.px]="selectionTarget.sizer.width"
+     [style.height.px]="selectionTarget.sizer.height">
 
   <div class="background" [attr.data-usable]="selectionTarget.isMovable()"                  #background></div>
   <div class="border W"   [attr.data-usable]="selectionTarget.isMovable() && selectionTarget.isResizable()" #resizeW></div>

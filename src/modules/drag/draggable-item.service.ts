@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { DraggableItem } from './DraggableItem';
+import { DraggableItem, Sizer } from './DraggableItem';
 import { HTMLElementChmod, HTMLElementFactory, HTMLElementTransformer } from '../shared/HTMLElement';
 import { ElementRepositoryHelper } from '../app/services/element-repository.service';
 import { Position2D } from '../shared/Position2D';
@@ -39,10 +39,12 @@ class DraggableItemImpl implements DraggableItem {
 
   private chmod: HTMLElementChmod;
   private transformer: HTMLElementTransformer;
+  public readonly sizer: Sizer;
 
   constructor(private dom: HTMLElement, private parent: DraggableItem) {
     this.chmod = HTMLElementChmod.of(dom);
     this.transformer = HTMLElementTransformer.of(dom);
+    this.sizer = new SizerImpl(dom);
   }
 
   public getRootlessCopy(): DraggableItem {
@@ -106,35 +108,31 @@ class DraggableItemImpl implements DraggableItem {
   }
 
   public moveToPosition(position: Position2D, lastPosition: Position2D): Position2D {
-    const transformer = this.transformer;
-
     if (lastPosition === null) {
-      transformer.positionX = position.x;
-      transformer.positionY = position.y;
+      this.sizer.left = position.x;
+      this.sizer.top = position.y;
       return null;
     }
 
-    transformer.positionX += position.x - lastPosition.x;
-    transformer.positionY += position.y - lastPosition.y;
+    this.sizer.left += position.x - lastPosition.x;
+    this.sizer.top += position.y - lastPosition.y;
 
     if (!this.parent) {
       return position;
     }
 
-    const adjustedLeft = Math.min(Math.max(0, transformer.positionX), this.parent.getChmod().innerWidth - transformer.totalWidth);
-    const adjustedTop = Math.min(Math.max(0, transformer.positionY), this.parent.getChmod().innerHeight - transformer.totalHeight);
+    const adjustedLeft = Math.min(Math.max(0, this.sizer.left), this.parent.getChmod().innerWidth - this.sizer.width);
+    const adjustedTop = Math.min(Math.max(0, this.sizer.top), this.parent.getChmod().innerHeight - this.sizer.height);
     const last = {
-      x: position.x + adjustedLeft - transformer.positionX,
-      y: position.y + adjustedTop - transformer.positionY
+      x: position.x + adjustedLeft - this.sizer.left,
+      y: position.y + adjustedTop - this.sizer.top
     };
-    transformer.positionX = adjustedLeft;
-    transformer.positionY = adjustedTop;
+    this.sizer.left = adjustedLeft;
+    this.sizer.top = adjustedTop;
     return last;
   }
 
   public moveWallTo(position: Position2D, lastPosition: Position2D, resizeType: string): Position2D {
-    const transformer = this.transformer;
-
     if (!this.parent) {
       console.warn('Parent undefined');
       return position;
@@ -143,22 +141,17 @@ class DraggableItemImpl implements DraggableItem {
     let deltaX = position.x - lastPosition.x;
     let deltaY = position.y - lastPosition.y;
 
-    const targetX = transformer.positionX;
-    const targetY = transformer.positionY;
-    const targetWidth = transformer.totalWidth;
-    const targetHeight = transformer.totalHeight;
-
     switch (resizeType) {
       case 'Resize_W':
       case 'Resize_NW':
       case 'Resize_SW':
-        deltaX = Math.max(0, targetX + deltaX) - targetX + Math.min(0, targetWidth - deltaX);
+        deltaX = Math.max(0, this.sizer.left + deltaX) - this.sizer.left + Math.min(0, this.sizer.width - deltaX);
         break;
       case 'Resize_E':
       case 'Resize_NE':
       case 'Resize_SE':
-        deltaX = Math.round(Math.min(this.parent.getChmod().clientRect.width, targetX + targetWidth + deltaX)
-            - (targetX + targetWidth)) - Math.min(0, targetWidth + deltaX);
+        deltaX = Math.round(Math.min(this.parent.getChmod().clientRect.width, this.sizer.left + this.sizer.width + deltaX)
+            - (this.sizer.left + this.sizer.width)) - Math.min(0, this.sizer.width + deltaX);
         break;
     }
 
@@ -166,13 +159,13 @@ class DraggableItemImpl implements DraggableItem {
       case 'Resize_N':
       case 'Resize_NW':
       case 'Resize_NE':
-        deltaY = Math.max(0, targetY + deltaY) - targetY + Math.min(0, targetHeight - deltaY);
+        deltaY = Math.max(0, this.sizer.top + deltaY) - this.sizer.top + Math.min(0, this.sizer.height - deltaY);
         break;
       case 'Resize_S':
       case 'Resize_SW':
       case 'Resize_SE':
-        deltaY = Math.round(Math.min(this.parent.getChmod().clientRect.height, targetY + targetHeight + deltaY)
-            - (targetY + targetHeight)) - Math.min(0, targetHeight + deltaY);
+        deltaY = Math.round(Math.min(this.parent.getChmod().clientRect.height, this.sizer.top + this.sizer.height + deltaY)
+            - (this.sizer.top + this.sizer.height)) - Math.min(0, this.sizer.height + deltaY);
         break;
     }
 
@@ -180,13 +173,13 @@ class DraggableItemImpl implements DraggableItem {
       case 'Resize_N':
       case 'Resize_NW':
       case 'Resize_NE':
-        transformer.positionY += deltaY;
-        transformer.totalHeight -= deltaY;
+        this.sizer.top += deltaY;
+        this.sizer.height -= deltaY;
         break;
       case 'Resize_S':
       case 'Resize_SW':
       case 'Resize_SE':
-        transformer.totalHeight += deltaY;
+        this.sizer.height += deltaY;
         break;
     }
 
@@ -194,13 +187,13 @@ class DraggableItemImpl implements DraggableItem {
       case 'Resize_W':
       case 'Resize_NW':
       case 'Resize_SW':
-        transformer.positionX += deltaX;
-        transformer.totalWidth -= deltaX;
+        this.sizer.left += deltaX;
+        this.sizer.width -= deltaX;
         break;
       case 'Resize_E':
       case 'Resize_NE':
       case 'Resize_SE':
-        transformer.totalWidth += deltaX;
+        this.sizer.width += deltaX;
         break;
     }
 
@@ -208,6 +201,84 @@ class DraggableItemImpl implements DraggableItem {
       x: lastPosition.x + deltaX,
       y: lastPosition.y + deltaY
     };
+  }
+
+}
+
+/*
+ * TODO: Add support for calculated styles:
+ * border, margin, padding, size, positioning
+ */
+class SizerImpl implements Sizer {
+
+  constructor(private dom: HTMLElement) {}
+
+  get left(): number {
+    return SizerImpl.stringPx(this.dom.style.left);//this.dom.offsetLeft;
+  }
+
+  set left(left: number) {
+    if (left) {
+      this.dom.style.left = left + 'px';
+    } else {
+      this.dom.style.left = null;
+    }
+  }
+
+  get right(): number {
+    return SizerImpl.stringPx(this.dom.style.right);//this.dom.offsetRight;
+  }
+
+  set right(right: number) {
+    if (right) {
+      this.dom.style.right = right + 'px';
+    } else {
+      this.dom.style.right = null;
+    }
+  }
+
+  get top(): number {
+    return SizerImpl.stringPx(this.dom.style.top);//this.dom.offsetTop;
+  }
+
+  set top(top: number) {
+    if (top) {
+      this.dom.style.top = top + 'px';
+    } else {
+      this.dom.style.top = null;
+    }
+  }
+
+  get bottom(): number {
+    return SizerImpl.stringPx(this.dom.style.bottom);//this.dom.offsetBottom;
+  }
+
+  set bottom(bottom: number) {
+    if (bottom) {
+      this.dom.style.bottom = bottom + 'px';
+    } else {
+      this.dom.style.bottom = null;
+    }
+  }
+
+  get width(): number {
+    return SizerImpl.stringPx(this.dom.style.width);//this.dom.offsetWidth;
+  }
+
+  set width(width: number) {
+    this.dom.style.width = width + 'px';
+  }
+
+  get height(): number {
+    return SizerImpl.stringPx(this.dom.style.height);//this.dom.offsetHeight;
+  }
+
+  set height(height: number) {
+    this.dom.style.height = height + 'px';
+  }
+
+  private static stringPx(value: string): number {
+    return Number(value.slice(0, -2));
   }
 
 }

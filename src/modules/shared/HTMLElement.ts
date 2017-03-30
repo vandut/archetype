@@ -57,21 +57,6 @@ export class HTMLElementTransformer {
     }
   }
 
-  get totalWidth(): number {
-    return HTMLElementTransformer.stringPx(this.element.style.width);//this.element.offsetWidth;
-  }
-
-  set totalWidth(w: number) {
-    this.element.style.width = w + 'px';
-  }
-
-  get totalHeight(): number {
-    return HTMLElementTransformer.stringPx(this.element.style.height);//this.element.offsetHeight;
-  }
-
-  set totalHeight(h: number) {
-    this.element.style.height = h + 'px';
-  }
 
   get proxy(): HTMLElementTransformer {
     return this;

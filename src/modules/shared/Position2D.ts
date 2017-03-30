@@ -2,8 +2,8 @@ import { ElementRef } from '@angular/core';
 import { DomHelper } from './DomHelper';
 
 export interface Position2D {
-  x: number;
-  y: number;
+  readonly x: number;
+  readonly y: number;
 }
 
 export class Position2DHelper {

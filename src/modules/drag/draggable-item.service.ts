@@ -205,80 +205,157 @@ class DraggableItemImpl implements DraggableItem {
 
 }
 
+abstract class Css {
+
+  public abstract get style(): CSSStyleDeclaration;
+
+  public get width(): number   { return Css.getPx(this.style.width); }
+  public get height(): number  { return Css.getPx(this.style.height); }
+
+  public set width(value: number)   { this.style.width  = Css.setPx(value); }
+  public set height(value: number)  { this.style.height = Css.setPx(value); }
+
+
+  public get left(): number   { return Css.getPx(this.style.left); }
+  public get right(): number  { return Css.getPx(this.style.right); }
+  public get top(): number    { return Css.getPx(this.style.top); }
+  public get bottom(): number { return Css.getPx(this.style.bottom); }
+
+  public set left(value: number)   { this.style.left   = Css.setPx(value); }
+  public set right(value: number)  { this.style.right  = Css.setPx(value); }
+  public set top(value: number)    { this.style.top    = Css.setPx(value); }
+  public set bottom(value: number) { this.style.bottom = Css.setPx(value); }
+
+
+  public get marginLeft(): number   { return Css.getPx(this.style.marginLeft); }
+  public get marginRight(): number  { return Css.getPx(this.style.marginRight); }
+  public get marginTop(): number    { return Css.getPx(this.style.marginTop); }
+  public get marginBottom(): number { return Css.getPx(this.style.marginBottom); }
+
+  public set marginLeft(value: number)   { this.style.marginLeft   = Css.setPx(value); }
+  public set marginRight(value: number)  { this.style.marginRight  = Css.setPx(value); }
+  public set marginTop(value: number)    { this.style.marginTop    = Css.setPx(value); }
+  public set marginBottom(value: number) { this.style.marginBottom = Css.setPx(value); }
+
+  private static getPx(value: string): number | null {
+    return value == null ? null : Number(value.slice(0, -2));
+  }
+
+  private static setPx(value: number): string | null {
+    return value == null ? null : value + 'px';
+  }
+
+}
+
+class RealCss extends Css {
+  constructor(private dom: HTMLElement) { super(); }
+  public get style(): CSSStyleDeclaration { return this.dom.style; }
+}
+
+class ComputedCss extends Css {
+  constructor(private dom: HTMLElement) { super(); }
+  public get style(): CSSStyleDeclaration { return window.getComputedStyle(this.dom); }
+}
+
 /*
- * TODO: Add support for calculated styles:
- * border, margin, padding, size, positioning
+ * Note: this does not count transformation like rotation or scaling.
  */
 class SizerImpl implements Sizer {
 
-  constructor(private dom: HTMLElement) {}
+  private css: Css;
+  private computedCss: Css;
+
+  constructor(private dom: HTMLElement) {
+    this.css = new RealCss(dom);
+    this.computedCss = new ComputedCss(dom);
+  }
 
   get left(): number {
-    return SizerImpl.stringPx(this.dom.style.left);//this.dom.offsetLeft;
+    return this.dom.offsetLeft;
   }
 
   set left(left: number) {
-    if (left) {
-      this.dom.style.left = left + 'px';
+    if (left == null) {
+      this.css.left = null;
+      this.css.marginLeft = null;
     } else {
-      this.dom.style.left = null;
+      this.right = null;
+      if (this.computedCss.style.position === 'static') {
+        this.css.marginLeft = left + this.css.marginLeft - this.left;
+      } else {
+        this.css.left = left + this.css.left - this.left;
+      }
     }
   }
 
   get right(): number {
-    return SizerImpl.stringPx(this.dom.style.right);//this.dom.offsetRight;
+    return this.computedCss.right + this.computedCss.marginRight;
   }
 
   set right(right: number) {
-    if (right) {
-      this.dom.style.right = right + 'px';
+    if (right == null) {
+      this.css.right = null;
+      this.css.marginRight = null;
     } else {
-      this.dom.style.right = null;
+      this.left = null;
+      if (this.computedCss.style.position === 'static') {
+        this.css.marginRight = right + this.css.marginRight - this.right;
+      } else {
+        this.css.right = right + this.css.right - this.right;
+      }
     }
   }
 
   get top(): number {
-    return SizerImpl.stringPx(this.dom.style.top);//this.dom.offsetTop;
+    return this.dom.offsetTop;
   }
 
   set top(top: number) {
-    if (top) {
-      this.dom.style.top = top + 'px';
+    if (top == null) {
+      this.css.top = null;
+      this.css.marginTop = null;
     } else {
-      this.dom.style.top = null;
+      this.bottom = null;
+      if (this.computedCss.style.position === 'static') {
+        this.css.marginTop = top + this.css.marginTop - this.top;
+      } else {
+        this.css.top = top + this.css.top - this.top;
+      }
     }
   }
 
   get bottom(): number {
-    return SizerImpl.stringPx(this.dom.style.bottom);//this.dom.offsetBottom;
+    return this.computedCss.bottom + this.computedCss.marginBottom;
   }
 
   set bottom(bottom: number) {
-    if (bottom) {
-      this.dom.style.bottom = bottom + 'px';
+    if (bottom == null) {
+      this.css.bottom = null;
+      this.css.marginBottom = null;
     } else {
-      this.dom.style.bottom = null;
+      this.top = null;
+      if (this.computedCss.style.position === 'static') {
+        this.css.marginBottom = bottom + this.css.marginBottom - this.bottom;
+      } else {
+        this.css.bottom = bottom + this.css.bottom - this.bottom;
+      }
     }
   }
 
   get width(): number {
-    return SizerImpl.stringPx(this.dom.style.width);//this.dom.offsetWidth;
+    return this.dom.offsetWidth;
   }
 
   set width(width: number) {
-    this.dom.style.width = width + 'px';
+    this.css.width = width + this.css.width - this.width;
   }
 
   get height(): number {
-    return SizerImpl.stringPx(this.dom.style.height);//this.dom.offsetHeight;
+    return this.dom.offsetHeight;
   }
 
   set height(height: number) {
-    this.dom.style.height = height + 'px';
-  }
-
-  private static stringPx(value: string): number {
-    return Number(value.slice(0, -2));
+    this.css.height = height + this.css.height - this.height;
   }
 
 }
